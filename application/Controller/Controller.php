@@ -29,16 +29,16 @@
  
 namespace Controller;
 
-use Exception;
 use PDO;
 
 abstract class Controller {
 	
 	protected $db = null;
 	
+	protected $model = null;
+	
 	public function __construct() {
 		$this->openPDOConnection();
-		$this->loadModel();
 	}
 	
 	private function openPDOConnection() {
@@ -49,8 +49,11 @@ abstract class Controller {
 		$this->db = new PDO( DB_DRIVER . ':host=' . DB_HOST . ';dbname=' . DB_SCHEMA, DB_USERNAME, DB_PASSWORD, $options );
 	}
 	
-	abstract protected function loadModel();
-	
+	protected function loadModel( $modelName ) {
+		$modelName = ucfirst( $modelName );
+		$model = "Model\\{$modelName}Model";
+		$this->model = new $model( $this->db );
+	}
 }
 
 

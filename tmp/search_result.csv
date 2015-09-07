@@ -1,0 +1,31 @@
+Query term, Ontology, URI
+adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000001
+adverse drug event,OAE,http://purl.obolibrary.org/obo/OAE_0000005
+adverse event incubation time,OAE,http://purl.obolibrary.org/obo/OAE_0000065
+adverse event induced by medical device,OAE,http://purl.obolibrary.org/obo/OAE_0000096
+causal adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000003
+vaccine adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000004
+medical device adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000006
+medical food adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000007
+nutritional product adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000008
+dietary supplement adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000009
+infant formula adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000010
+causal adverse event hypothesis,OAE,http://purl.obolibrary.org/obo/OAE_0000028
+influenza vaccine-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000030
+KIV-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000031
+Afluria-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000051
+systematic adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000063
+surgery adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000066
+clinical trial adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000070
+time instant of an adverse event outcome observed,OAE,http://purl.obolibrary.org/obo/OAE_0000072
+LAIV-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000073
+FluMist-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000074
+aspirin-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000087
+Aspidrox-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000088
+causal adverse drug event,OAE,http://purl.obolibrary.org/obo/OAE_0000095
+vaccine-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000097
+surgery-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000098
+nutritional product-induced adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000099
+prediction of causal adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000101
+prediction of causal vaccine adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000102
+prediction of causal drug adverse event,OAE,http://purl.obolibrary.org/obo/OAE_0000104

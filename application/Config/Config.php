@@ -27,6 +27,8 @@
  * @comment 
  */
 
+ini_set('memory_limit', '4096M');
+
 DEFINE( 'ENVIRONMENT', 'development' );
 if ( ENVIRONMENT == 'development' ) {
 	error_reporting(E_ALL);

@@ -1,0 +1,118 @@
+/**
+ * Copyright © 2015 The Regents of the University of Michigan
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ * 
+ * For more information, questions, or permission requests, please contact:
+ * Yongqun “Oliver” He - yongqunh@med.umich.edu
+ * Unit for Laboratory Animal Medicine, Center for Computational Medicine & Bioinformatics
+ * University of Michigan, Ann Arbor, MI 48109, USA
+ * He Group:  http://www.hegroup.org
+ */
+
+/**
+ * @file ontology.css
+ * @author Edison Ong
+ * @since Sep 05, 2015
+ * @comment 
+ */
+ 
+.hierarchy {
+	
+}
+
+.hierarchy .heading {
+	font-weight:bold;
+}
+
+.hierarchy .main {
+	border : #99CCFF 1px solid;
+    background-color : #EAF1F2;
+	margin-top : 4px;
+	margin-bottom : 12px;
+}
+
+.hierarchy .main .top {
+	list-style-type : none;
+	padding-left : 0;
+	margin-left : 4px;
+	padding-top : 0px;
+	margin-top : 4px;
+}
+
+.hierarchy .main .top-term {
+	
+}
+
+.hierarchy .main ul {
+	list-style-type : none;
+	padding-left : 0;
+	margin-left : 20px;
+}
+
+.hierarchy .main li {
+
+}
+
+.hierarchy .main .sup-term {
+	
+}
+
+.hierarchy .main .sib-term {
+	
+}
+
+.hierarchy .main .sib-more {
+	color: #CC0000;
+	font-size: 120%;
+}
+
+.hierarchy .main .sib-less {
+	color: #CC0000;
+	font-size: 120%;
+	display: none;
+}
+
+.hierarchy .main .cur-term {
+	color:#CC0000;
+	font-size:120%
+}
+
+.hierarchy .main .sub-term {
+	
+}
+
+.hierarchy .main .sub-more {
+	color: #CC0000;
+	font-size: 120%;
+}
+
+.hierarchy .main .sub-less {
+	color: #CC0000;
+	font-size: 120%;
+	display: none;
+}
+
+.axiom {
+	
+}
+
+.axiom .heading{
+	font-weight:bold;
+}
+
+.axiom .main{
+    border : #99CCFF 1px solid;
+    background-color : #EAF1F2;
+    margin-top : 4px;
+    margin-bottom : 12px;
+    padding : 4px;
+}

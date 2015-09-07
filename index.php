@@ -31,6 +31,9 @@ DEFINE( 'SCRIPTPATH', __DIR__ . DIRECTORY_SEPARATOR );
 
 DEFINE( 'APPPATH', SCRIPTPATH . 'application' . DIRECTORY_SEPARATOR );
 DEFINE( 'VIEWPATH', SCRIPTPATH . 'application/View' . DIRECTORY_SEPARATOR );
+DEFINE( 'TEMPLATE', SCRIPTPATH . 'application/Layout' . DIRECTORY_SEPARATOR );
+DEFINE( 'PHPLIB', SCRIPTPATH . 'library' . DIRECTORY_SEPARATOR );
+DEFINE ( 'TMP', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
 
 if ( file_exists( SCRIPTPATH . 'vendor/autoload.php' ) ) {
 	require SCRIPTPATH . 'vendor/autoload.php';

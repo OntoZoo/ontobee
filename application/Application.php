@@ -30,6 +30,8 @@
 class Application {
 	
 	public static function webStart () {
+		$GLOBALS['application_start_time'] = microtime( true );
+		
 		$controller = null;
 		$method = null;
 		$params = array();
