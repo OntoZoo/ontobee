@@ -58,6 +58,11 @@ $GLOBALS['ontology']['label']['priority'] = array(
 	'http://www.w3.org/2000/01/rdf-schema#label',
 );
 
+$GLOBALS['ontology']['definition']['priority'] = array(
+	'http://www.geneontology.org/formats/oboInOwl#Definition',
+	'http://purl.obolibrary.org/obo/IAO_0000115',
+);
+
 $GLOBALS['ontology']['hierarchy']['sibhasmax'] = 10;
 $GLOBALS['ontology']['hierarchy']['sibnomax'] =10;
 $GLOBALS['ontology']['hierarchy']['subhasmax'] = 10;
@@ -83,27 +88,27 @@ $GLOBALS['ontology']['annotation']['ignore'] = array(
 
 $GLOBALS['ontology']['restriction'] = array();
 $GLOBALS['ontology']['restriction']['operation'] = array(
-		'and' => 'http://www.w3.org/2002/07/owl#intersectionOf',
-		'or' => 'http://www.w3.org/2002/07/owl#unionOf',
-		'not' => 'http://www.w3.org/2002/07/owl#complementOf',
+	'and' => 'http://www.w3.org/2002/07/owl#intersectionOf',
+	'or' => 'http://www.w3.org/2002/07/owl#unionOf',
+	'not' => 'http://www.w3.org/2002/07/owl#complementOf',
 );
 $GLOBALS['ontology']['restriction']['type'] = array(
-		'some' => 'http://www.w3.org/2002/07/owl#someValuesFrom',
-		'only' => 'http://www.w3.org/2002/07/owl#allValuesFrom',
-		'value' => 'http://www.w3.org/2002/07/owl#hasValue',
+	'some' => 'http://www.w3.org/2002/07/owl#someValuesFrom',
+	'only' => 'http://www.w3.org/2002/07/owl#allValuesFrom',
+	'value' => 'http://www.w3.org/2002/07/owl#hasValue',
 );
 $GLOBALS['ontology']['restriction']['list'] = array(
-		'first' =>'http://www.w3.org/1999/02/22-rdf-syntax-ns#first',
-		'rest' =>'http://www.w3.org/1999/02/22-rdf-syntax-ns#rest',
+	'first' =>'http://www.w3.org/1999/02/22-rdf-syntax-ns#first',
+	'rest' =>'http://www.w3.org/1999/02/22-rdf-syntax-ns#rest',
 );
 $GLOBALS['ontology']['restriction']['onProperty'] = 'http://www.w3.org/2002/07/owl#onProperty';
 $GLOBALS['ontology']['restriction']['nil'] = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#nil';
 
 $GLOBALS['ontology']['type'] = array(
-		'Class' => 'http://www.w3.org/2002/07/owl#Class',
-		'ObjectProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
-		'DatatypeProperty' => 'http://www.w3.org/2002/07/owl#DatatypeProperty',
-		'AnnotationProperty' => 'http://www.w3.org/2002/07/owl#AnnotationProperty',
+	'Class' => 'http://www.w3.org/2002/07/owl#Class',
+	'ObjectProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
+	'DatatypeProperty' => 'http://www.w3.org/2002/07/owl#DatatypeProperty',
+	'AnnotationProperty' => 'http://www.w3.org/2002/07/owl#AnnotationProperty',
 );
 
 
@@ -114,12 +119,12 @@ $GLOBALS['ontology']['top_level_term'] = array(
 );
 
 $GLOBALS['alias']['type'] = array(
-		'http://www.w3.org/2002/07/owl#TransitiveProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
-		'http://www.w3.org/2002/07/owl#SymmetricProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
-		'http://www.w3.org/2002/07/owl#AsymmetricProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
-		'http://www.w3.org/2002/07/owl#IrreflexiveProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
-		'http://www.w3.org/2002/07/owl#ReflexiveProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
-		'http://www.w3.org/2002/07/owl#InverseFunctionalProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
+	'http://www.w3.org/2002/07/owl#TransitiveProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
+	'http://www.w3.org/2002/07/owl#SymmetricProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
+	'http://www.w3.org/2002/07/owl#AsymmetricProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
+	'http://www.w3.org/2002/07/owl#IrreflexiveProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
+	'http://www.w3.org/2002/07/owl#ReflexiveProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
+	'http://www.w3.org/2002/07/owl#InverseFunctionalProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
 );
 
 ?>
