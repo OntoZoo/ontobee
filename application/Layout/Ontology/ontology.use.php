@@ -37,7 +37,7 @@ $site = SITEURL;
 
 $others = array();
 foreach( $term->other as $index => $graph ) {
-	if ( $graph['g'] == $ontology->ontology_graph_url ) {
+	if ( $graph == $ontology->ontology_graph_url ) {
 		unset( $term->other[$index] );
 	}
 }
@@ -57,7 +57,7 @@ if ( !empty( $term->other ) ) {
 </tr>
 END;
 	foreach ( $term->other as $graph ) {
-		$other = $ontologyList[$graph['g']];
+		$other = $ontologyList[$graph];
 		if ( $other->download != '' ) {
 			$download = $other->download;
 		} else {
@@ -83,12 +83,14 @@ END;
 		}
 			
 		
-		$html .= '</td></tr></table>';
+		$html .= '</td></tr>';
 		
-		echo Helper::tidyHTML( $html );
+		
 	}
 	
+	$html .= '</table>';
 	
+	echo Helper::tidyHTML( $html );
 }
 
 ?>

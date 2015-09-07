@@ -328,7 +328,15 @@ class OntologyModel {
 		}
 		$class->usage = $usage;
 		
-		$class->other = $describeResult['usage']['ontology'];
+		$other = array();
+		$validOntology = $this->getAllOntology();
+		$validGraph = array_keys( $validOntology );
+		foreach ( $describeResult['usage']['ontology'] as $graph ) {
+			if ( in_array( $graph['g'], $validGraph ) ) {
+				$other[] = $graph['g'];
+			}
+		}
+		$class->other = $other;
 		
 		$related = $this->queryRelated( $describes );
 		$related[$termIRI] = $class;
