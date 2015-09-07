@@ -79,7 +79,7 @@ if ( !isset( $title ) ) {
 <a href="<?php echo SITEURL; ?>introduction" class="topnav">Introduction</a>
 <a href="<?php echo SITEURL; ?>ontostat" class="topnav">Statistics</a>
 <a href="<?php echo SITEURL; ?>sparql" class="topnav">SPARQL</a>
-<a href="<?php echo SITEURL; ?>ontobeep" class="topnav">Ontobeep</a>
+<!-- <a href="<?php echo SITEURL; ?>ontobeep" class="topnav">Ontobeep</a> -->
 <a href="<?php echo SITEURL; ?>tutorial" class="topnav">Tutorial</a>
 <a href="<?php echo SITEURL; ?>faqs" class="topnav">FAQs</a>
 <a href="<?php echo SITEURL; ?>references" class="topnav">References</a>
