@@ -6,3 +6,5 @@ composer.lock
 vendor/
 
 application/Config/DB.php
+
+tmp/*
