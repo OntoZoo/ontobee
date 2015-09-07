@@ -42,4 +42,8 @@ require APPPATH . 'Config/DB.php';
 
 require APPPATH . 'Config/OntologyConfig.php';
 
+$GLOBALS['call_function'] = function( $function ) {
+	return $function;
+};
+
 ?>
