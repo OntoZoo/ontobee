@@ -69,21 +69,23 @@ echo Helper::tidyHTML( $html );
 </ul>
 </div>
 
-<div style="font-weight:bold">Top level terms and selected core <?php echo $ontology->ontology_abbrv; ?> terms</div>
-<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
-<ul>
+
 <?php
 $html = '';
 if ( !empty( $ontology->key_term ) ) {
+	$html =
+<<<END
+<div style="font-weight:bold">Top level terms and selected core <?php echo $ontology->ontology_abbrv; ?> terms</div>
+<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
+<ul>
+END;
 	foreach ( $ontology->key_term as $term ) {
 		$html .= "<li><a href=\"{$site}ontology/?o=$ontology->ontology_abbrv&amp;iri=$term->term_url\">$term->term_label</a></li>";
 	}
+	$html .= '</ul></div>';
 }
 echo Helper::tidyHTML( $html );
 ?>
-
-</ul>
-</div>
 
 <?php require TEMPLATE . 'sparql.count.php'; ?>
 
