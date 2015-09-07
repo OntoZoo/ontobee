@@ -53,9 +53,11 @@ if (!$this) {
 <td bgcolor="#158AFF" align="center"><strong>Ontology Prefix</strong></td>
 <td bgcolor="#158AFF" align="center"><strong>Ontology Full Name</strong></td>
 <td bgcolor="#158AFF" align="center"><strong>List of Terms</strong></td>
+</tr>
 
-<?php 
-foreach ( $ontologies as $index => $ontology ) {
+<?php
+$index = 0;
+foreach ( $ontologies as $key => $ontology ) {
 	$index += 1;
 	if ( $index % 2 == 0 ) {
 		$bgcolor = '#BBDDFF';
@@ -76,6 +78,7 @@ END;
 ?>
 
 </table>
+
 <p><strong>Please cite the following reference for Ontobee: </strong></p>
 <p>Xiang Z, Mungall C, Ruttenberg A, He Y. <a href="Ontobee_ICBO-2011_Proceeding.pdf">Ontobee: A Linked Data Server and Browser for Ontology Terms</a>. <em>Proceedings of the 2nd International Conference on Biomedical Ontologies (ICBO)</em>, July 28-30, 2011, Buffalo, NY, USA. Pages 279-281. URL: <a href="http://ceur-ws.org/Vol-833/paper48.pdf">http://ceur-ws.org/Vol-833/paper48.pdf</a>. </p>
 <p>&nbsp;</p>
