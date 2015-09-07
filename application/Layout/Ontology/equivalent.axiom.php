@@ -50,7 +50,7 @@ END;
 			
 			foreach ( $term->axiom['equivalent'] as $data ) {
 				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
-				$html .= Helper::trimBracket( $axiom );
+				$html .= '<li>' . Helper::trimBracket( $axiom ) . '</li>';
 			}
 			
 			$html .= '</ul></div>';
