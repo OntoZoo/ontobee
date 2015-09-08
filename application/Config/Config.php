@@ -27,7 +27,7 @@
  * @comment 
  */
 
-ini_set('memory_limit', '4096M');
+ini_set( 'memory_limit', '4096M' );
 
 DEFINE( 'ENVIRONMENT', 'development' );
 if ( ENVIRONMENT == 'development' ) {
@@ -43,7 +43,7 @@ if ( !isset( $_SERVER['HTTP_X_FORWARD_ACCEPT'] ) ) {
 
 DEFINE( 'VIEWPATH', SCRIPTPATH . 'application/View' . DIRECTORY_SEPARATOR );
 DEFINE( 'TEMPLATE', SCRIPTPATH . 'application/Layout' . DIRECTORY_SEPARATOR );
-DEFINE( 'PHPLIB', SCRIPTPATH . 'library' . DIRECTORY_SEPARATOR );
+DEFINE( 'PHPLIB', SCRIPTPATH . 'library/php' . DIRECTORY_SEPARATOR );
 DEFINE ( 'TMP', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
 
 require APPPATH . 'Config/DB.php';

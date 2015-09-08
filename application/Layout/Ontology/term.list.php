@@ -35,13 +35,18 @@ if ( !$this ) {
 
 $termURL = SITEURL . "ontology/$ontAbbr?iri=";
 
-if ( isset( $typeIRI ) ) {
-	$pageURL = SITEURL . "ontology/type/$ontAbbr?iri=" . urlencode( $typeIRI ) . "&letter=$letter&page=";
-	$letterURL = SITEURL . "ontology/type/$ontAbbr?iri=" . urlencode( $typeIRI ) . "&letter=";
-} else {
-	$pageURL = SITEURL . "ontology/term/$ontAbbr?iri=" . urlencode( $termIRI ) . "&letter=$letter&page=";
-	$letterURL = SITEURL . "ontology/term/$ontAbbr?iri=" . urlencode( $termIRI ) . "&letter=";
-}
+$pageURL = 
+	SITEURL .
+	"ontology/term/$ontAbbr?iri=" .
+	urlencode( $termIRI ) .
+	"&letter=" .
+	urlencode( $letter ) .
+	"&page=";
+$letterURL =
+	SITEURL .
+	"ontology/term/$ontAbbr?iri=" .
+	urlencode( $termIRI ) .
+	"&letter=";
 
 $html =
 <<<END
@@ -51,6 +56,7 @@ END;
 if ( sizeof( $terms ) >= 10000 ) {
 	$html .=
 <<<END
+</br>
 <span class="darkred">There are still more terms in this ontology.  Please click a term for detail information. </p></span>
 END;
 }
@@ -61,7 +67,7 @@ $html .=
 <tr>
 <td bgcolor="#F5FAF7" class="tdData" style="padding-left:20px; padding-right:20px ">
 <strong>Term Type:</strong>
-{$GLOBALS['call_function']( array_search( $typeIRI, $GLOBALS['ontology']['type'] ) )}
+{$GLOBALS['call_function']( array_search( $termIRI, $GLOBALS['ontology']['type'] ) )}
 </td>
 <td bgcolor="#F5FAF7" class="tdData" style="padding-left:20px; padding-right:20px ">
 <strong>Record:</strong>
@@ -129,7 +135,7 @@ END;
 $html .=
 <<<END
 </select>
- Terms Per Page
+ Records Per Page
 </td>
 </tr>
 </table>
@@ -144,7 +150,9 @@ END;
 	} else {
 		$html .=
 <<<END
-<a href="$letterURL$l" style="font-size:14px; font-weight:bold; margin-right:12px;">$l</a>
+<a href=
+"$letterURL{$GLOBALS['call_function']( urlencode( $l ) )}" 
+style="font-size:14px; font-weight:bold; margin-right:12px;">$l</a>
 END;
 	}
 }

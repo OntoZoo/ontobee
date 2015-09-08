@@ -528,7 +528,7 @@ END;
 	}
 	*/
 	
-	public function selectSubClass( $graph, $termIRI ) {
+	public function selectSubClass( $graph, $termIRI, $limit = null, $subclass = false ) {
 		$query =
 <<<END
 PREFIX rdf: <{$this->prefixNS['rdf']}>
@@ -566,18 +566,26 @@ SELECT DISTINCT ?class ?label ?subClass FROM <$graph> WHERE {
 	}
 }
 END;
+		if ( !is_null( $limit ) ) {
+			$query .=
+<<<END
+		
+LIMIT $limit
+END;
+		}
+		
 		$json = SPARQLQuery::queue( $this->endpoint, $query );
 		$subClasses = RDFQueryHelper::parseSPARQLResult( $json );
 		return array( $subClasses, $query );
 	}
 	
-	public function selectSupClass( $graph, $termIRI ) {
+	public function selectSupClass( $graph, $termIRI, $limit = null) {
 		$query =
 <<<END
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
-SELECT ?class ?label FROM <$graph> WHERE {
+SELECT DISTINCT ?class ?label FROM <$graph> WHERE {
 	{
 		<$termIRI> rdfs:subClassOf ?class .
 		FILTER (isURI(?class)).
@@ -591,6 +599,13 @@ SELECT ?class ?label FROM <$graph> WHERE {
 	}
 }
 END;
+		if ( !is_null( $limit ) ) {
+			$query .=
+<<<END
+
+LIMIT $limit
+END;
+		}
 		$fields = array();
 		$fields['default-graph-uri'] = '';
 		$fields['format'] = 'application/sparql-results+json';
@@ -601,7 +616,7 @@ END;
 		return array( $supClasses, $query );
 	}
 	
-	public function selectAllTerm( $graph, $typeIRI ) {
+	public function selectTermFromType( $graph, $typeIRI ) {
 		$query =
 <<<END
 PREFIX rdf: <{$this->prefixNS['rdf']}>
@@ -634,7 +649,7 @@ END;
 		$json = SPARQLQuery::queue( $this->endpoint, $query );
 		$result = RDFQueryHelper::parseSPARQLResult( $json );
 		$terms = RDFQueryHelper::parseEntity( $result, 'term', 'label' );
-		return $terms;
+		return array( $terms, $query );
 	}
 	
 	/*

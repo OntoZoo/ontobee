@@ -202,44 +202,32 @@ class OntologyModel {
 		}
 	}
 	
-	public function getTermList( $typeIRI, $letter, $page, $max ) {
+	
+	
+	public function getTermList( $termIRI, $letter, $page, $max ) {
 		if ( !isset( $this->rdf ) ) {
 			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
 		}
-		$termResult = $this->rdf->selectAllTerm( $this->ontology->ontology_graph_url, $typeIRI );
 		
-		if ( $letter != '' && preg_match( '/[a-z1-9]/i', substr( $letter, 0, 1 ) )) {
-			$letter = substr( $letter, 0, 1 );
+		if ( in_array( $termIRI, $GLOBALS['ontology']['type'] ) ) {
+			list( $termResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $termIRI );
+			$this->addQueries( $query );
 		} else {
+			list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
+			$this->addQueries( $query );
+			$subClasses = OntologyModelHelper::parseClassResult( $subClasses );
+			foreach( $subClasses as $subClass ) {
+				$termResult[$subClass->iri][] = $subClass->label;
+			}
+		}
+		
+		if ( strlen( $letter ) != 1 && preg_match( '/[a-z1-9]/i', substr( $letter, 0, 1 ) )) {
+			$letter = substr( $letter, 0, 1 );
+		} else if ( strlen( $letter ) != 1 ) {
 			$letter = '*';
 		}
 		
-		$terms = array();
-		$letters = array();
-		foreach( $termResult as $termIRI => $termLabels ) {
-			if ( !empty( $termLabels ) ) {
-				$termLabel = array_shift( $termLabels );
-			} else {
-				$termLabel = OntologyModelHelper::getShortTerm( $termIRI );
-			}
-			$termLabel = trim( $termLabel, '"\'\\\/' );
-			$first = substr( $termLabel, 0, 1 );
-			if ( preg_match( '/[a-z]/i', $first ) ) {
-				$first =  strtoupper( $first );
-			}
-			$letters[$first] = null;
-			if ( $first == $letter || $letter == '*' ) {
-				$terms[$termIRI] = $termLabel;
-				/*
-				if ( preg_match( '/[a-z1-9]/i', $first ) ) {
-					$terms[$termIRI] = $termLabel;
-				}
-				*/
-			}
-		}
-		asort( $terms );
-		ksort( $letters );
-		$letters = array( '*' => null ) + $letters;
+		list( $terms, $letters ) = OntologyModelHelper::parseTermList( $termResult, $letter );
 		
 		$pageCount = ceil( sizeof( $terms ) / $max );
 		
@@ -470,7 +458,8 @@ class OntologyModel {
 					$supClass = key( $tmpClasses );
 					list( $sibClassResult, $query ) = $this->rdf->selectSubClass(
 						$this->ontology->ontology_graph_url,
-						$supClass
+						$supClass,
+						$limit = 1000
 					);
 					$this->addQueries( $query );
 					$sibClassResult = OntologyModelHelper::parseClassResult( $sibClassResult );
@@ -485,7 +474,11 @@ class OntologyModel {
 					}
 				}
 					
-				list( $subClassResult, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
+				list( $subClassResult, $query ) = $this->rdf->selectSubClass(
+					$this->ontology->ontology_graph_url,
+					$termIRI,
+					$limit = 1000
+				);
 				$this->addQueries( $query );
 				$subClassResult = OntologyModelHelper::parseClassResult( $subClassResult );
 				foreach ( $subClassResult as $subClassIRI => $subClassObject ) {
@@ -506,7 +499,11 @@ class OntologyModel {
 				);
 			}
 		} else {
-			list( $subClassResult, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
+			list( $subClassResult, $query ) = $this->rdf->selectSubClass(
+				$this->ontology->ontology_graph_url,
+				$termIRI,
+				$limit = 1000
+			);
 			$this->addQueries( $query );
 			$subClassResult = OntologyModelHelper::parseClassResult( $subClassResult );
 			foreach ( $subClassResult as $subClassIRI => $subClassObject ) {
@@ -594,6 +591,34 @@ class OntologyModelHelper {
 		}
 		asort( $classes );
 		return $classes;
+	}
+	
+	public static function parseTermList( $termResult, $letter ) {
+		$terms = array();
+		$letters = array();
+		foreach( $termResult as $termIRI => $termLabels ) {
+			if ( !empty( $termLabels ) ) {
+				$termLabel = array_shift( $termLabels );
+			} else {
+				$termLabel = self::getShortTerm( $termIRI );
+			}
+			$termLabel = trim( $termLabel, '"\'\\\/' );
+			$tmpLabel = trim( $termLabel, '\(\)\[\]\{\}' );
+			$first = substr( $tmpLabel, 0, 1 );
+			if ( preg_match( '/[a-z]/i', $first ) ) {
+				$first =  strtoupper( $first );
+			}
+			print_r( !$first === $letter );
+			$letters[$first] = null;
+			if ( $first == $letter || $letter == '*' ) {
+				$terms[$termIRI] = $termLabel;
+			}
+		}
+		asort( $terms );
+		ksort( $letters );
+		$letters = array( '*' => null ) + $letters;
+		
+		return array( $terms, $letters );
 	}
 }
 

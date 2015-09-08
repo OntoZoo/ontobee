@@ -91,8 +91,8 @@ Class OntologyController extends Controller{
 		}
 	}
 	
-	public function type( $params = array() ) {		
-		list( $ontAbbr, $typeIRI ) = self::parseOntologyParameter( $params );
+	public function term( $params = array() ) {		
+		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
 		
 		if ( !is_null( $ontAbbr ) && !is_null( $ontAbbr ) ) {
 			if ( array_key_exists( 'letter', $params ) ) {
@@ -124,8 +124,8 @@ Class OntologyController extends Controller{
 			$this->model->loadOntology( $ontAbbr, false );
 			$ontology = $this->model->getOntology();
 			if ( !empty( $ontology ) ) {
-				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $typeIRI, $letter, $page, $listMaxTerms );
-				require VIEWPATH . 'Ontology/type.php';
+				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $termIRI, $letter, $page, $listMaxTerms );
+				require VIEWPATH . 'Ontology/term.php';
 			} else {
 				throw new Exception ( "Invalid ontology." );
 			}

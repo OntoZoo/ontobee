@@ -69,39 +69,49 @@ END;
 		} else {
 			$html .= '<ul class="top"><li class="top-term">Top<ul>';
 		}
+		if ( !empty( $path ) ) {
+			$html .= self::supClassHeader( $rootURL, $path );
 
-		if ( !empty( $path ) || !empty( $subClasses ) ) {
-
-			if ( !empty( $path ) ) {
-				$html .= self::supClassHeader( $rootURL, $path );
-
-				if( !empty( $sibClasses ) ) {
-					$html .= self::sibClassSection( $rootURL, $sibClasses, $hasChild );
-				}
-
-				$html .= self::curClassHeader( $rootURL, $term, $hasChild );
-
-				if ( !empty( $subClasses ) ) {
-					$html .= self::subClassSection( $rootURL, $subClasses, $hasChild );
-				}
-
-				$html .= self::curClassBottom();
-
-				$html .= self::supClassBottom( $path );
-			} else {
-				$html .= self::curClassHeader( $rootURL, $term, $hasChild );
-
-				$html .= self::subClassSection( $rootURL, $subClasses, $hasChild );
-
-				$html .= self::curClassBottom();
+			if( !empty( $sibClasses ) ) {
+				end($path);
+				$moreURL = 
+					SITEURL .
+					"ontology/term/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( key($path) )}";
+				$html .= self::sibClassSection( $rootURL, $moreURL, $sibClasses, $hasChild );
 			}
+
+			$html .= self::curClassHeader( $rootURL, $term, $hasChild );
+
+			if ( !empty( $subClasses ) ) {
+				$moreURL = SITEURL . "ontology/term/$ontology->ontology_abbrv?iri=$term->iri";
+				$html .= self::subClassSection( $rootURL, $moreURL, $subClasses, $hasChild );
+			}
+
+			$html .= self::curClassBottom();
+
+			$html .= self::supClassBottom( $path );
 		} else {
 			$html .= self::curClassHeader( $rootURL, $term, $hasChild );
 			
+			if( !empty( $sibClasses ) ) {
+				end($path);
+				$moreURL =
+				SITEURL .
+				"ontology/term/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( key($path) )}";
+				$html .= self::sibClassSection( $rootURL, $moreURL, $sibClasses, $hasChild );
+			}
+			
+			if ( !empty( $subClasses ) ) {
+				$moreURL = SITEURL . "ontology/term/$ontology->ontology_abbrv?iri=$term->iri";
+				$html .= self::subClassSection( $rootURL, $moreURL, $subClasses, $hasChild );
+			}
+
 			$html .= self::curClassBottom();
+			
+			$html .= '</ul></li></ul></div></div>';
 		}
 		
-		$html .= '</ul></li></ul></div></div>';
+		
 
 		return $html;
 	}
@@ -131,20 +141,17 @@ END;
 	 * @param $class
 	 * @return $html
 	 */
-	private static function more( $class ) {
+	private static function more( $moreURL, $class ) {
 		#TODO: Modify add more to HTML checkbox that trigger more terms to display or not
-		$html = '<li>';
-		$html .= '<a id="hierarchy-';
-		$html .= $class;
-		$html .= '-more" class="';
-		$html .= $class;
-		$html .= '-more">more...</a>';
-		$html .= '<a id="hierarchy-';
-		$html .= $class;
-		$html .= '-less" class="';
-		$html .= $class;
-		$html .= '-less">less...</a>';
-		$html .= '</li">';
+		$html = '<li>' .
+			'<a id="hierarchy-' .
+			$class .
+			'-more" class="' .
+			$class .
+			'-more" href="' .
+			$moreURL .
+			'">more...</a>' .
+			'</li">';
 		return $html;
 	}
 
@@ -184,7 +191,7 @@ END;
 	 * @param $hasChild
 	 * @return $html
 	 */
-	private static function sibClassSection( $rootURL, $sibClasses, $hasChild ) {
+	private static function sibClassSection( $rootURL, $moreURL, $sibClasses, $hasChild ) {
 		$sibHasChildMax = $GLOBALS['ontology']['hierarchy']['sibhasmax'];
 		$sibNoChildMax =$GLOBALS['ontology']['hierarchy']['sibnomax'];
 
@@ -225,8 +232,7 @@ END;
 			}
 		}
 		if ( $showMore ) {
-			#TODO: Modify add remaining terms as hiddenthat trigger base on display more checkbox
-			$html .= self::more( 'sib' );
+			$html .= self::more( $moreURL, 'sib' );
 		}
 		$html .= '<!-- Hierarchy Sibling Class Closing -->';
 		return $html;
@@ -264,7 +270,7 @@ END;
 	 * @param $hasChild
 	 * @return $html
 	 */
-	private static function subClassSection( $rootURL, $subClasses, $hasChild ) {
+	private static function subClassSection( $rootURL, $moreURL, $subClasses, $hasChild ) {
 		$subHasChildMax = $GLOBALS['ontology']['hierarchy']['subhasmax'];
 		$subNoChildMax = $GLOBALS['ontology']['hierarchy']['subnomax'];
 
@@ -306,8 +312,7 @@ END;
 			}
 		}
 		if ( $showMore ) {
-			#TODO: Modify add remaining terms as hiddenthat trigger base on display more checkbox
-			$html .= self::more( 'sub' );
+			$html .= self::more( $moreURL, 'sub' );
 		}
 		$html .= '</ul>';
 		$html .= '<!-- Hierarchy Sub Class Closing -->';

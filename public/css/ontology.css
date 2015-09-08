@@ -59,8 +59,8 @@
 }
 
 .section li {
-	margin-top : 8px;
-	margin-bottom : 8px;
+	margin-top : 1px;
+	margin-bottom : 1px;
 	line-height : 120%;
 }
 
@@ -102,12 +102,11 @@
 }
 
 .more-content {
-	display : none;
+	display : inline;
 }
 
 .more-link {
-	font-weight : bold;
-	color : #0000FF;
+	display : none;
 }
 
 .hierarchy {

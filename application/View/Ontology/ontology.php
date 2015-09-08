@@ -71,7 +71,7 @@ foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
 	if ( $size > 0 ) {
 		$html .=
 <<<END
-<li><a href="{$site}ontology/type/$ontology->ontology_abbrv?iri=
+<li><a href="{$site}ontology/term/$ontology->ontology_abbrv?iri=
 {$GLOBALS['call_function']( Helper::encodeURL( $typeIRI ) )}
 ">$type</a> ($size)</li>
 END;
