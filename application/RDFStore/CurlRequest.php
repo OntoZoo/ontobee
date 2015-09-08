@@ -33,7 +33,7 @@ class CurlRequest {
 
 	public static function curlPostContents( $url, $field ) {
 		if ( ENVIRONMENT == 'development' && $GLOBALS['show_query'] ) {
-			print_r( $field['query'] );
+			print_r( htmlspecialchars( $field['query'] ) );
 		}
 
 		$request = curl_init();

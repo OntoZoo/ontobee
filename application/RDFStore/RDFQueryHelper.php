@@ -263,27 +263,30 @@ class RDFQueryHelper {
 	
 	public static function parseRDF ( $json, $term ) {
 		$json = json_decode( $json, true );
-		if ( preg_match( '/nodeID:\/\//', $term ) ) {
-			$term = preg_replace( '/nodeID:\/\//', '_:v', $term );
-			$isNode = true;
-		} else {
-			$isNode = false;
-		}
-		if ( array_key_exists( $term, $json ) ) {
-			$results = $json[$term];
-			if ( $isNode ) {
-				$results = self::parseRecursiveRDFNode( $json, $term );
+		if ( !is_null( $json ) ) {
+			if ( preg_match( '/nodeID:\/\//', $term ) ) {
+				$term = preg_replace( '/nodeID:\/\//', '_:v', $term );
+				$isNode = true;
 			} else {
-				foreach ( $results as $propertyIRI => $properties ) {
-					foreach ( $properties as $index => $property ) {
-						if ( $property['type'] == 'bnode' ) {
-							$results[$propertyIRI][$index] = self::parseRecursiveRDFNode( $json, $property['value'] );
+				$isNode = false;
+			}
+			if ( array_key_exists( $term, $json ) ) {
+				$results = $json[$term];
+				if ( $isNode ) {
+					$results = self::parseRecursiveRDFNode( $json, $term );
+				} else {
+					foreach ( $results as $propertyIRI => $properties ) {
+						foreach ( $properties as $index => $property ) {
+							if ( $property['type'] == 'bnode' ) {
+								$results[$propertyIRI][$index] = self::parseRecursiveRDFNode( $json, $property['value'] );
+							}
 						}
 					}
 				}
+				return $results;
+			} else {
+				return array();
 			}
-			
-			return $results;
 		} else {
 			return array();
 		}

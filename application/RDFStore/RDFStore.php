@@ -330,7 +330,7 @@ END;
 	}
 	
 	public function describeAll( $graph, $termIRIs ) {
-		$termsQuery = '<' . join( '>, <' , $termIRIs ) . '>';
+		$termsQuery = '<' . join( '> <' , $termIRIs ) . '>';
 		$query =
 <<<END
 DEFINE sql:describe-mode "CBD"
@@ -343,7 +343,7 @@ END;
 		$describes = array();
 		foreach ( $termIRIs as $termIRI ) {
 			$describe = RDFQueryHelper::parseRDF( $json, $termIRI );
-			$describes = array_merge( $describes, $describe );
+			$describes[$termIRI] = $describe;
 		}
 		return array( $describes, $query );
 	}

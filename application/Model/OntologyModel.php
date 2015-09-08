@@ -318,13 +318,19 @@ class OntologyModel {
 		$nodes = array();
 		$usage = array();
 		foreach ( $describeResult['usage']['term'] as $use ) {
-			list( $describe, $query ) = $this->rdf->describe( $this->ontology->ontology_graph_url, $use['o'] );
+			$nodes[$use['o']] = $use['ref'];
 			$usage[$use['ref']] = array(
 					'label' => $use['label'],
 					'type' => $use['refp'],
-					'axiom' => $describe,
 			);
-			$describes[$use['refp']][] = $describe;
+		}
+		list( $nodeResults, $query ) = $this->rdf->describeAll($this->ontology->ontology_graph_url, array_keys( $nodes ) );
+		$this->addQueries( $query );
+		foreach ( $nodeResults as $nodeIRI => $nodeResult ) {
+			$ref = $nodes[$nodeIRI];
+			$refp = $usage[$ref]['type'];
+			$usage[$nodes[$nodeIRI]]['axiom'] = $nodeResult;
+			$describes[$refp][] = $nodeResult;
 		}
 		$class->usage = $usage;
 		

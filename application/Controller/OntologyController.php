@@ -52,7 +52,6 @@ Class OntologyController extends Controller{
 		}
 		
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
-		
 		if ( !is_null( $ontAbbr ) ) {
 			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
