@@ -20,6 +20,7 @@ $( document ).ready( function() {
 	
 	$( "#list-max" ).change( function() {
 		var url = window.location.href.replace( /\&max\=[0-9]+/g, "" );
+		url.replace( /\&page\=[0-9]+/g, "" );
 		window.location = url + "&max=" + $( this ).val();
 	} );
 });
