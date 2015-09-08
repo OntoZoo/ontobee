@@ -49,10 +49,10 @@ if ( preg_match( '/\/([a-zA-Z]+)_(\d+)$/', $term->iri, $match ) ) {
 		
 		$html =
 <<<END
-<div style="font-weight:bold"> Ontology in which the Class is published</div>
-<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
+<div class="section-title"> Ontology in which the Class is published</div>
+<div class="section">
 
-<table cellpadding="4" cellspacing="1" bgcolor="#888888">
+<table>
 <tr>
 <td bgcolor="#EAF1F2" style="font-weight:bold">Ontology listed in Ontobee</td>
 <td bgcolor="#EAF1F2" style="font-weight:bold">Ontology OWL file</td>
@@ -60,22 +60,32 @@ if ( preg_match( '/\/([a-zA-Z]+)_(\d+)$/', $term->iri, $match ) ) {
 <td bgcolor="#EAF1F2" style="font-weight:bold">Project home page</td>
 </tr>
 <tr>
-<td bgcolor="#EAF1F2"><a href="{$site}ontology/?o=$original->ontology_abbrv">$original->ontology_fullname</a></td>
+<td bgcolor="#EAF1F2"><a href="{$site}ontology/$original->ontology_abbrv">$original->ontology_fullname</a></td>
 <td bgcolor="#EAF1F2"><a href="$original->download">$filename</a></td>
-<td bgcolor="#EAF1F2"><a oncontextmenu="return false;" href="{$site}ontology/?o=$original->ontology_abbrv&amp;iri=$termIRI">'$term->label' in $filename</a></td>
+<td bgcolor="#EAF1F2"><a oncontextmenu="return false;" href="{$site}ontology/$original->ontology_abbrv?iri=
+{$GLOBALS['call_function']( Helper::encodeURL( $termIRI ) )}">'$term->label' in $filename</a></td>
 <td bgcolor="#EAF1F2">
 END;
 		
 		if ( $original->home != '' ) {
 			$tokens = preg_split( '/\|/', $original->home );
 			if ( sizeof( $tokens ) == 2 ) {
-				$html .= "<a href=\"{$tokens[1]}\">{$tokens[0]}</a>";
+				$html .=
+<<<END
+<a href="{$tokens[1]}">{$tokens[0]}</a>
+END;
 	 		} else {
-	 			$html .= " <a href=\"{$tokens[0]}\">Project home page</a>";
+	 			$html .= 
+<<<END
+<a href="{$tokens[0]}">Project home page</a>
+END;
 	 		}
 		}
 		
-		$html .= '</td></tr></table>';
+		$html .= 
+<<<END
+</td></tr></table>
+END;
 		
 		echo Helper::tidyHTML( $html );
 	}

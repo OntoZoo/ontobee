@@ -24,7 +24,92 @@
  * @since Sep 05, 2015
  * @comment 
  */
- 
+
+.title {
+	align : center;
+	font-size : 150%;
+}
+
+.iri {
+	margin-top : 6px;
+	margin-bottom : 6px;
+	margin-left : 20px;
+	font-weight : bold;
+	font-size : 120%
+}
+
+.def {
+	margin-top : 6px;
+	margin-bottom : 6px;
+	margin-left : 20px;
+	font-size : 110%;
+	color:#006600;
+}
+
+.def .label {
+	font-weight : bold;
+	color : #333333;
+}
+
+.section {
+	background-color : #EAF1F2;
+	border : #99CCFF 1px solid;
+	margin-top : 5px;
+	margin-bottom : 15px;
+}
+
+.section li {
+	margin-top : 8px;
+	margin-bottom : 8px;
+	line-height : 120%;
+}
+
+.section-title {
+	font-size : 110%;
+	font-weight : bold;
+}
+
+.section-title-value {
+	font-size : 110%;
+}
+
+.section .label {
+	font-weight : bold;
+}
+
+.section .value {
+	color : #006600;
+}
+
+.section .value .value{
+	color : #14275D;
+}
+
+.section .link {
+
+}
+
+.section table{
+	border-spacing : 1px;
+	border-collapse: separate;
+	background-color : #888888;
+	width : 100%;
+	line-height : 120%;
+}
+
+.section td {
+	padding-left : 8px;
+}
+
+.more-content {
+	display : none;
+}
+
+.more-link {
+	font-weight : bold;
+	color : #0000FF;
+}
+
 .hierarchy {
 	
 }
@@ -34,10 +119,7 @@
 }
 
 .hierarchy .main {
-	border : #99CCFF 1px solid;
-    background-color : #EAF1F2;
-	margin-top : 4px;
-	margin-bottom : 12px;
+
 }
 
 .hierarchy .main .top {
@@ -99,20 +181,4 @@
 	color: #CC0000;
 	font-size: 120%;
 	display: none;
-}
-
-.axiom {
-	
-}
-
-.axiom .heading{
-	font-weight:bold;
-}
-
-.axiom .main{
-    border : #99CCFF 1px solid;
-    background-color : #EAF1F2;
-    margin-top : 4px;
-    margin-bottom : 12px;
-    padding : 4px;
 }

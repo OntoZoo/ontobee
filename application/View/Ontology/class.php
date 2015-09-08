@@ -33,9 +33,17 @@ if ( !$this ) {
 
 ?>
 
+<!-- Ontobee Template: header.default.dwt.php -->
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
 
+<link href="<?php echo SITEURL; ?>public/css/ontology.css" rel="stylesheet" type="text/css">
+<script src="<?php echo SITEURL; ?>public/js/ontobee.ontology.js"></script>
+
+<!-- Ontobee Ontology Template: title.php -->
 <?php require TEMPLATE . 'Ontology/title.php'; ?>
+
+<!-- Ontobee Template: search.keyword.php -->
+<?php require TEMPLATE . 'search.keyword.php'; ?>
 
 <?php require TEMPLATE . 'Ontology/about.php'; ?>
 

@@ -35,8 +35,16 @@ if ( ENVIRONMENT == 'development' ) {
 	ini_set("display_errors", 1);
 }
 
-DEFINE( 'SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/' );
-DEFINE( 'SITEURL_INDEX', 'http://' . $_SERVER['HTTP_HOST'] . '/index.php' );
+if ( !isset( $_SERVER['HTTP_X_FORWARD_ACCEPT'] ) ) {
+	DEFINE( 'SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/' );
+} else {
+	DEFINE( 'SITEURL', 'http://' . 'e4ong.fwd.wf' . '/' );
+}
+
+DEFINE( 'VIEWPATH', SCRIPTPATH . 'application/View' . DIRECTORY_SEPARATOR );
+DEFINE( 'TEMPLATE', SCRIPTPATH . 'application/Layout' . DIRECTORY_SEPARATOR );
+DEFINE( 'PHPLIB', SCRIPTPATH . 'library' . DIRECTORY_SEPARATOR );
+DEFINE ( 'TMP', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
 
 require APPPATH . 'Config/DB.php';
 

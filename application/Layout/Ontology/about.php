@@ -40,40 +40,40 @@ $html = '';
 if ( is_null( $termIRI ) ) {
 	$html .=
 <<<END
-<p><b>Ontology:</b> $ontology->ontology_abbrv</p>
-<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
+<p class="section-title">Ontology: <span class="section-title-value">$ontology->ontology_abbrv</span></p>
+<div class="section">
 <ul>	
-<li>IRI: <a href="$ontology->ontology_url">$ontology->ontology_url</a></li>
+<li><span class="label">IRI:</span> <a href="$ontology->ontology_url">$ontology->ontology_url</a></li>
 END;
 	if ( $ontology->foundry != '' ) {
 		$html .= 
 <<<END
-<li>OBO Foundry: $ontology->foundry</li>
+<li><span class="label">OBO Foundry:</span> $ontology->foundry</li>
 END;
 	}
  	if ( $ontology->download != '' ) {
  		$html .= 
 <<<END
-<li>Download: <a href=\"$ontology->download\">$ontology->download</a></li>
+<li><span class="label">Download:</span> <a href=\"$ontology->download\">$ontology->download</a></li>
 END;
  	}
  	if ( $ontology->alternative_download != '' ) {
  	 	$html .= 
 <<<END
- 	<li>Alternative Download: <a href=\"$ontology->alternative_download\">$ontology->alternative_download</a></li>
+<li><span class="label">Alternative Download:</span> <a href=\"$ontology->alternative_download\">$ontology->alternative_download</a></li>
 END;
  	}
  	if ( $ontology->source != '' ) {
 		$html .= 
 <<<END
- 	<li>Source: <a href=\"$ontology->source\">$ontology->source</a></li>
+<li><span class="label">Source:</span> <a href=\"$ontology->source\">$ontology->source</a></li>
 END;
 	}
  	if ( $ontology->home != '' ) {
 		$tokens = preg_split( '/\|/', $ontology->home );
 		$html .= 
 <<<END
-<li>Home: <a href="
+<li><span class="label">Home:</span> <a href="
 END;
 		if ( sizeof( $tokens ) == 2 ) {
 			$html .= $tokens[1];
@@ -89,7 +89,7 @@ END;
 		$tokens = preg_split( '/[|\t]/', $ontology->documentation );
 		$html .=
 <<<END
-<li>Documentation: <a href="
+<li><span class="label">Documentation:</span> <a href="
 END;
 		if ( sizeof( $tokens ) == 2 ) {
 			$html .= $tokens[1];
@@ -105,20 +105,27 @@ END;
 		$tokens = preg_split( '/[|\t]/', $ontology->contact );
 		$html .= 
 <<<END
-<li>Contact: <a href="mailto:{$tokens[1]}@{$tokens[2]}">{$tokens[0]}</a></li>
+<li><span class="label">Contact:</span> <a href="mailto:{$tokens[1]}@{$tokens[2]}">{$tokens[0]}</a></li>
 END;
  	}
  	if ( $ontology->help != '' ) {
 		$tokens = preg_split( '/[|\t]/', $ontology->help );
-		$html .=
+		if ( sizeof( $tokens ) < 3 ) {
+			$html .=
 <<<END
-<li>Help: <a href="mailto:{$tokens[1]}@{$tokens[2]}">{$tokens[0]}</a></li>
+<li><span class="-label">Help:</span> <a href="$ontology->help">$ontology->help</a></li>
 END;
+		} else {
+			$html .=
+<<<END
+<li><span class="label">Help:</span> <a href="mailto:{$tokens[1]}@{$tokens[2]}">{$tokens[0]}</a></li>
+END;
+		}
  	}
  	if ( $ontology->description != '' ) {
 		$html .=
 <<<END
-<li>Description: $ontology->description</li>
+<li><span class="label">Description:</span> $ontology->description</li>
 END;
  	}
  	$html .= 
@@ -130,49 +137,24 @@ END;
 } else {
 	$html .=
 <<<END
-<p>
-<b>$term->type: $term->label</b>
-</p>
-<ul>
+<p class="section-title">$term->type: <span class="section-title-value">$term->label</span></p>
 END;
 	$html .=
 <<<END
-<li style="font-weight:bold; font-size:120%">Term IRI: <a href="$term->iri">$term->iri</a></li>
+<div class="iri">Term IRI: <a href="$term->iri">$term->iri</a></div>
 END;
 	foreach ( $GLOBALS['ontology']['definition']['priority'] as $defIRI ) {
 		if ( isset( $term->describe[$defIRI] ) ) {
 			foreach ($term->describe[$defIRI] as $object ) {
 				$html .=
 <<<END
-<li><span style="color:#333333">definition</span>: <span style="color:#006600">
-{$GLOBALS['call_function']( Helper::convertUTFToUnicode( $object['value'] ) ) }
-</span>
+<div class="def"><span class="label">Definition:</span> 
+{$GLOBALS['call_function']( ucfirst( Helper::convertUTFToUnicode( $object['value'] ) ) )}
 END;
-				foreach ( $term->annotation_annotation as $annotationRelated ) {
-					if ( 
-						$annotationRelated['annotatedProperty'] == $defIRI && 
-						$annotationRelated['annotatedTarget'] == $object['value']
-					) {
-						$html .=
-<<<END
-<span style="color:#14275D"> [
-END;
-						if ( isset( $annotationRelated['aaPropertyLabel'] ) ) {
-							$html .= $annotationRelated['aaPropertyLabel'];
-						} else {
-							$html .= Helper::getShortTerm( $annotationRelated['aaProperty'] );
-						}
-						$html .= 
-<<<END
-{$GLOBALS['call_function']( Helper::convertUTFToUnicode( $annotationRelated['aaPropertyTarget'] ) )}]</span>
-END;
-					}
-				}
-				$html .= 
-<<<END
-</li>
-END;
+				$html .= Helper::writeAnnotationRelated( $term->annotation_annotation, $defIRI, $object['value'] );
+				break;
 			}
+			break;
 		}
 	}
 }

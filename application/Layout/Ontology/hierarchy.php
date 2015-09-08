@@ -36,7 +36,7 @@ if ( !$this ) {
 class Hierarchy {
 
 	public static function show( $ontology, $term, $hierarchy ) {
-		$rootURL = SITEURL . "ontology/?ontology=$ontology->ontology_abbrv&iri=";
+		$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
 		
 		$path = $hierarchy['path'];
 		$subClasses = $hierarchy['subClasses'];
@@ -45,20 +45,20 @@ class Hierarchy {
 		if ( $term->type == 'Class' ) {
 			$html = 
 <<<END
-<div class="heading">Class Hierarchy</div>
-<div class="main">
+<div class="section-title">Class Hierarchy</div>
+<div class="section main">
 END;
 		} else if ( in_array( $term->type, array( 'ObjectProperty', 'AnnotationProperty', 'DataProperty' ) ) ) {
 			$html =
 <<<END
-<div class="heading">Property Hierarchy</div>
-<div class="main">
+<div class="section-title">Property Hierarchy</div>
+<div class="section main">
 END;
 		} else {
 			$html =
 <<<END
-<div class="heading">Hierarchy</div>
-<div class="main">
+<div class="section-title">Hierarchy</div>
+<div class="section main">
 END;
 		}
 		
@@ -118,7 +118,7 @@ END;
 		$html = '<a class="';
 		$html .= $class;
 		$html .= '" oncontextmenu="return false;" href="';
-		$html .= $link;
+		$html .= "{$GLOBALS['call_function']( Helper::encodeURL( $link ) )}";
 		$html .= '">';
 		$html .= Helper::convertUTFToUnicode( $label );
 		$html .= '</a>';

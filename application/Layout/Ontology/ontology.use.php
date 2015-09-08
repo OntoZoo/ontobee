@@ -45,10 +45,10 @@ foreach( $term->other as $index => $graph ) {
 if ( !empty( $term->other ) ) {
 	$html =
 <<<END
-<div style="font-weight:bold">Ontologies that use the Class</div>
-<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
+<div class="section-title">Ontologies that use the Class</div>
+<div class="section">
 
-<table cellpadding="4" cellspacing="1" bgcolor="#888888">
+<table>
 <tr>
 <td bgcolor="#EAF1F2" style="font-weight:bold">Ontology listed in Ontobee</td>
 <td bgcolor="#EAF1F2" style="font-weight:bold">Ontology OWL file</td>
@@ -63,32 +63,44 @@ END;
 		} else {
 			$download = $other->ontology_url;
 		}
-		$filename = Helper::getShortTerm( $download );
-		$termIRI = Helper::encodeURL( $term->iri );
 		$html .=
 <<<END
 <tr>
-<td bgcolor="#EAF1F2"><a href="{$site}ontology/?o=$other->ontology_abbrv">$other->ontology_fullname</a></td>
-<td bgcolor="#EAF1F2"><a href="$download">$filename</a></td>
-<td bgcolor="#EAF1F2"><a oncontextmenu="return false;" href="{$site}ontology/?o=$other->ontology_abbrv&amp;iri=$termIRI">'$term->label' in $filename</a></td>
+<td bgcolor="#EAF1F2"><a href="{$site}ontology/$other->ontology_abbrv">$other->ontology_fullname</a></td>
+<td bgcolor="#EAF1F2"><a href="$download">{$GLOBALS['call_function']( Helper::getShortTerm( $filename ) )}</a></td>
+<td bgcolor="#EAF1F2"><a oncontextmenu="return false;" href="{$site}ontology/$other->ontology_abbrv?iri=
+{$GLOBALS['call_function']( Helper::encodeURL( $termIRI ) )}">
+'$term->label' in {$GLOBALS['call_function']( Helper::getShortTerm( $filename ) )}</a></td>
 <td bgcolor="#EAF1F2">
 END;
 		if ( $other->home != '' ) {
 			$tokens = preg_split( '/\|/', $other->home );
 			if ( sizeof( $tokens ) == 2 ) {
-				$html .= "<a href=\"{$tokens[1]}\">{$tokens[0]}</a>";
+				$html .=
+<<<END
+<a href="{$GLOBALS['call_function']( Helper::encodeURL( $tokens[1] ) )}">{$tokens[0]}</a>
+END;
 	 		} else {
-	 			$html .= " <a href=\"{$tokens[0]}\">Project home page</a>";
+	 			$html .=
+<<<END
+<a href=\"{$GLOBALS['call_function']( Helper::encodeURL( $tokens[0] ) )}\">Project home page</a>
+END;
 	 		}
 		}
 			
 		
-		$html .= '</td></tr>';
+		$html .=
+<<<END
+</td></tr>
+END;
 		
 		
 	}
 	
-	$html .= '</table>';
+	$html .=
+<<<END
+</table>
+END;
 	
 	echo Helper::tidyHTML( $html );
 }

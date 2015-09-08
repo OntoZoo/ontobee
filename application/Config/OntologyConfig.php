@@ -68,11 +68,11 @@ $GLOBALS['ontology']['hierarchy']['sibnomax'] =10;
 $GLOBALS['ontology']['hierarchy']['subhasmax'] = 10;
 $GLOBALS['ontology']['hierarchy']['subnomax'] =10;
 
-$GLOBALS['ontology']['annotation']['main']['list'] = array(
+$GLOBALS['ontology']['annotation']['main']['text'] = array(
 	'creator', 
 	'contributor',
 );
-$GLOBALS['ontology']['annotation']['main']['text'] = array(
+$GLOBALS['ontology']['annotation']['main']['list'] = array(
 	'versionIRI',
 	'title',
 	'description',

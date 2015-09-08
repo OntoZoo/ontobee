@@ -37,52 +37,75 @@ $site = SITEURL;
 
 ?>
 
+<!-- Ontobee Ontology home page -->
+
+<!-- Ontobee Template: header.default.dwt.php -->
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
 
+<link href="<?php echo SITEURL; ?>public/css/ontology.css" rel="stylesheet" type="text/css">
+<script src="<?php echo SITEURL; ?>public/js/ontobee.ontology.js"></script>
+
+<!-- Ontobee Ontology Template: title.php -->
 <?php require TEMPLATE . 'Ontology/title.php'; ?>
 
-<?php require TEMPLATE . 'Ontology/about.php'; ?>
-
-<?php require TEMPLATE . 'Ontology/annotation.php'; ?>
-
+<!-- Ontobee Template: search.keyword.php -->
 <?php require TEMPLATE . 'search.keyword.php'; ?>
 
-<div style="font-weight:bold">
-Number of Terms (<span class="darkred">including imported terms</span>)  <a href="<?php echo SITEURL; ?>ontostat/?ontology=<?php echo $ontology->ontology_abbrv; ?>">(Detailed Statistics)</a></div>
-<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
-<ul>
+<!-- Ontobee Ontology Template: about.php -->
+<?php require TEMPLATE . 'Ontology/about.php'; ?>
 
+<!-- Ontobee Ontology Template: annotation.php -->
+<?php require TEMPLATE . 'Ontology/annotation.php'; ?>
+
+<!-- Ontobee Ontology home page: Number of Terms -->
+<div class="section-title">
+Number of Terms (<span class="darkred">including imported terms</span>)  <a href="<?php echo SITEURL; ?>ontostat/?ontology=<?php echo $ontology->ontology_abbrv; ?>">(Detailed Statistics)</a></div>
+<div class="section">
 <?php
-$html = '';
+$html =
+<<<END
+<ul>
+END;
 foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
 	$size = sizeof( $ontology->$type );
 	if ( $size > 0 ) {
 		$html .=
-			"<li><a href=\"{$site}ontology/term/?o=$ontology->ontology_abbrv&amp;iri=" .
-			urlencode( $typeIRI) .
-			"\">$type</a> ($size)</li>";
+<<<END
+<li><a href="{$site}ontology/term/$ontology->ontology_abbrv?iri=
+{$GLOBALS['call_function']( Helper::encodeURL( $typeIRI ) )}
+">$type</a> ($size)</li>
+END;
 	}
 }
+$html .=
+<<<END
+</ul>
+END;
 echo Helper::tidyHTML( $html );
 ?>
-
-</ul>
 </div>
 
-
+<!-- Ontobee Ontology home page: Key terms -->
 <?php
 $html = '';
 if ( !empty( $ontology->key_term ) ) {
 	$html =
 <<<END
-<div style="font-weight:bold">Top level terms and selected core <?php echo $ontology->ontology_abbrv; ?> terms</div>
-<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
+<div class="section-title">Top level terms and selected core <?php echo $ontology->ontology_abbrv; ?> terms</div>
+<div class="section">
 <ul>
 END;
 	foreach ( $ontology->key_term as $term ) {
-		$html .= "<li><a href=\"{$site}ontology/?o=$ontology->ontology_abbrv&amp;iri=$term->term_url\">$term->term_label</a></li>";
+		$html .=
+<<<END
+<li><a href="{$site}ontology/$ontology->ontology_abbrv?iri=
+{$GLOBALS['call_function']( Helper::encodeURL( $term->term_url ) ) }">$term->term_label</a></li>
+END;
 	}
-	$html .= '</ul></div>';
+	$html .= 
+<<<END
+</ul></div>
+END;
 }
 echo Helper::tidyHTML( $html );
 ?>

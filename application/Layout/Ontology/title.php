@@ -33,4 +33,4 @@ if ( !$this ) {
 
 ?>
 
-<h3 align="center"><a href="<?php echo SITEURL; ?>ontology/<?php echo $ontology->ontology_abbrv; ?>"> <?php echo $ontology->ontology_fullname; ?></a></h3>
+<h3 class="title"><a href="<?php echo SITEURL; ?>ontology/<?php echo $ontology->ontology_abbrv; ?>"> <?php echo $ontology->ontology_fullname; ?></a></h3>

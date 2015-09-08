@@ -37,19 +37,18 @@ $rootURL = SITEURL . "ontology/?ontology=$ontology->ontology_abbrv&iri=";
 if ( !empty( $term->usage ) ) {
 	$html =
 <<<END
-<div style="font-weight:bold">Uses in this ontology</div>
-<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
+<div class="section-title">Uses in this ontology</div>
+<div class="section">
 <ul>
 END;
 	foreach ( $term->usage as $useIRI => $usage ) {
 		$html .=
-			"<li><a oncontextmenu=\"return false;\" href=\"" .
-			Helper::convertUTFToUnicode( $useIRI ).
-			"\">{$usage['label']}</a>  " .
-			Helper::getShortTerm( $usage['type'] ).
-			': ' .
-			Helper::trimBracket( Helper::writeRecursiveManchester( $rootURL, $usage['axiom'], $term->related ) ) .
-			'</li>';
+<<<END
+<li><a oncontextmenu="return false;" href="{$GLOBALS['call_function']( Helper::convertUTFToUnicode( $useIRI ) )}">
+{$usage['label']}</a> {$GLOBALS['call_function']( Helper::getShortTerm( $usage['type'] ) )} : 
+{$GLOBALS['call_function']( Helper::trimBracket( Helper::writeRecursiveManchester( $rootURL, $usage['axiom'], $term->related ) ) )}
+</li>
+END;
 	}
 	$html .= '</ul></div>';
 	

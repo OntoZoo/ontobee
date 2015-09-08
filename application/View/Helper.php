@@ -162,6 +162,55 @@ class Helper {
 		}
 	}
 	
+	public static function writeAnnotationRelated( $annotationRelateds, $property, $target ) {
+		$html = '';
+		foreach ( $annotationRelateds as $annotationRelated ) {
+			if (
+					$annotationRelated['annotatedProperty'] == $property &&
+					$annotationRelated['annotatedTarget'] == $target
+			) {
+				$html .=
+<<<END
+<span class="value"> [
+END;
+				if ( isset( $annotationRelated['aaPropertyLabel'] ) ) {
+					$html .= $annotationRelated['aaPropertyLabel'];
+				} else {
+					$html .= self::getShortTerm( $annotationRelated['aaProperty'] );
+				}
+				$html .=
+<<<END
+: {$GLOBALS['call_function']( self::convertUTFToUnicode( $annotationRelated['aaPropertyTarget'] ) )}]</span>
+END;
+			}
+		}
+		return $html;
+	}
+	
+	public static function writeMoreContent( $label, $value ) {
+		$tmp = preg_replace( '/[\n\r]/', ' ', $value );
+		$tmp = wordwrap( $tmp, 200, "\n" );
+		$tokens = preg_split( '/\n/', $tmp );
+		if ( sizeof( $tokens ) == 1 ) {
+			$text =
+<<<END
+<li><span class="label">{$GLOBALS['call_function']( ucfirst( $label ) )}:</span> <span class="value more">
+{$GLOBALS['call_function']( self::makeLink( $value ) )}</span></li>
+END;
+		} else {
+			$text =
+			<<<END
+<li><span class="label">$label:</span> <span class="value more">
+{$GLOBALS['call_function']( self::makeLink( array_shift( $tokens ) ) )}
+<span class="more-skip"> ... </span>
+<span class="more-content" style="display:none">{$GLOBALS['call_function']( self::makeLink( join( ' ', $tokens ) ) )}</span>
+<span class="more-link" style="display:inline-block;white-space:normal;cursor:hand"> Read More </span>
+</span></li>
+END;
+		}
+		return $text;
+	}
+	
 	public static function trimBracket( $text ) {
 		if ( preg_match( '/^\s*\(/', $text ) ) {
 			$text = substr( $text, 1 );
@@ -179,9 +228,9 @@ class Helper {
 			$label =  Helper::getShortTerm( $term );
 		}
 		$html = '<a oncontextmenu="return false;" href="';
-		$html .= $rootURL . $term;
+		$html .= $rootURL . self::encodeURL( $term );
 		$html .= '">';
-		$html .= Helper::convertUTFToUnicode( $label );
+		$html .= self::convertUTFToUnicode( $label );
 		$html .= '</a>';
 		return $html;
 	}

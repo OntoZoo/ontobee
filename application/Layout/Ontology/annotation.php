@@ -39,21 +39,23 @@ class Annotation {
 		if ( !empty ( $annotations ) ) {
 			$html =
 <<<END
-<div style="font-weight:bold">Annotations</div>
-<div style="background-color:#EAF1F2; border:#99CCFF 1px solid; margin-top:4px; margin-bottom:12px">
+<div class="section-title">Annotations</div>
+<div class="section">
 <ul>
 END;
 			
 			# Deprecated
 			$deprecateIRI = $GLOBALS['ontology']['namespace']['owl'] . 'deprecated';
 			if ( array_key_exists( $deprecateIRI, $annotations ) ) {
-				$html .= '<li><span style="color:#333333">deprecated</span></li>';
+				$html .=
+<<<END
+<li><span class="label">deprecated</span></li>
+END;
 				unset( $annotations[$deprecateIRI] );
 			}
 			
-			$buffer = array();
-			
 			# Main Annotation
+			$buffer = array();
 			foreach ( $annotations as $iri => $annotation ) {
 				$label = $annotation['label'];
 				$values = $annotation['value'];
@@ -61,87 +63,54 @@ END;
 					unset( $annotations[$iri] );
 					continue;
 				}
-				if ( in_array( $label, $GLOBALS['ontology']['annotation']['main']['list'] ) ) {
+				if ( in_array( $label, $GLOBALS['ontology']['annotation']['main']['text'] ) ) {
 					$text = join(', ', $values );
 					$text = Helper::convertUTFToUnicode( $text );
-					$buffer[$label] = "<li><span style=\"color:#333333\">$label</span>: <span style=\"color:#006600\">$text</span></li>";
+					$buffer[$label] =
+<<<END
+<li><span class="label">$label:</span> <span class="value">
+$text</span></li>
+END;
 					unset( $annotations[$iri] );
 					continue;
-				} else if ( in_array( $label, $GLOBALS['ontology']['annotation']['main']['text'] ) ) {
-					if ( $label == 'comment' ) {
+				}
+				if ( in_array( $label, $GLOBALS['ontology']['annotation']['main']['list'] ) ) {
+					if ( $iri == 'http://www.w3.org/2000/01/rdf-schema#comment' || $label == 'comment' ) {
+						$text = '';
 						foreach ( $values as $value ) {
-							$text =
-								'<li><span style="color:#333333">comment</span>: <span style="color:#006600">' .
-								Helper::makeLink( $value ) .
-								'</span>'
-							;
+							$text .= Helper::writeMoreContent( $label, $value );
 							if ( isset( $term ) ) {
-								foreach ( $term->annotation_annotation as $annotationRelated ) {
-									if (
-											$annotationRelated['annotatedProperty'] == $GLOBALS['ontology']['namespace']['rdfs'] . 'comment' &&
-											$annotationRelated['annotatedTarget'] == $value
-									) {
-										$text .= '<span style="color:#14275D"> [';
-										if ( isset( $annotationRelated['aaPropertyLabel'] ) ) {
-											$text .= $annotationRelated['aaPropertyLabel'];
-										} else {
-											$text .= Helper::getShortTerm( $annotationRelated['aaProperty'] );
-										}
-										$text .= ': ' . Helper::convertUTFToUnicode( $annotationRelated['aaPropertyTarget']) . ']</span>';
-									}
-								}
+								$text .= Helper::writeAnnotationRelated(
+									$term->annotation_annotation,
+									$GLOBALS['ontology']['namespace']['rdfs'] . 'comment',
+									$value
+								);
 							}
 						}
 						$buffer[$label] = $text;
 					} else {
+						$text = '';
 						foreach ( $values as $value ) {
-							$text = Helper::convertUTFToUnicode( $value );
-							$buffer[$label] = "<li><span style=\"color:#333333\">$label</span>: <span style=\"color:#006600\">$text</span></li>";
+							$text .= 
+<<<END
+<li><span class="label">$label:</span> <span class="value">
+{$GLOBALS['call_function']( Helper::makeLink( $value ) )}</span></li>
+END;
 						}
+						$buffer[$label] = $text;
+
 					}
 					unset( $annotations[$iri] );
 					continue;
 				}
 			}
-			
-			# Annotation with other information
-			if ( isset( $term->annotation_annotation ) ) {
-				$annotationRelateds = array();
-				foreach ( $term->annotation_annotation as $annotationRelated ) {
-					$iri = $annotationRelated['annotatedProperty'];
-					$value = $annotationRelated['annotatedTarget'];
-					if ( array_key_exists( $iri, $annotations ) ) {
-						$annotationRelateds[$iri][$value][] = $annotationRelated;
-					}
-				}
-				foreach ( $annotationRelateds as $iri => $annotationRelated ) {
-					$annotation = $annotations[iri];
-					$label = $annotation['label'];
-					$values = $annotation['value'];
-					$show = array();
-					foreach ( $values as $value ) {
-						if ( !in_array( $value, $GLOBALS['ontology']['annotation']['ignore'] ) ) {
-							$related = $annotationRelated[$value];
-							$tmp = '<span style="color:#14275D"> [';
-							if ( isset( $related['aaPropertyLabel'] ) ) {
-								$tmp .= $related['aaPropertyLabel'];
-							} else {
-								$tmp .= Helper::getShortTerm( $related['aaProperty'] );
-							}
-							$tmp .=
-								': ' .
-								Helper::convertUTFToUnicode( $related['aaPropertyTarget'] ) .
-								']</span>'
-							;
-							$show[] = Helper::convertUTFToUnicode( $value ) . $tmp;
-						}
-					}
-					$text = join( '; ', $show );
-					$buffer[$label] = "<li><span style=\"color:#333333\">$label</span>: <span style=\"color:#006600\">$text</span></li>";
-					unset( $annotations[$iri] );
-				}
+			ksort( $buffer );
+			foreach ( $buffer as $label => $value ) {
+				$html .= $value;
 			}
 			
+			
+			$buffer = array();
 			# Special annotation & Rest
 			foreach ( $annotations as $iri => $annotation ) {
 				$label = $annotation['label'];
@@ -155,35 +124,31 @@ END;
 					}
 					if ( !empty( $defEditors ) ) {
 						$buffer[$label] =
-							'<li><span style="color:#333333">definition editor</span>: <span style="color:#006600">' .
-							Helper::convertUTFToUnicode( join(', ', $defEditors ) ) .
-							'</span></li>'
-						;
+<<<END
+<li><span class="label">definition editor:</span> <span class="value">
+{$GLOBALS['call_function']( Helper::convertUTFToUnicode( join(', ', $defEditors ) ) )}
+</span></li>
+END;
 					}
+					unset( $annotations[$iri] );
 					continue;
 				}
 				
 				# editor note
 				if ( $iri == 'http://purl.obolibrary.org/obo/IAO_0000116' || $label == 'editor note' ) {
-					$show = array();
+					$text = '';
 					foreach ( $values as $value ) {
 						foreach ( Helper::convertUTFToUnicode( $value, true ) as $item ) {
-							$show[] =
-								'<li><span style="color:#333333">' .
-								$label .
-								'</span>: <span style="color:#006600">' .
-								Helper::makeLink( Helper::convertUTFToUnicode( $item ) ) .
-								'</span></li>'
-							;
+							$text .= Helper::writeMoreContent( $label, $item );
 						}
 					}
-					$buffer[$label] = $show;
+					$buffer[$label] = $text;
 					continue;
 				}
 				
 				# has PubMed association
 				if ( $iri == '' || $label == 'has PubMed association') {
-					$show = array();
+					$text = '';
 					foreach ( $values as $value ) {
 						$pmidArray = array();
 						$pmidCount = 0;
@@ -194,20 +159,30 @@ END;
 						if ($pmidCount > 50) {
 							$printFlag = 1;
 						}
-						$tmp = "<li><span style=\"color:#333333\">$label</span>: <span style=\"color:#006600\">";
-						$tmp .= join( '; ', $pmidArray );
+						$text .= 
+<<<END
+<li><span class="label">$label:
+</span> <span class="value">
+{$GLOBALS['call_function']( Helper::makeLink( Helper::convertUTFToUnicode( join( '; ', $pmidArray ) ) ) )}
+END;
 						if ( $printFlag == 1 ) {
-							$tmp .= "; ... (Note: Only 50 PMIDs shown. See more from  web page source or RDF output.)</span></li>";
+							$text .=
+<<<END
+; ... (Note: Only 50 PMIDs shown. See more from  web page source or RDF output.)
+END;
 						}
-						$show[] = $tmp;
+						$text .=
+<<<END
+</span></li>
+END;
 					}
-					$buffer[$label] = $show;
+					$buffer[$label] = $text;
 					continue;
 				}
 				
 				# has GO association
 				if ( $iri == '' || $label == 'has GO association') {
-					$show = array();
+					$text = '';
 					foreach ( $values as $value ) {
 						$pmidArray = array();
 						$pmidCount = 0;
@@ -218,28 +193,48 @@ END;
 						if ($pmidCount > 20) {
 							$printFlag = 1;
 						}
-						$tmp = "<li><span style=\"color:#333333\">$label</span>: <span style=\"color:#006600\">";
-						$tmp .= join( '; ', $pmidArray );
+						$text .=
+<<<END
+<li><span class="label">$label:
+</span> <span class="value">
+{$GLOBALS['call_function']( Helper::makeLink( Helper::convertUTFToUnicode( join( '; ', $pmidArray ) ) ) )}
+END;
 						if ( $printFlag == 1 ) {
-							$tmp .= "; ... (Note: Only 20 GO IDs shown. See more from  web page source or RDF output.)</span></li>";
+							$text .= 
+<<<END
+; ... (Note: Only 20 GO IDs shown. See more from  web page source or RDF output.)"
+END;
 						}
-						$show[] = $tmp;
+						$text .=
+<<<END
+</span></li>
+END;
 					}
-					$buffer[$label] = $show;
+					$buffer[$label] = $text;
 					continue;
 				}
 				
 				# depicted_by
 				if ( $iri == '' || $label == 'depicted_by') {
-					$show = array();
+					$text = '';
 					foreach ( $values as $value) {
-						$tmp = "<li><span style=\"color:#333333\">$label:</span><br/>";
+						$text .= 
+<<<END
+<li><span class="label">$label:
+</span><br/>
+END;
 						foreach ( Helper::convertUTFToUnicode( $value, true ) as $item ) {
-							$tmp .= "<span style=\"margin-right:10px\"><a href=\"$item\"><img src=\"$item\" height=\"150\"/></a></span>";
+							$text .=
+<<<END
+<span class="value" style=\"margin-right:10px\"><a href=\"$item\"><img src=\"$item\" height=\"150\"/></a></span>
+END;
 						}
-						$tmp .= '</li>';
+						$text .=
+<<<END
+</li>
+END;
 					}
-					$buffer[$label] = $show;
+					$buffer[$label] = $text;
 					continue;
 				}
 				
@@ -257,22 +252,25 @@ END;
 					$show = array();
 					foreach ( $values as $value ) {
 						if ( !in_array( $value, $GLOBALS['ontology']['annotation']['ignore'] ) ) {
-							$show[] = Helper::convertUTFToUnicode( $value );
+							if ( preg_match( '/^(mailto:)?([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4})$/', $value, $match ) ) {
+								$show[] = "<a href=\"mailto:{$match[2]}\">{$match[2]}";
+							} else {
+								$show[] = Helper::makeLink( Helper::convertUTFToUnicode( $value ) );
+							}
 						}
 					}
 					$text = join( '; ', $show );
-					$buffer[$label] = "<li><span style=\"color:#333333\">$label</span>: <span style=\"color:#006600\">$text</span></li>";
+					$buffer[$label] = 
+<<<END
+<li><span class="label">$label:
+</span> <span class="value">$text</span></li>
+END;
 					continue;
 				}
 			}
-			
 			ksort( $buffer );
 			foreach ( $buffer as $label => $values ) {
-				if ( is_array( $values ) ) {
-					$html .= join( PHP_EOL, array_values( $values ) );
-				} else {
-					$html .= $values;
-				}
+				$html .= $values;
 			}
 			
 			

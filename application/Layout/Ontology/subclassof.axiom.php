@@ -36,7 +36,7 @@ if ( !$this ) {
 class SubClassOfAxiom {
 	public static function show( $ontology, $term ) {
 		if ( !empty ( $term->axiom['subclassof'] ) ) {
-			$rootURL = SITEURL . "ontology/?ontology=$ontology->ontology_abbrv&iri=";
+			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
 			
 			$operations = $GLOBALS['ontology']['restriction']['operation'];
 			$types = $GLOBALS['ontology']['restriction']['type'];
@@ -44,27 +44,29 @@ class SubClassOfAxiom {
 			if ( in_array( $term->type, array( 'ObjectProperty', 'AnnotationProperty', 'DataProperty' ) ) ) {
 				$html =
 <<<END
-<div id="subclass-axiom" class="axiom">
-<div class="heading">Superproperties</div>
-<div class="main"><ul>
+<div class="section-title">Superproperties</div>
+<div class="section"><ul>
 END;
 			} else {
 				$html =
 <<<END
-<div id="subclass-axiom" class="axiom">
-<div class="heading">Superclasses &amp; Asserted Axioms</div>
-<div class="main"><ul>
+<div class="section-title">Superclasses &amp; Asserted Axioms</div>
+<div class="section"><ul>
 END;
 			}
 			
 			foreach ( $term->axiom['subclassof'] as $data ) {
 				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
-				$html .= '<li>' . Helper::trimBracket( $axiom ) . '</li>';
+				$html .=
+<<<END
+<li>{$GLOBALS['call_function']( Helper::trimBracket( $axiom ) )}</li>
+END;
 			}
 			
-			$html .= '</ul></div>';
-			
-			$html .= '</div>';
+			$html .
+<<<END
+</ul></div>
+END;
 		} else {
 			$html = '';
 		}

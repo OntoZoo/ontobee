@@ -35,29 +35,31 @@ if ( !$this ) {
 
 class EquivalentAxiom {
 	public static function show( $ontology, $term ) {
+		$html = '';
 		if ( !empty ( $term->axiom['equivalent'] ) ) {
-			$rootURL = SITEURL . "ontology/?ontology=$ontology->ontology_abbrv&iri=";
+			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
 			
 			$operations = $GLOBALS['ontology']['restriction']['operation'];
 			$types = $GLOBALS['ontology']['restriction']['type'];
 			
 			$html =
 <<<END
-<div id="subclass-axiom" class="axiom">
-<div class="heading">Equivalents</div>
-<div class="main"><ul>
+<div class="section-title">Equivalents</div>
+<div class="section"><ul>
 END;
 			
 			foreach ( $term->axiom['equivalent'] as $data ) {
 				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
-				$html .= '<li>' . Helper::trimBracket( $axiom ) . '</li>';
+				$html .=
+<<<END
+<li>{$GLOBALS['call_function']( Helper::trimBracket( $axiom ) )}</li>
+END;
 			}
 			
-			$html .= '</ul></div>';
-			
-			$html .= '</div>';
-		} else {
-			$html = '';
+			$html .=
+<<<END
+</ul></div>
+END;
 		}
 	
 		return $html;

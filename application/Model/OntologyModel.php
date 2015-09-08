@@ -347,7 +347,12 @@ class OntologyModel {
 			if ( $related[$property]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
 				$values = array();
 				foreach ( $class->describe[$property] as $token ) {
-					$values[] = $token['value'];
+					if ( array_key_exists( 'value', $token ) ) {
+						$values[] = $token['value'];
+					}
+				}
+				if ( empty( $values ) ) {
+					continue;
 				}
 				$label = $related[$property]->label;
 				if ( $label == '' ) {

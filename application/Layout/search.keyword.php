@@ -33,7 +33,7 @@ if (!$this) {
 
 ?>
 
-<script src="<?php echo SITEURL; ?>public/js/ontobee.autocomplete.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/ontobee.search.js"></script>
 
 <!-- Ontobee home keyword search -->
 <form action="<?php echo SITEURL; ?>search" method="get" id="keyword-search">
