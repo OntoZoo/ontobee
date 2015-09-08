@@ -20,7 +20,7 @@ $(function() {
 		minLength: 3,
 		select: function( event, ui ) {
 			var params = ui.item.id.split( /:::/ );
-			window.location = "/ontology/?o=" + params.shift() + "&iri=" + params.shift();
+			window.location = "/ontology/" + params.shift() + "?iri=" + params.shift();
 		}
 	});
 });

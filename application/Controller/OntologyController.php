@@ -91,7 +91,7 @@ Class OntologyController extends Controller{
 		}
 	}
 	
-	public function term( $params = array() ) {		
+	public function type( $params = array() ) {		
 		list( $ontAbbr, $typeIRI ) = self::parseOntologyParameter( $params );
 		
 		if ( !is_null( $ontAbbr ) && !is_null( $ontAbbr ) ) {
@@ -111,13 +111,21 @@ Class OntologyController extends Controller{
 				$page = 1;
 			}
 			
+			if ( array_key_exists( 'max', $params ) ) {
+				$listMaxTerms = $params['max'];
+			} else if ( array_key_exists( 'm', $params ) ) {
+				$listMaxTerms = $params['m'];
+			} else {
+				$listMaxTerms = $GLOBALS['ontology']['term_max_per_page'][0];
+			}
+			
 			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
 			$this->model->loadOntology( $ontAbbr, false );
 			$ontology = $this->model->getOntology();
 			if ( !empty( $ontology ) ) {
-				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $typeIRI, $letter, $page );
-				require VIEWPATH . 'Ontology/term.php';
+				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $typeIRI, $letter, $page, $listMaxTerms );
+				require VIEWPATH . 'Ontology/type.php';
 			} else {
 				throw new Exception ( "Invalid ontology." );
 			}

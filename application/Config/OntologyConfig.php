@@ -43,7 +43,7 @@ $GLOBALS['search']['endpoint'] ="http://localhost:8890/sparql";
 
 $GLOBALS['ontology'] = array();
 
-$GLOBALS['ontology']['term_max_per_page'] = 500; 
+$GLOBALS['ontology']['term_max_per_page'] = array( 50, 100, 200, 500 );
 
 $GLOBALS['ontology']['namespace'] = array(
 	'obo' => 'http://purl.obolibrary.org/obo/',

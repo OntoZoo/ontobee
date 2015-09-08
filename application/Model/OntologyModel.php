@@ -148,9 +148,19 @@ class OntologyModel {
 			$this->ontology->key_term = $query->fetchall();
 			
 			$this->rdf = new RDFStore( $this->ontology->end_point );
-			if ( !$this->rdf->ping() ) {
+			$count = 0;
+			$connection = false;
+			while ( $count < 10 && !$connection ) {
+				$count += 1;
+				if ( $this->rdf->ping() ) {
+					$connection = true;
+				}
+			}
+			
+			if ( !$connection ) {
 				throw new Exception( "Unable to connect RDFStore endpoint: {$this->ontology->end_point}" );
 			}
+			
 			
 			if ( $detail ) {
 				$ontIRI = $this->prefixNS['obo'] . strtolower( $ontAbbr ) . '.owl';
@@ -192,7 +202,7 @@ class OntologyModel {
 		}
 	}
 	
-	public function getTermList( $typeIRI, $letter, $page ) {
+	public function getTermList( $typeIRI, $letter, $page, $max ) {
 		if ( !isset( $this->rdf ) ) {
 			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
 		}
@@ -205,24 +215,33 @@ class OntologyModel {
 		}
 		
 		$terms = array();
-		$letters = array( '*' => null );
+		$letters = array();
 		foreach( $termResult as $termIRI => $termLabels ) {
 			if ( !empty( $termLabels ) ) {
 				$termLabel = array_shift( $termLabels );
 			} else {
 				$termLabel = OntologyModelHelper::getShortTerm( $termIRI );
 			}
-			$termLabel = trim( $termLabel, '"\'-\\\/' );
-			$first = strtoupper( substr( $termLabel, 0, 1 ) );
+			$termLabel = trim( $termLabel, '"\'\\\/' );
+			$first = substr( $termLabel, 0, 1 );
+			if ( preg_match( '/[a-z]/i', $first ) ) {
+				$first =  strtoupper( $first );
+			}
 			$letters[$first] = null;
-			if ( preg_match( '/[a-z1-9]/i', $first ) && $first == $letter || $letter == '*') {
+			if ( $first == $letter || $letter == '*' ) {
 				$terms[$termIRI] = $termLabel;
+				/*
+				if ( preg_match( '/[a-z1-9]/i', $first ) ) {
+					$terms[$termIRI] = $termLabel;
+				}
+				*/
 			}
 		}
 		asort( $terms );
 		ksort( $letters );
+		$letters = array( '*' => null ) + $letters;
 		
-		$pageCount = ceil( sizeof( $terms ) / $GLOBALS['ontology']['term_max_per_page'] );
+		$pageCount = ceil( sizeof( $terms ) / $max );
 		
 		if ( $page == '' || intval( $page ) < 1 || intval( $page ) > $pageCount ) {
 			$page = 1;
