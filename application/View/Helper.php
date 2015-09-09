@@ -47,7 +47,7 @@ class Helper {
 	}
 
 	public static function getShortTerm( $term ) {
-		if ( preg_match( '/^http/', $term ) ) {
+		if ( preg_match( '/^http/', $term ) || preg_match( '/^ftp:/', $term ) ) {
 			$tmp_array = preg_split( '/[#\/]/', $term );
 			return( self::convertUTFToUnicode( array_pop( $tmp_array ) ) );
 		}

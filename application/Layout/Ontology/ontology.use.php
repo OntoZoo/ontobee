@@ -67,10 +67,10 @@ END;
 <<<END
 <tr>
 <td bgcolor="#EAF1F2"><a href="{$site}ontology/$other->ontology_abbrv">$other->ontology_fullname</a></td>
-<td bgcolor="#EAF1F2"><a href="$download">{$GLOBALS['call_function']( Helper::getShortTerm( $filename ) )}</a></td>
+<td bgcolor="#EAF1F2"><a href="$download">{$GLOBALS['call_function']( Helper::getShortTerm( $download ) )}</a></td>
 <td bgcolor="#EAF1F2"><a oncontextmenu="return false;" href="{$site}ontology/$other->ontology_abbrv?iri=
 {$GLOBALS['call_function']( Helper::encodeURL( $termIRI ) )}">
-'$term->label' in {$GLOBALS['call_function']( Helper::getShortTerm( $filename ) )}</a></td>
+'$term->label' in {$GLOBALS['call_function']( Helper::getShortTerm( $download ) )}</a></td>
 <td bgcolor="#EAF1F2">
 END;
 		if ( $other->home != '' ) {
