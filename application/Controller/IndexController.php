@@ -76,6 +76,40 @@ Class IndexController extends Controller {
 		$ontologies = $this->model->getAllOntology();
 		require VIEWPATH . 'Index/home.php';
 	}
+	
+	public function sparql( $params = array() ) {
+		if ( array_key_exists( 'query', $params ) ) {
+			$query = $params['query'];
+		} else {
+			$query = '';
+		}
+		if ( array_key_exists( 'format', $params ) ) {
+			$format = $params['format'];
+		} else {
+			$format = '';
+		}
+		if ( array_key_exists( 'maxrows', $params ) ) {
+			$maxrows = $params['maxrows'];
+		} else {
+			$maxrows = '';
+		}
+		if ( array_key_exists( 'go', $params ) ) {
+			$go = $params['go'];
+		} else {
+			$go = '';
+		}
+		require VIEWPATH . 'Index/sparql.php';
+	}
+	
+	public function tutorial( $params = array() ) {
+		if ( !empty( $params ) ) {
+			if ( $params[0] == 'sparql' ) {
+				require VIEWPATH . 'Tutorial/sparql.php';
+			}
+		} else {
+			require VIEWPATH . 'Tutorial/index.php';
+		}
+	}
 }
 
 

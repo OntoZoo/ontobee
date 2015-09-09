@@ -47,8 +47,10 @@ class Application {
 			
 			if ( isset( $urlComps[0] ) ) {
 				if ( method_exists( '\\Controller\\IndexController', $urlComps[0] ) ) {
+					$GLOBALS['method'] = $urlComps[0];
 					$method = $urlComps[0];
 				} else {
+					$GLOBALS['controller'] = $urlComps[0];
 					$controller = '\\Controller\\' . ucfirst( $urlComps[0] . 'Controller');
 				}
 				unset( $urlComps[0] );
@@ -56,6 +58,7 @@ class Application {
 				
 				if ( isset( $urlComps[0] ) ) {
 					if ( method_exists( $controller, $urlComps[0] ) ) {
+						$GLOBALS['method'] = $urlComps[0];
 						$method = $urlComps[0];
 						unset( $urlComps[0] );
 					}
@@ -94,7 +97,7 @@ class Application {
 			}
 		} else if ( is_null( $controller ) && !is_null( $method ) ) {
 			$controller = new \Controller\IndexController();
-			$controller->{$method}();
+			$controller->{$method}( $params );
 		} else if ( is_null( $controller ) ) {
 			$controller = new \Controller\IndexController();
 			$controller->index();

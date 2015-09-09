@@ -41,6 +41,6 @@ if ( !$this ) {
 <!-- Ontobee Ontology Template: title.php -->
 <?php require TEMPLATE . 'Ontology/title.php'; ?>
 
-<?php require TEMPLATE . 'Ontology/term.list.php'; ?>
+<?php require TEMPLATE . 'term.list.php'; ?>
 
 <?php require TEMPLATE . 'footer.default.dwt.php'; ?>

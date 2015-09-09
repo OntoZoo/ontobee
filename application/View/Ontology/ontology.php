@@ -59,7 +59,7 @@ $site = SITEURL;
 
 <!-- Ontobee Ontology home page: Number of Terms -->
 <div class="section-title">
-Number of Terms (<span class="darkred">including imported terms</span>)  <a href="<?php echo SITEURL; ?>ontostat/?ontology=<?php echo $ontology->ontology_abbrv; ?>">(Detailed Statistics)</a></div>
+Number of Terms (<span class="darkred">including imported terms</span>)  <a href="<?php echo SITEURL; ?>statistic/<?php echo $ontology->ontology_abbrv; ?>">(Detailed Statistics)</a></div>
 <div class="section">
 <?php
 $html =

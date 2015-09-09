@@ -48,13 +48,11 @@ class RDFQueryHelper {
 		return $results;
 	}
 	
-	/*
 	public static function parseCountResult( $json ) {
 		$json = json_decode( $json, true );
 		$var = $json['head']['vars'][0];
 		return $json['results']['bindings'][0][$var]['value'];
 	}
-	*/
 	
 	public static function parseSearchResult( $keywords, $searchResult, $graphs, $deprecated = array() ) {
 		$match = array();

@@ -134,90 +134,158 @@ class OntologyModel {
 		return $ontologies;
 	}
 	
-	
-	public function loadOntology( $ontAbbr, $detail = true ) {
+	public function loadOntology( $ontAbbr, $endpoint = null, $detail = true ) {
 		$sql = "SELECT * FROM ontology WHERE ontology_abbrv = '$ontAbbr'";
 		$query = $this->db->prepare( $sql );
 		$query->execute();
 		$this->ontology = $query->fetch();
-		if ( !empty($this->ontology) ) {
-			
+		
+		if ( !empty($this->ontology) && $detail ) {
 			$sql = "SELECT * FROM key_terms WHERE ontology_abbrv='$ontAbbr' ORDER BY term_label";
 			$query = $this->db->prepare( $sql );
 			$query->execute();
 			$this->ontology->key_term = $query->fetchall();
-			
+		}
+		
+		if ( !is_null( $endpoint ) ) {
+			$this->rdf = new RDFStore( $endpoint );
+		} else {
 			$this->rdf = new RDFStore( $this->ontology->end_point );
-			$count = 0;
-			$connection = false;
-			while ( $count < 10 && !$connection ) {
-				$count += 1;
-				if ( $this->rdf->ping() ) {
-					$connection = true;
+		}
+		$count = 0;
+		$connection = false;
+		while ( $count < 10 && !$connection ) {
+			$count += 1;
+			if ( $this->rdf->ping() ) {
+				$connection = true;
+			}
+		}
+		if ( !$connection ) {
+			throw new Exception( "Unable to connect RDFStore endpoint: {$this->ontology->end_point}" );
+		}
+			
+		if ( $detail ) {
+			$ontIRI = $this->prefixNS['obo'] . strtolower( $ontAbbr ) . '.owl';
+			list( $annotationResult, $query ) = $this->rdf->selectOntologyAnnotation(
+				$this->ontology->ontology_graph_url,
+				$ontIRI 
+			);
+			$this->addQueries( $query );
+			list( $annotationLabels, $query ) = $this->rdf->selectAllTermLabel(
+				$this->ontology->ontology_graph_url,
+				array_keys( $annotationResult )
+			);
+			$this->addQueries( $query );
+			
+			$annotations = array();
+			foreach ( $annotationResult as $annotationIRI => $annotationValue ) {
+				if ( array_key_exists( $annotationIRI, $annotationLabels ) ) {
+					$annotationLabel = array_shift( $annotationLabels[$annotationIRI] );
+				} else {
+					$annotationLabel = OntologyModelHelper::getShortTerm( $annotationIRI );
 				}
+				$annotations[] = array(
+					'label' => $annotationLabel,
+					'value' => $annotationValue,
+				);
 			}
+			$this->ontology->annotation = $annotations;
 			
-			if ( !$connection ) {
-				throw new Exception( "Unable to connect RDFStore endpoint: {$this->ontology->end_point}" );
-			}
+			$this->queries[] = $query;
 			
-			
-			if ( $detail ) {
-				$ontIRI = $this->prefixNS['obo'] . strtolower( $ontAbbr ) . '.owl';
-				list( $annotationResult, $query ) = $this->rdf->selectOntologyAnnotation(
+			foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
+				list( $this->ontology->$type, $query ) = $this->rdf->selectOntologyProperty(
 					$this->ontology->ontology_graph_url,
-					$ontIRI 
+					$typeIRI
 				);
 				$this->addQueries( $query );
-				list( $annotationLabels, $query ) = $this->rdf->selectAllTermLabel(
-					$this->ontology->ontology_graph_url,
-					array_keys( $annotationResult )
-				);
-				$this->addQueries( $query );
-				
-				$annotations = array();
-				foreach ( $annotationResult as $annotationIRI => $annotationValue ) {
-					if ( array_key_exists( $annotationIRI, $annotationLabels ) ) {
-						$annotationLabel = array_shift( $annotationLabels[$annotationIRI] );
-					} else {
-						$annotationLabel = OntologyModelHelper::getShortTerm( $annotationIRI );
-					}
-					$annotations[] = array(
-						'label' => $annotationLabel,
-						'value' => $annotationValue,
-					);
-				}
-				$this->ontology->annotation = $annotations;
-				
-				$this->queries[] = $query;
-				
-				foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
-					list( $this->ontology->$type, $query ) = $this->rdf->selectOntologyProperty(
-						$this->ontology->ontology_graph_url,
-						$typeIRI
-					);
-					$this->addQueries( $query );
-				}
 			}
 		}
 	}
 	
+	public function countAllOntologyType() {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+		$stats = array();
+		foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
+			list( $stat, $query ) = $this->rdf->countType( $this->ontology->ontology_graph_url, $typeIRI );
+			$this->addQueries( $query );
+			$stats[$type] = $stat;
+		}
+		return $stats;
+	}
 	
-	
-	public function getTermList( $termIRI, $letter, $page, $max ) {
+	public function countOntologyType() {
 		if ( !isset( $this->rdf ) ) {
 			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
 		}
 		
-		if ( in_array( $termIRI, $GLOBALS['ontology']['type'] ) ) {
-			list( $termResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $termIRI );
-			$this->addQueries( $query );
+		$stats = array();
+		foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
+			list( $terms, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $typeIRI );
+			$prefixArray = array();
+			$classNoPrefixCount = 0;
+			foreach ( $terms as $iri => $labels ){
+				if ( preg_match( '/\/([A-Za-z\.\-_]+)#[a-zA-Z_0-9]+/', $iri, $match ) ) {
+					$prefix = $match[1];
+					if( array_key_exists( $prefix, $prefixArray ) ){
+						$prefixArray[$prefix] += 1;
+					} else {
+						$prefixArray[$prefix] = 1;
+					}    
+				} else if ( preg_match( '/\/([A-Z][A-Za-z]+)_[-a-zA-Z_0-9]+/', $iri, $match ) ) {
+					$prefix = $match[1];
+					if( array_key_exists( $prefix, $prefixArray ) ){
+						$prefixArray[$prefix] += 1;
+					} else {
+						$prefixArray[$prefix] = 1;
+					} 
+				} else if ( preg_match( '/\/([a-z]+)_[0-9]+/', $iri, $match ) ) {
+					$prefix = $match[1];
+					if ( array_key_exists( $prefix, $prefixArray ) ){
+						$prefixArray[$prefix] += 1;
+					} else {
+						$prefixArray[$prefix] = 1;
+					} 
+				} else {
+					$classNoPrefixCount ++;
+				}
+			}
+			foreach( $prefixArray as $prefix => $count ) {
+				$stats[$prefix][$type] = $count;
+			}
+			$stats['no_prefix'][$type] = $classNoPrefixCount;
+		}
+		$noprefix = $stats['no_prefix'];
+		unset( $stats['no_prefix'] );
+		ksort( $stats );
+		$stats['NoPrefix'] = $noprefix;
+		return $stats;
+	}
+	
+	public function getTermList( $termIRI, $prefix, $letter, $page, $max ) {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+		$termResult = array();
+		if ( !is_null( $termIRI ) ) {
+			if ( !in_array( $termIRI, $GLOBALS['ontology']['type'] ) ) {
+				list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
+				$this->addQueries( $query );
+				$subClasses = OntologyModelHelper::parseClassResult( $subClasses );
+				foreach( $subClasses as $subClass ) {
+					$termResult[$subClass->iri][] = $subClass->label;
+				}
+			} else {
+				list( $termResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $termIRI );
+				$this->addQueries( $query );
+			}
 		} else {
-			list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
-			$this->addQueries( $query );
-			$subClasses = OntologyModelHelper::parseClassResult( $subClasses );
-			foreach( $subClasses as $subClass ) {
-				$termResult[$subClass->iri][] = $subClass->label;
+			foreach ( $GLOBALS['ontology']['type'] as $typeIRI ) {
+				list( $tmpResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $typeIRI );
+				$this->addQueries( $query );
+				$termResult = array_merge( $termResult, $tmpResult );
 			}
 		}
 		
@@ -227,7 +295,7 @@ class OntologyModel {
 			$letter = '*';
 		}
 		
-		list( $terms, $letters ) = OntologyModelHelper::parseTermList( $termResult, $letter );
+		list( $terms, $letters ) = OntologyModelHelper::parseTermList( $termResult, $prefix, $letter );
 		
 		$pageCount = ceil( sizeof( $terms ) / $max );
 		
@@ -593,7 +661,7 @@ class OntologyModelHelper {
 		return $classes;
 	}
 	
-	public static function parseTermList( $termResult, $letter ) {
+	public static function parseTermList( $termResult, $prefix, $letter ) {
 		$terms = array();
 		$letters = array();
 		foreach( $termResult as $termIRI => $termLabels ) {
@@ -608,10 +676,42 @@ class OntologyModelHelper {
 			if ( preg_match( '/[a-z]/i', $first ) ) {
 				$first =  strtoupper( $first );
 			}
-			print_r( !$first === $letter );
-			$letters[$first] = null;
-			if ( $first == $letter || $letter == '*' ) {
-				$terms[$termIRI] = $termLabel;
+			
+			if ( is_null( $prefix ) || $prefix == '' ) {
+				$letters[$first] = null;
+				if ( $first == $letter || $letter == '*' ) {
+					$terms[$termIRI] = $termLabel;
+				}
+			} else {
+				if ( preg_match( '/\/([A-Za-z\.\-_]+)#[a-zA-Z_0-9]+/', $termIRI, $match ) ) {
+					if ( $prefix == $match[1] ) {
+						$letters[$first] = null;
+						if ( $first == $letter || $letter == '*' ) {
+							$terms[$termIRI] = $termLabel;
+						}
+					}
+				} else if ( preg_match( '/\/([A-Z][A-Za-z]+)_[-a-zA-Z_0-9]+/', $termIRI, $match ) ) {
+					if ( $prefix == $match[1] ) {
+						$letters[$first] = null;
+						if ( $first == $letter || $letter == '*' ) {
+							$terms[$termIRI] = $termLabel;
+						}
+					}
+				} else if ( preg_match( '/\/([a-z]+)_[0-9]+/', $termIRI, $match ) ) {
+					if ( $prefix == $match[1] ) {
+						$letters[$first] = null;
+						if ( $first == $letter || $letter == '*' ) {
+							$terms[$termIRI] = $termLabel;
+						}
+					}
+				} else {
+					if ( strtolower( $prefix ) == 'noprefix' ) {
+						$letters[$first] = null;
+						if ( $first == $letter || $letter == '*' ) {
+							$terms[$termIRI] = $termLabel;
+						}
+					}
+				}
 			}
 		}
 		asort( $terms );

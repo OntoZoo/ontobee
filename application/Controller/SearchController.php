@@ -45,7 +45,8 @@ class SearchController extends Controller  {
 			$submit = true;
 			unset( $params['submit'] );
 		}
-	
+		
+		$ontAbbr = null;
 		if ( array_key_exists( 'ontology' , $params ) ) {
 			$ontAbbr = $params['ontology'];
 			unset( $params['ontology'] );
@@ -54,6 +55,7 @@ class SearchController extends Controller  {
 			unset( $params['o'] );
 		}
 		
+		$keyword = null;
 		if ( array_key_exists( 'term' , $params ) ) {
 			$keyword = $params['term'];
 		} else if ( array_key_exists( 'keyword' , $params ) ) {
@@ -65,8 +67,8 @@ class SearchController extends Controller  {
 		}
 		
 		if ( !is_null( $keyword ) ) {
-			if ( !is_null( $ontAbbr ) ) {
-				$this->model->loadOntology( $ontAbbr, false );
+			if ( !is_null( $ontAbbr ) && $ontAbbr != '' ) {
+				$this->model->loadOntology( $ontAbbr, null, false );
 				$ontology = $this->model->getOntology();
 				if ( empty( $ontology ) ) {
 					$ontologies = $this->model->getAllOntology();

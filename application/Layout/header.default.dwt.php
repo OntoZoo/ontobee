@@ -52,9 +52,14 @@ if ( !isset( $title ) ) {
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.widget.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.position.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.autocomplete.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/sparql/toolkit/loader.js"></script>
 <style>
 .ui-autocomplete-loading { background: white url('<?php echo SITEURL; ?>public/images/ui-anim_basic_16x16.gif') right center no-repeat; }
 </style>
+<script type="text/javascript">
+var toolkitPath = "<?php echo SITEURL; ?>public/js/sparql/toolkit"; 
+var featureList = ["tab", "ajax2", "combolist", "window", "tree", "grid", "dav", "xml"];
+</script>
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-4869243-9']);
@@ -65,6 +70,7 @@ if ( !isset( $title ) ) {
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 </script>
+
 </head>
 
 <body>
@@ -76,7 +82,7 @@ if ( !isset( $title ) ) {
 <div id="topnav">
 <a href="<?php echo SITEURL; ?>" class="topnav">Home</a>
 <a href="<?php echo SITEURL; ?>introduction" class="topnav">Introduction</a>
-<a href="<?php echo SITEURL; ?>ontostat" class="topnav">Statistics</a>
+<a href="<?php echo SITEURL; ?>statistic" class="topnav">Statistics</a>
 <a href="<?php echo SITEURL; ?>sparql" class="topnav">SPARQL</a>
 <!-- <a href="<?php echo SITEURL; ?>ontobeep" class="topnav">Ontobeep</a> -->
 <a href="<?php echo SITEURL; ?>tutorial" class="topnav">Tutorial</a>

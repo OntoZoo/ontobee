@@ -33,20 +33,43 @@ if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-$termURL = SITEURL . "ontology/$ontAbbr?iri=";
+if ( !isset( $prefix) || is_null( $prefix ) || $prefix == '' ) {
+	$termURL = SITEURL . "ontology/$ontAbbr?iri=";
+	
+	$pageURL =
+		SITEURL .
+		"{$GLOBALS['controller']}/term/$ontAbbr?iri=" .
+		urlencode( $termIRI ) .
+		"&letter=" .
+		urlencode( $letter ) .
+		"&page="
+	;
+	$letterURL =
+		SITEURL .
+		"{$GLOBALS['controller']}/term/$ontAbbr?iri=" .
+		urlencode( $termIRI ) .
+		"&letter="
+	;
+} else {
+	$termURL = SITEURL . "ontology/$ontAbbr?iri=";
+	
+	$pageURL =
+		SITEURL .
+		"{$GLOBALS['controller']}/term/$ontAbbr?prefix=$prefix&iri=" .
+		urlencode( $termIRI ) .
+		"&letter=" .
+		urlencode( $letter ) .
+		"&page="
+	;
+	$letterURL =
+		SITEURL .
+		"{$GLOBALS['controller']}/term/$ontAbbr?prefix=$prefix&iri=" .
+		urlencode( $termIRI ) .
+		"&letter="
+	;
+}
 
-$pageURL = 
-	SITEURL .
-	"ontology/term/$ontAbbr?iri=" .
-	urlencode( $termIRI ) .
-	"&letter=" .
-	urlencode( $letter ) .
-	"&page=";
-$letterURL =
-	SITEURL .
-	"ontology/term/$ontAbbr?iri=" .
-	urlencode( $termIRI ) .
-	"&letter=";
+
 
 $html =
 <<<END

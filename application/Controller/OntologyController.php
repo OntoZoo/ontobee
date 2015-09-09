@@ -66,7 +66,7 @@ Class OntologyController extends Controller{
 				$query = $this->model->getQueries();
 				require VIEWPATH . 'Ontology/ontology.php';
 			} else {
-				$this->model->loadOntology( $ontAbbr, false );
+				$this->model->loadOntology( $ontAbbr, null, false );
 				$ontology = $this->model->getOntology();
 				if ( empty( $ontology ) ) {
 					throw new Exception ( "Invalid ontology." );
@@ -91,10 +91,9 @@ Class OntologyController extends Controller{
 		}
 	}
 	
-	public function term( $params = array() ) {		
+	public function term( $params = array() ) {
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
-		
-		if ( !is_null( $ontAbbr ) && !is_null( $ontAbbr ) ) {
+		if ( !is_null( $ontAbbr ) ) {
 			if ( array_key_exists( 'letter', $params ) ) {
 				$letter = strtoupper( $params['letter'] );
 			} else if ( array_key_exists( 'l', $params ) ) {
@@ -121,10 +120,10 @@ Class OntologyController extends Controller{
 			
 			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
-			$this->model->loadOntology( $ontAbbr, false );
+			$this->model->loadOntology( $ontAbbr, null, false );
 			$ontology = $this->model->getOntology();
 			if ( !empty( $ontology ) ) {
-				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $termIRI, $letter, $page, $listMaxTerms );
+				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $termIRI, null, $letter, $page, $listMaxTerms );
 				require VIEWPATH . 'Ontology/term.php';
 			} else {
 				throw new Exception ( "Invalid ontology." );
@@ -150,8 +149,6 @@ Class OntologyController extends Controller{
 			$termIRI = $params['iri'];
 		} else if ( array_key_exists( 'i', $params ) ) {
 			$termIRI = $params['i'];
-		} else {
-			$termIRI = array_shift( $params );
 		}
 		
 		return array( $ontAbbr, $termIRI );

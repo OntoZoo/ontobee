@@ -180,6 +180,24 @@ END;
 		return array( $match, $query );
 	}
 	
+	public function countType( $graph, $typeIRI ) {
+		$query =
+<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT COUNT( DISTINCT ?class ) as ?count FROM <$graph> WHERE {
+	{
+		?class a <$typeIRI> .
+		FILTER ( isIRI( ?class ) ).
+	}
+}
+END;
+		$json = SPARQLQuery::queue( $this->endpoint, $query );
+		$count = RDFQueryHelper::parseCountResult( $json );
+		return array( $count, $query );
+	}
+	
 	public function selectOntologyAnnotation( $graph, $ontIRI ) {
 		$query =
 <<<END
@@ -363,7 +381,7 @@ END;
 		
 		# Transitive Super Classes
 		$query =
-		<<<END
+<<<END
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
@@ -372,13 +390,13 @@ SELECT ?path ?link ?label FROM <{$graph}> WHERE {
 		SELECT ?s ?o ?label WHERE {
 			{
 				?s rdfs:subClassOf ?o .
-				FILTER (isURI(?o)).
+				FILTER (isIRI(?o)).
 				OPTIONAL {?o rdfs:label ?label}
 			} UNION {
 				?s owl:equivalentClass ?s1 .
 				?s1 owl:intersectionOf ?s2 .
 				?s2 rdf:first ?o  .
-				FILTER (isURI(?o))
+				FILTER (isIRI(?o))
 				OPTIONAL {?o rdfs:label ?label}
 			}
 		}
@@ -588,13 +606,13 @@ PREFIX owl: <{$this->prefixNS['owl']}>
 SELECT DISTINCT ?class ?label FROM <$graph> WHERE {
 	{
 		<$termIRI> rdfs:subClassOf ?class .
-		FILTER (isURI(?class)).
+		FILTER (isIRI(?class)).
 		OPTIONAL {?class rdfs:label ?label}
 	} UNION {
 		<$termIRI> owl:equivalentClass ?s1 .
 		?s1 owl:intersectionOf ?s2 .
 		?s2 rdf:first ?class  .
-		FILTER (isURI(?class))
+		FILTER (isIRI(?class))
 		OPTIONAL {?class rdfs:label ?label}
 	}
 }
