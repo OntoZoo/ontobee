@@ -511,41 +511,6 @@ END;
 		return array( $class, $queries );
 	}
 	
-	/*
-	public function selectTransitiveSupClass( $graph, $termIRI ) {
-		$query =
-<<<END
-PREFIX rdf: <{$this->prefixNS['rdf']}>
-PREFIX rdfs: <{$this->prefixNS['rdfs']}>
-PREFIX owl: <{$this->prefixNS['owl']}>
-SELECT ?path ?link ?label FROM <{$graph}> WHERE {
-	{
-		SELECT ?s ?o ?label WHERE {
-			{
-				?s rdfs:subClassOf ?o .
-				FILTER (isURI(?o)).
-				OPTIONAL {?o rdfs:label ?label}
-			} UNION {
-				?s owl:equivalentClass ?s1 .
-				?s1 owl:intersectionOf ?s2 .
-				?s2 rdf:first ?o  .
-				FILTER (isURI(?o))
-				OPTIONAL {?o rdfs:label ?label}
-			}
-		}
-	}
-	OPTION (TRANSITIVE, t_in(?s), t_out(?o), t_step (?s) as ?link, t_step ('path_id') as ?path).
-	FILTER (isIRI(?o)).
-	FILTER (?s= <$termIRI>)
-}
-END;
-		$json = SPARQLQuery::queue( $this->endpoint, $query );
-		$result = RDFQueryHelper::parseSPARQLResult( $json );
-		$transitivePath = RDFQueryHelper::parseTransitivePath( $result );
-		return array( $transitivePath, $query );
-	}
-	*/
-	
 	public function selectSubClass( $graph, $termIRI, $limit = null, $subclass = false ) {
 		$query =
 <<<END
@@ -670,7 +635,156 @@ END;
 		return array( $terms, $query );
 	}
 	
+	public function exportTermRDF( $graph, $termIRI, $ontIRI) {
+		$query =
+<<<END
+DEFINE sql:describe-mode "CBD"
+DESCRIBE <$termIRI>
+FROM <$graph>
+END;
+		$describe = SPARQLQuery::queue( $this->endpoint, $query, '', 'application/rdf+xml' );
+		$queries[] = $query;
+		
+		preg_match_all( '/xmlns:([^=]*)="([^"]*)"/', $describe, $matches, PREG_SET_ORDER );
+		foreach ( $matches as $match ) {
+			$describeNS[$match[1]] = $match[2];
+		}
+		
+		$buffer = array();
+		
+		if ( preg_match_all( '/(<rdf:Description[\s\S]*?(?=(rdf:Description>)))/', $describe, $matches, PREG_PATTERN_ORDER ) ) {
+			foreach ( $matches[0] as $match ) {
+				$lines = preg_split( '/\n/', $match );
+				array_shift( $lines );
+				array_pop( $lines );
+				foreach ( $lines as $line ) {
+					preg_match_all( '/resource="([^"]+)"/', $line, $resources, PREG_PATTERN_ORDER );
+					foreach ( $resources[1] as $resource ) {
+						$related[$resource] = null;
+					}
+					# For backward-compatibility with Virtuoso version 6.2.1
+					preg_match_all( '/<n0pred:(\S+) xmlns:n0pred="(\S+)"/', $line, $resources, PREG_SET_ORDER );
+					foreach ( $resources as $resource ) {
+						$related[$resource[2].$resource[1]] = null;
+					}
+				}
+			}
+			for ( $index = 0; $index < sizeof( $matches[0] ); $index++ ) {
+				$buffer[] = $matches[1][$index] . $matches[2][$index];
+			}
+		}
+		
+		if ( !empty( $related ) ) {
+			$this->sparql->clear();
+			$relatedQuery = "<" . join( '>, <', array_keys( $related ) ) . ">";
+			$query = 
+<<<END
+CONSTRUCT {
+	?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?o
+} FROM <$graph> WHERE { 
+	?s <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?o .
+	FILTER ( ?s in ( $relatedQuery ) )
+}
+END;
+			$this->sparql->add( 'relatedType', $query, '', 'application/rdf+xml');
+			$queries[] = $query;
+
+
+			$relatedQuery = "<" . join( '>, <', array_keys( $related ) ) . ">";
+			$query =
+<<<END
+CONSTRUCT {
+	?s <http://www.w3.org/2000/01/rdf-schema#label> ?o
+} FROM <$graph> WHERE {
+	?s <http://www.w3.org/2000/01/rdf-schema#label> ?o .
+	FILTER ( ?s in ( $relatedQuery ) )
+}
+END;
+			$this->sparql->add( 'relatedLabel', $query, '', 'application/rdf+xml');
+			$queries[] = $query;
+			
+			$results = $this->sparql->execute();
+		}
+		
+		if ( preg_match_all( 
+			'/(<rdf:Description[\s\S]*?(?=(rdf:Description>)))/',
+			$results['relatedType'] . $results['relatedLabel'],
+			$matches,
+			PREG_PATTERN_ORDER
+		) ) {
+			for ( $index = 0; $index < sizeof( $matches[0] ); $index++ ) {
+				$buffer[] = $matches[1][$index] . $matches[2][$index];
+			}
+		}
+		
+		$rdf = join( PHP_EOL, $buffer );
+		
+		$rdf = preg_replace( '/\<\?xml[\s]?version[\s]?=[\s]?"[\d]+.[\d]"[^?]*\?>/', '', $rdf );
+		
+		foreach ( $this->prefixNS as $prefix => $namespace ) {
+			$rdf = str_replace( "xmlns:$prefix=\"$namespace\"", '', $rdf );
+			$rdf = str_replace( "rdf:resource=\"$namespace", "rdf:resource=\"&$prefix;", $rdf );
+			$rdf = str_replace( "rdf:about=\"$namespace", "rdf:about=\"&$prefix;", $rdf );
+			$rdf = str_replace( "rdf:datatype=\"$namespace", "rdf:datatype=\"&$prefix;", $rdf );
+		}
+		
+		$header = '';
+		foreach ( array_merge( $this->prefixNS, $describeNS ) as $prefix => $namespace ) {
+			$header .= " xmlns:$prefix=\"$namespace\" ";
+		}
+		
+		$rdf =
+<<<END
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE rdf:RDF [
+<!ENTITY obo 'http://purl.obolibrary.org/obo/'>
+<!ENTITY owl 'http://www.w3.org/2002/07/owl#'>
+<!ENTITY rdfs 'http://www.w3.org/2000/01/rdf-schema#'>
+<!ENTITY rdf 'http://www.w3.org/1999/02/22-rdf-syntax-ns#'>
+<!ENTITY oboInOwl 'http://www.geneontology.org/formats/oboInOwl#'>
+]>
+
+<rdf:RDF$header>
+$rdf
+</rdf:RDF>
+END;
+		
+		return array( $rdf, $queries );
+	}
+	
 	/*
+		public function selectTransitiveSupClass( $graph, $termIRI ) {
+		$query =
+<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT ?path ?link ?label FROM <{$graph}> WHERE {
+	{
+		SELECT ?s ?o ?label WHERE {
+			{
+				?s rdfs:subClassOf ?o .
+				FILTER (isURI(?o)).
+				OPTIONAL {?o rdfs:label ?label}
+			} UNION {
+				?s owl:equivalentClass ?s1 .
+				?s1 owl:intersectionOf ?s2 .
+				?s2 rdf:first ?o  .
+				FILTER (isURI(?o))
+				OPTIONAL {?o rdfs:label ?label}
+			}
+		}
+	}
+	OPTION (TRANSITIVE, t_in(?s), t_out(?o), t_step (?s) as ?link, t_step ('path_id') as ?path).
+	FILTER (isIRI(?o)).
+	FILTER (?s= <$termIRI>)
+}
+END;
+		$json = SPARQLQuery::queue( $this->endpoint, $query );
+		$result = RDFQueryHelper::parseSPARQLResult( $json );
+		$transitivePath = RDFQueryHelper::parseTransitivePath( $result );
+		return array( $transitivePath, $query );
+	}
 	
 	public function selectTermUsage( $graph, $termIRI ) {
 		$this->sparql->clear();

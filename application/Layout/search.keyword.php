@@ -54,7 +54,7 @@ END;
 	}
 	echo '</select>';
 } else {
-	echo "<input name=\"ontology\" id=\"ontology\" type=\"hidden\" value=\"$ontology->ontology_abbrv\">";
+	echo "<input name=\"ontology\" id=\"ontology\" type=\"hidden\" value=\"$ontology->ontology_abbrv\"/>";
 }
 
 ?>

@@ -21,9 +21,9 @@
  */
 
 /**
- * @file header.default.dwt.php
- * @author edison
- * @since Sep 3, 2015
+ * @file header.default.xml.php
+ * @author Edison Ong
+ * @since Sep 9, 2015
  * @comment 
  */
  
@@ -32,9 +32,7 @@ if ( !$this ) {
 }
 
 ?>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <?php 
 if ( !isset( $title ) ) {
@@ -52,7 +50,6 @@ if ( !isset( $title ) ) {
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.widget.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.position.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.autocomplete.js"></script>
-
 <style>
 .ui-autocomplete-loading { background: white url('<?php echo SITEURL; ?>public/images/ui-anim_basic_16x16.gif') right center no-repeat; }
 </style>
@@ -76,7 +73,7 @@ var featureList = ["tab", "ajax2", "combolist", "window", "tree", "grid", "dav",
 <body>
 <div id="topbanner">
 <a href="<?php echo SITEURL; ?>" style="font-size:36px; color:#111144; text-decoration:none">
-<img src="<?php echo SITEURL; ?>public/images/logo.gif" alt="Logo" width="280" height="49" border="0">
+<img src="<?php echo SITEURL; ?>public/images/logo.gif" alt="Logo" width="280" height="49" border="0"/>
 </a>
 </div>
 <div id="topnav">

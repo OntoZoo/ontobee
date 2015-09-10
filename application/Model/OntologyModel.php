@@ -90,10 +90,19 @@ class OntologyModel {
 	/**
 	 * Getter
 	 *
-	 * @return $term
+	 * @return $class
 	 */
 	public function getClass() {
 		return $this->class;
+	}
+	
+	/**
+	 * Getter
+	 *
+	 * @return $rdf
+	 */
+	public function getRDF() {
+		return $this->rdf;
 	}
 	
 	
@@ -132,6 +141,136 @@ class OntologyModel {
 			$ontologies[$result->ontology_graph_url] = $result;
 		}
 		return $ontologies;
+	}
+	
+	public function countAllOntologyType() {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+		$stats = array();
+		foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
+			list( $stat, $query ) = $this->rdf->countType( $this->ontology->ontology_graph_url, $typeIRI );
+			$this->addQueries( $query );
+			$stats[$type] = $stat;
+		}
+		return $stats;
+	}
+	
+	public function countOntologyType() {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+	
+		$stats = array();
+		foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
+			list( $terms, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $typeIRI );
+			$prefixArray = array();
+			$classNoPrefixCount = 0;
+			foreach ( $terms as $iri => $labels ){
+				if ( preg_match( '/\/([A-Za-z\.\-_]+)#[a-zA-Z_0-9]+/', $iri, $match ) ) {
+					$prefix = $match[1];
+					if( array_key_exists( $prefix, $prefixArray ) ){
+						$prefixArray[$prefix] += 1;
+					} else {
+						$prefixArray[$prefix] = 1;
+					}
+				} else if ( preg_match( '/\/([A-Z][A-Za-z]+)_[-a-zA-Z_0-9]+/', $iri, $match ) ) {
+					$prefix = $match[1];
+					if( array_key_exists( $prefix, $prefixArray ) ){
+						$prefixArray[$prefix] += 1;
+					} else {
+						$prefixArray[$prefix] = 1;
+					}
+				} else if ( preg_match( '/\/([a-z]+)_[0-9]+/', $iri, $match ) ) {
+					$prefix = $match[1];
+					if ( array_key_exists( $prefix, $prefixArray ) ){
+						$prefixArray[$prefix] += 1;
+					} else {
+						$prefixArray[$prefix] = 1;
+					}
+				} else {
+					$classNoPrefixCount ++;
+				}
+			}
+			foreach( $prefixArray as $prefix => $count ) {
+				$stats[$prefix][$type] = $count;
+			}
+			$stats['no_prefix'][$type] = $classNoPrefixCount;
+		}
+		$noprefix = $stats['no_prefix'];
+		unset( $stats['no_prefix'] );
+		ksort( $stats );
+		$stats['NoPrefix'] = $noprefix;
+		return $stats;
+	}
+	
+	public function getTermList( $termIRI, $prefix, $letter, $page, $max ) {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+		$termResult = array();
+		if ( !is_null( $termIRI ) ) {
+			if ( !in_array( $termIRI, $GLOBALS['ontology']['type'] ) ) {
+				list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
+				$this->addQueries( $query );
+				$subClasses = OntologyModelHelper::parseClassResult( $subClasses );
+				foreach( $subClasses as $subClass ) {
+					$termResult[$subClass->iri][] = $subClass->label;
+				}
+			} else {
+				list( $termResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $termIRI );
+				$this->addQueries( $query );
+			}
+		} else {
+			foreach ( $GLOBALS['ontology']['type'] as $typeIRI ) {
+				list( $tmpResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $typeIRI );
+				$this->addQueries( $query );
+				$termResult = array_merge( $termResult, $tmpResult );
+			}
+		}
+	
+		if ( strlen( $letter ) != 1 && preg_match( '/[a-z1-9]/i', substr( $letter, 0, 1 ) )) {
+			$letter = substr( $letter, 0, 1 );
+		} else if ( strlen( $letter ) != 1 ) {
+			$letter = '*';
+		}
+	
+		list( $terms, $letters ) = OntologyModelHelper::parseTermList( $termResult, $prefix, $letter );
+	
+		$pageCount = ceil( sizeof( $terms ) / $max );
+	
+		if ( $page == '' || intval( $page ) < 1 || intval( $page ) > $pageCount ) {
+			$page = 1;
+		}
+	
+		return array( $terms, $letters, $page, $pageCount );
+	}
+	
+	public function searchKeyword( $keyword, $ontAbbr = null ) {
+		$ontologies = array();
+		if ( is_null( $ontAbbr ) || $ontAbbr == '' ) {
+			foreach ( $this->getAllOntology( 'y', null, false ) as $ontology ) {
+				$ontologies[$ontology->ontology_abbrv] = $ontology->ontology_graph_url;
+			}
+		} else {
+			$this->loadOntology( $ontAbbr );
+			$ontologies[$this->ontology->ontology_abbrv] = $this->ontology->ontology_graph_url;
+		}
+	
+		$rdf = new RDFStore( $GLOBALS['search']['endpoint'] );
+		list( $match, $query ) = $rdf->search( $ontologies, $keyword );
+		$this->addQueries( $query );
+		return $match;
+	}
+	
+	public function askTermType( $termIRI ) {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+		list( $typeIRI, $query ) = $this->rdf->selectTermType( $this->ontology->ontology_graph_url, $termIRI );
+		$this->addQueries( $query );
+		$type = array_search( $typeIRI, $GLOBALS['ontology']['type'] );
+		return $type;
 	}
 	
 	public function loadOntology( $ontAbbr, $endpoint = null, $detail = true ) {
@@ -201,136 +340,6 @@ class OntologyModel {
 				$this->addQueries( $query );
 			}
 		}
-	}
-	
-	public function countAllOntologyType() {
-		if ( !isset( $this->rdf ) ) {
-			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
-		}
-		$stats = array();
-		foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
-			list( $stat, $query ) = $this->rdf->countType( $this->ontology->ontology_graph_url, $typeIRI );
-			$this->addQueries( $query );
-			$stats[$type] = $stat;
-		}
-		return $stats;
-	}
-	
-	public function countOntologyType() {
-		if ( !isset( $this->rdf ) ) {
-			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
-		}
-		
-		$stats = array();
-		foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
-			list( $terms, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $typeIRI );
-			$prefixArray = array();
-			$classNoPrefixCount = 0;
-			foreach ( $terms as $iri => $labels ){
-				if ( preg_match( '/\/([A-Za-z\.\-_]+)#[a-zA-Z_0-9]+/', $iri, $match ) ) {
-					$prefix = $match[1];
-					if( array_key_exists( $prefix, $prefixArray ) ){
-						$prefixArray[$prefix] += 1;
-					} else {
-						$prefixArray[$prefix] = 1;
-					}    
-				} else if ( preg_match( '/\/([A-Z][A-Za-z]+)_[-a-zA-Z_0-9]+/', $iri, $match ) ) {
-					$prefix = $match[1];
-					if( array_key_exists( $prefix, $prefixArray ) ){
-						$prefixArray[$prefix] += 1;
-					} else {
-						$prefixArray[$prefix] = 1;
-					} 
-				} else if ( preg_match( '/\/([a-z]+)_[0-9]+/', $iri, $match ) ) {
-					$prefix = $match[1];
-					if ( array_key_exists( $prefix, $prefixArray ) ){
-						$prefixArray[$prefix] += 1;
-					} else {
-						$prefixArray[$prefix] = 1;
-					} 
-				} else {
-					$classNoPrefixCount ++;
-				}
-			}
-			foreach( $prefixArray as $prefix => $count ) {
-				$stats[$prefix][$type] = $count;
-			}
-			$stats['no_prefix'][$type] = $classNoPrefixCount;
-		}
-		$noprefix = $stats['no_prefix'];
-		unset( $stats['no_prefix'] );
-		ksort( $stats );
-		$stats['NoPrefix'] = $noprefix;
-		return $stats;
-	}
-	
-	public function getTermList( $termIRI, $prefix, $letter, $page, $max ) {
-		if ( !isset( $this->rdf ) ) {
-			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
-		}
-		$termResult = array();
-		if ( !is_null( $termIRI ) ) {
-			if ( !in_array( $termIRI, $GLOBALS['ontology']['type'] ) ) {
-				list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
-				$this->addQueries( $query );
-				$subClasses = OntologyModelHelper::parseClassResult( $subClasses );
-				foreach( $subClasses as $subClass ) {
-					$termResult[$subClass->iri][] = $subClass->label;
-				}
-			} else {
-				list( $termResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $termIRI );
-				$this->addQueries( $query );
-			}
-		} else {
-			foreach ( $GLOBALS['ontology']['type'] as $typeIRI ) {
-				list( $tmpResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $typeIRI );
-				$this->addQueries( $query );
-				$termResult = array_merge( $termResult, $tmpResult );
-			}
-		}
-		
-		if ( strlen( $letter ) != 1 && preg_match( '/[a-z1-9]/i', substr( $letter, 0, 1 ) )) {
-			$letter = substr( $letter, 0, 1 );
-		} else if ( strlen( $letter ) != 1 ) {
-			$letter = '*';
-		}
-		
-		list( $terms, $letters ) = OntologyModelHelper::parseTermList( $termResult, $prefix, $letter );
-		
-		$pageCount = ceil( sizeof( $terms ) / $max );
-		
-		if ( $page == '' || intval( $page ) < 1 || intval( $page ) > $pageCount ) {
-			$page = 1;
-		}
-		
-		return array( $terms, $letters, $page, $pageCount );
-	}
-	
-	public function searchKeyword( $keyword, $ontAbbr = null ) {
-		$ontologies = array();
-		if ( is_null( $ontAbbr ) || $ontAbbr == '' ) {
-			foreach ( $this->getAllOntology( 'y', null, false ) as $ontology ) {
-				$ontologies[$ontology->ontology_abbrv] = $ontology->ontology_graph_url;
-			}
-		} else {
-			$this->loadOntology( $ontAbbr );
-			$ontologies[$this->ontology->ontology_abbrv] = $this->ontology->ontology_graph_url;
-		}
-		
-		$rdf = new RDFStore( $GLOBALS['search']['endpoint'] );
-		list( $match, $query ) = $rdf->search( $ontologies, $keyword );
-		$this->addQueries( $query );
-		return $match;
-	}
-	
-	public function askTermType( $termIRI ) {
-		if ( !isset( $this->rdf ) ) {
-			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
-		}
-		list( $typeIRI, $query ) = $this->rdf->selectTermType( $this->ontology->ontology_graph_url, $termIRI );
-		$this->addQueries( $query );
-		$type = array_search( $typeIRI, $GLOBALS['ontology']['type'] );
-		return $type;
 	}
 	
 	public function loadClass( $termIRI ) {
@@ -449,6 +458,19 @@ class OntologyModel {
 		
 		
 		$this->class = $class;
+	}
+	
+	public function loadRDF( $termIRI ) {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+		list( $rdf, $query ) = $this->rdf->exportTermRDF(
+			$this->ontology->ontology_graph_url,
+			$termIRI,
+			$this->ontology->ontology_url
+		);
+		
+		$this->rdf = $rdf;
 	}
 	
 	private function queryRelated( $describe ) {

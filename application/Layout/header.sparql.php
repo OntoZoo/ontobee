@@ -21,9 +21,9 @@
  */
 
 /**
- * @file header.default.dwt.php
- * @author edison
- * @since Sep 3, 2015
+ * @file header.sparql.php
+ * @author Edison Ong
+ * @since Sep 9, 2015
  * @comment 
  */
  
@@ -46,12 +46,7 @@ if ( !isset( $title ) ) {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
 <link rel="shortcut icon" href="/favicon.ico" />
 <link href="<?php echo SITEURL; ?>public/css/main.css" rel="stylesheet" type="text/css"/>
-<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/themes/base/jquery.ui.all.css"/>
-<script src="<?php echo SITEURL; ?>public/js/jquery/jquery-1.7.1.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.core.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.widget.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.position.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.autocomplete.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/sparql/toolkit/loader.js"></script>
 
 <style>
 .ui-autocomplete-loading { background: white url('<?php echo SITEURL; ?>public/images/ui-anim_basic_16x16.gif') right center no-repeat; }
@@ -94,4 +89,3 @@ var featureList = ["tab", "ajax2", "combolist", "window", "tree", "grid", "dav",
 <a href="<?php echo SITEURL; ?>news" class="topnav">News</a>
 </div>
 <div id="mainbody">
-

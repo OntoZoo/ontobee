@@ -1,5 +1,6 @@
 <?php
 
+use View\Helper;
 /**
  * Copyright © 2015 The Regents of the University of Michigan
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,29 +22,27 @@
  */
 
 /**
- * @file footer.default.dwt.php
- * @author edison
- * @since Sep 3, 2015
+ * @file rdf.php
+ * @author Edison Ong
+ * @since Sep 9, 2015
  * @comment 
  */
  
-if (!$this) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+if ( !$this ) {
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
-?>
+if ( strpos($_SERVER['HTTP_ACCEPT'], 'application/rdf+xml') !== false ) {	
+	header("Content-type: application/rdf+xml");
+} elseif ( strpos( $_SERVER['HTTP_ACCEPT'], 'application/xml' ) !== false ) {
+	header( "Content-type: application/xml" );
+} else {
+	header( "Content-type: text/xml" );
+}
 
-</div>
-<div id="footer">
-<div id="footer_hl"></div>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr>
-<td><div id="footer_left"><a href="http://www.hegroup.org" target="_blank">He Group</a><br />
-University of Michigan Medical School<br />
-Ann Arbor, MI 48109</div></td>
-<td width="300"><div id="footer_right"><a href="http://www.umich.edu" target="_blank"><img src="<?php echo SITEURL; ?>public/images/wordmark_m_web.jpg" alt="UM Logo" width="166" height="20" border="0"/></a></div></td>
-	</tr>
-</table>
-</div>
-</body>
-</html>
+$site = SITEURL;
+
+$stylesheet = "<?xml-stylesheet type=\"text/xsl\" href=\"{$site}ontology/view/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( Helper::encodeURL( $termIRI ) )}\"?>";
+
+echo preg_replace( '/(\<\?xml[\s]?version[\s]?=[\s]?"[\d]+.[\d]"[^?]*\?>)/', '$1' . PHP_EOL . $stylesheet, $rdf );
+?>

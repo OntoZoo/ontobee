@@ -35,27 +35,50 @@ use Model\OntologyModel;
 
 Class OntologyController extends Controller{	
 	public function index( $params = array() ) {
-		$showHTML = true;
-		if (
-			strpos( $_SERVER['HTTP_ACCEPT'], 'application/rdf+xml' ) === false &&
-			strpos( $_SERVER['HTTP_ACCEPT'], 'application/xml' ) === false &&
-			strpos( $_SERVER['HTTP_ACCEPT'], '*/*' ) === false
-		) {
-			$showHTML = false;
-		} else if (
-			strpos( $_SERVER['HTTP_USER_AGENT'], 'bot' ) ||
-			strpos( $_SERVER['HTTP_USER_AGENT'], 'spider' ) ||
-			strpos( $_SERVER['HTTP_USER_AGENT'], 'crawl' ) ||
-			strpos( $_SERVER['HTTP_USER_AGENT'], 'search' )
-		) {
-			$showHTML = false;
+		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
+		if ( is_null( $termIRI ) ) {
+			$this->view( $params );
+		} else {
+			$GLOBALS['show_query'] = false;
+			$title = "Ontobee: $ontAbbr";
+			$this->loadModel( 'Ontology' );
+			$this->model->loadOntology( $ontAbbr, null, false );
+			$ontology = $this->model->getOntology();
+			if ( empty( $ontology ) ) {
+				throw new Exception ( "Invalid ontology." );
+			}
+			$this->model->loadRDF( $termIRI );
+			$rdf = $this->model->getRDF();
+			require VIEWPATH . 'Ontology/rdf.php';
+		}
+	}
+	
+	public function rdf( $params = array() ) {
+		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
+		$title = "Ontobee: $ontAbbr";
+		$this->loadModel( 'Ontology' );
+		$this->model->loadOntology( $ontAbbr, null, false );
+		$ontology = $this->model->getOntology();
+		if ( empty( $ontology ) ) {
+			throw new Exception ( "Invalid ontology." );
+		}
+		$this->model->loadRDF( $termIRI );
+		$rdf = $this->model->getRDF();
+		require VIEWPATH . 'Ontology/rdf.php';
+	}
+	
+	public function view( $params ) {
+		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
+		if ( !is_null( $termIRI ) ) {
+			$GLOBALS['show_query'] = false;
+			$xslt = true;
 		}
 		
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
 		if ( !is_null( $ontAbbr ) ) {
 			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
-			
+		
 			if ( is_null( $termIRI ) ) {
 				$this->model->loadOntology( $ontAbbr );
 				$ontology = $this->model->getOntology();
@@ -73,15 +96,16 @@ Class OntologyController extends Controller{
 				}
 				$ontologyList = $this->model->getAllOntology();
 				if ( in_array( $this->model->askTermType( $termIRI), array(
-					'Class',
-					'ObjectProperty',
-					'DatatypeProperty',
-					'AnnotationProperty'
+						'Class',
+						'ObjectProperty',
+						'DatatypeProperty',
+						'AnnotationProperty'
 				) ) ) {
 					$this->model->loadClass( $termIRI );
 					$term = $this->model->getClass();
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
+					file_put_contents(TMP.'test', $_SERVER);
 					require VIEWPATH . 'Ontology/class.php';
 				}
 					

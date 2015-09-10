@@ -51,6 +51,7 @@ $GLOBALS['ontology']['namespace'] = array(
 	'rdfs' => 'http://www.w3.org/2000/01/rdf-schema#',
 	'owl' => 'http://www.w3.org/2002/07/owl#',
 	'oboInOwl' => 'http://www.geneontology.org/formats/oboInOwl#',
+	'dc' => 'http://purl.org/dc/elements/1.1/',
 );
 
 $GLOBALS['ontology']['label']['priority'] = array(

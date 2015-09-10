@@ -33,7 +33,7 @@ if (!$this) {
 
 ?>
 
-<?php require TEMPLATE . 'header.default.dwt.php'; ?>
+<?php require TEMPLATE . 'header.sparql.php'; ?>
 
 <link href="<?php echo SITEURL; ?>public/css/sparql/default.css" rel="stylesheet" type="text/css">
 <link href="<?php echo SITEURL; ?>public/css/sparql/SyntaxHighlighter.css" rel="stylesheet" type="text/css">
