@@ -13,8 +13,7 @@ $(function() {
 	
 	$( "#keywords" ).autocomplete({
 		source: function( request, response ) {
-			console.log("autocomplete");
-			$.getJSON( "/search/?ontology=" + $( "#ontology" ).val(), {
+			$.getJSON( "/search?ontology=" + $( "#ontology" ).val(), {
 				term: extractLast( request.term )
 			}, response );
 		},								  

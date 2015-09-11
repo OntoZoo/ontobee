@@ -38,7 +38,7 @@ $GLOBALS['search']['property'] = array(
 		'http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym',
 		'http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym',
 );
-$GLOBALS['search']['endpoint'] ="http://localhost:8890/sparql";
+$GLOBALS['search']['endpoint'] ="http://sparql.hegroup.org/sparql";
 
 
 $GLOBALS['ontology'] = array();

@@ -65,7 +65,6 @@ class SearchController extends Controller  {
 		} else if ( !empty ( $params ) ) {
 			$keyword = array_shift( $params );
 		}
-		
 		if ( !is_null( $keyword ) ) {
 			if ( !is_null( $ontAbbr ) && $ontAbbr != '' ) {
 				$this->model->loadOntology( $ontAbbr, null, false );
