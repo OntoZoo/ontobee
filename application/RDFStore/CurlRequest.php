@@ -35,21 +35,20 @@ class CurlRequest {
 		if ( ENVIRONMENT == 'development' && $GLOBALS['show_query'] ) {
 			print_r( htmlspecialchars( $field['query'] ) );
 		}
-
 		$request = curl_init();
 		$fieldQuery = http_build_query( $field );
-
+		
 		curl_setopt( $request, CURLOPT_URL, $url );
 		curl_setopt( $request, CURLOPT_POST, count( $field ) );
 		curl_setopt( $request, CURLOPT_POSTFIELDS, $fieldQuery );
 		curl_setopt( $request, CURLOPT_RETURNTRANSFER, true );
-
+		
 		$result = curl_exec( $request );
-
+		
 		if ( $result === false ) {
 			wfDebugLog( 'OntoKiWi', sprintf( 'OKW\CurlRequest: CURL Error: %s', curl_error($request) ) );
 		}
-
+		
 		curl_close( $request );
 
 		return( trim( $result ) );

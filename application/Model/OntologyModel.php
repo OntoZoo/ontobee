@@ -256,8 +256,9 @@ class OntologyModel {
 			$this->loadOntology( $ontAbbr );
 			$ontologies[$this->ontology->ontology_abbrv] = $this->ontology->ontology_graph_url;
 		}
-	
+		
 		$rdf = new RDFStore( $GLOBALS['search']['endpoint'] );
+		
 		list( $match, $query ) = $rdf->search( $ontologies, $keyword );
 		$this->addQueries( $query );
 		return $match;
@@ -470,7 +471,14 @@ class OntologyModel {
 			$this->ontology->ontology_url
 		);
 		
+		$tmpFile = tmpfile();
+		fwrite( $tmpFile, $rdf );
+		$tmpMeta = stream_get_meta_data( $tmpFile );
+		$tmpName = $tmpMeta['uri'];
+		exec( 'java -cp "' . SCRIPTPATH . "library/java/*\" org.hegroup.rdfconvert.Reformat $tmpName" );
+		$rdf = file_get_contents( $tmpName );
 		$this->rdf = $rdf;
+		fclose( $tmpFile );
 	}
 	
 	private function queryRelated( $describe ) {

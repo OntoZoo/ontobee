@@ -63,7 +63,7 @@ class RDFStore {
 	
 	public function search( $graphs, $keywords, $limit = 30 ) {
 		$propertiesQuery = '<' . join( '>,<', $this->search['property'] ) . '>';
-	
+		
 		if ( sizeof( $graphs ) == 1 ) {
 			$graph = current( $graphs );
 			if ( preg_match_all( '/([a-zA-Z]+)[:_]([a-zA-Z]*)[:_]?(\d+)/', $keywords, $matches, PREG_SET_ORDER ) ) {
@@ -704,16 +704,16 @@ END;
 			$queries[] = $query;
 			
 			$results = $this->sparql->execute();
-		}
-		
-		if ( preg_match_all( 
-			'/(<rdf:Description[\s\S]*?(?=(rdf:Description>)))/',
-			$results['relatedType'] . $results['relatedLabel'],
-			$matches,
-			PREG_PATTERN_ORDER
-		) ) {
-			for ( $index = 0; $index < sizeof( $matches[0] ); $index++ ) {
-				$buffer[] = $matches[1][$index] . $matches[2][$index];
+			
+			if ( preg_match_all(
+					'/(<rdf:Description[\s\S]*?(?=(rdf:Description>)))/',
+					$results['relatedType'] . $results['relatedLabel'],
+					$matches,
+					PREG_PATTERN_ORDER
+			) ) {
+				for ( $index = 0; $index < sizeof( $matches[0] ); $index++ ) {
+					$buffer[] = $matches[1][$index] . $matches[2][$index];
+				}
 			}
 		}
 		
