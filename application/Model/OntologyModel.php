@@ -557,7 +557,7 @@ class OntologyModel {
 					list( $sibClassResult, $query ) = $this->rdf->selectSubClass(
 						$this->ontology->ontology_graph_url,
 						$supClass,
-						$limit = 1000
+						$limit = 10
 					);
 					$this->addQueries( $query );
 					$sibClassResult = OntologyModelHelper::parseClassResult( $sibClassResult );
@@ -575,7 +575,7 @@ class OntologyModel {
 				list( $subClassResult, $query ) = $this->rdf->selectSubClass(
 					$this->ontology->ontology_graph_url,
 					$termIRI,
-					$limit = 1000
+					$limit = 10
 				);
 				$this->addQueries( $query );
 				$subClassResult = OntologyModelHelper::parseClassResult( $subClassResult );
@@ -600,7 +600,7 @@ class OntologyModel {
 			list( $subClassResult, $query ) = $this->rdf->selectSubClass(
 				$this->ontology->ontology_graph_url,
 				$termIRI,
-				$limit = 1000
+				$limit = 10
 			);
 			$this->addQueries( $query );
 			$subClassResult = OntologyModelHelper::parseClassResult( $subClassResult );
@@ -621,7 +621,7 @@ class OntologyModel {
 					'hasChild' => $hasChild,
 			);
 		}
-	
+		
 		return $hierarchy;
 	}
 	
