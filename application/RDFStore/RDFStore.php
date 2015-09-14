@@ -367,7 +367,6 @@ END;
 			$describe = RDFQueryHelper::parseRDF( $json, $termIRI );
 			$describes[$termIRI] = $describe;
 		}
-		print_r($describes);
 		return array( $describes, $query );
 	}
 	
