@@ -339,27 +339,37 @@ class RDFQueryHelper {
 			
 			foreach ( $operations as $operation => $operationIRI ) {
 				if ( isset( $curResult[$operationIRI] ) ) {
-					$objEquivalent['restrictionType'] = $operation;
-					$objEquivalent['restrictionValue'] = array();
-					
 					$curNodeID = $curResult[$operationIRI][0]['value'];
 					$curNode = $rdfResult[$curNodeID];
-					
-					while ( $curNode[$lists['rest']][0]['value'] != $nilIRI ) {
+					if ( array_key_exists( $lists['first'], $curNode ) && array_key_exists( $lists['rest'], $curNode ) ) {
+						$objEquivalent['restrictionType'] = $operation;
+						$objEquivalent['restrictionValue'] = array();
+						
+						while ( $curNode[$lists['rest']][0]['value'] != $nilIRI ) {
+							if ( $curNode[$lists['first']][0]['type'] == 'uri' ) {
+								$objEquivalent['restrictionValue'][] = $curNode[$lists['first']][0]['value'];
+							} else {
+								$objEquivalent['restrictionValue'][] = self::parseRecursiveRDFNode( $rdfResult, $curNode[$lists['first']][0]['value'] );
+							}
+						
+							$curNodeID = $curNode[$lists['rest']][0]['value'];
+							$curNode = $rdfResult[$curNodeID];
+						}
+						
 						if ( $curNode[$lists['first']][0]['type'] == 'uri' ) {
-							$objEquivalent['restrictionValue'][] = $curNode[$lists['first']][0]['value'];
+							if ( sizeof( $objEquivalent['restrictionValue'] ) != 0 ) {
+								$objEquivalent['restrictionValue'][] = $curNode[$lists['first']][0]['value'];
+							} else {
+								$objEquivalent = $curNode[$lists['first']][0]['value'];
+							}
 						} else {
 							$objEquivalent['restrictionValue'][] = self::parseRecursiveRDFNode( $rdfResult, $curNode[$lists['first']][0]['value'] );
 						}
-					
-						$curNodeID = $curNode[$lists['rest']][0]['value'];
-						$curNode = $rdfResult[$curNodeID];
-					}
-					
-					if ( $curNode[$lists['first']][0]['type'] == 'uri' ) {
-						$objEquivalent['restrictionValue'][] = $curNode[$lists['first']][0]['value'];
+
 					} else {
-						$objEquivalent['restrictionValue'][] = self::parseRecursiveRDFNode( $rdfResult, $curNode[$lists['first']][0]['value'] );
+						$objEquivalent['restrictionType'] = $operation;
+						$objEquivalent['restrictionValue'] = array();
+						$objEquivalent['restrictionValue'][] = self::parseRecursiveRDFNode( $rdfResult, $curNodeID );
 					}
 				}
 			}

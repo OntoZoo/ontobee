@@ -244,9 +244,9 @@ END;
 			$types = $GLOBALS['ontology']['restriction']['type'];
 			$type = $data['restrictionType'];
 			$value = $data['restrictionValue'];
-			$property = self::makeManchesterLink( $rootURL, $value[0], $mapping );
 			
 			if ( in_array( $type, array_keys( $types ) ) ) {
+				$property = self::makeManchesterLink( $rootURL, $value[0], $mapping );
 				$manchester .= "$property $type ";
 				if ( !is_array( $value[1] ) ) {
 					$manchester .= self::makeManchesterLink( $rootURL, $value[1], $mapping );
@@ -254,20 +254,31 @@ END;
 					$manchester .= self::writeRecursiveManchester( $rootURL, $value[1], $mapping );
 				}
 			} else if ( in_array( $type, array_keys( $operations ) ) ) {
-				$manchester .= '(';
+				if ( sizeof( $value ) > 1 ) {
+					$manchester .= '(';
+				}
 				foreach ( $value as $index => $node ) {
-					if ( $index != 0 ) {
-						$manchester .= ' and ';
+					if ( $type == 'not' ) {
+						if ( $index != 0 ) {
+							$manchester .= " $type ";
+						} else {
+							$manchester .= "$type ";
+						}
+					} else {
+						if ( $index != 0 ) {
+							$manchester .= " $type ";
+						}
 					}
-			
 					if ( !is_array( $node ) ) {
 						$manchester .= self::makeManchesterLink( $rootURL, $node, $mapping );
 					} else {
-						$manchester .= '(' . self::writeRecursiveManchester( $rootURL, $value[1], $mapping ) . ')';
+						$manchester .= '(' . self::writeRecursiveManchester( $rootURL, $node, $mapping ) . ')';
 					}
 				}
 			
-				$manchester .= ')';
+			if ( sizeof( $value ) > 1 ) {
+					$manchester .= ')';
+				}
 			}
 		}
 		

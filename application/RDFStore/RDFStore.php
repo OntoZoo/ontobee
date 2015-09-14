@@ -289,16 +289,20 @@ END;
 		$types = RDFQueryHelper::parseEntity( $result, 's', 'o' );
 		$output = array();
 		foreach ( $types as $iri => $type ) {
-			foreach ( $type as $index => $typeIRI ) {
-				if ( array_key_exists( $typeIRI, $GLOBALS['alias']['type'] ) ) {
-					$type[$index] = $GLOBALS['alias']['type'][$typeIRI];
-				}
-			}
-			$type = array_unique( $type );
-			if ( sizeof( $type ) == 1 ) {
-				$output[$iri] = array_shift( $type );
+			if ( in_array( $GLOBALS['ontology']['type']['NamedIndividual'], $type ) ) {
+				$output[$iri] = $GLOBALS['ontology']['type']['NamedIndividual'];
 			} else {
-				throw new Exception( "Term has more than one type definition" );
+				foreach ( $type as $index => $typeIRI ) {
+					if ( array_key_exists( $typeIRI, $GLOBALS['alias']['type'] ) ) {
+						$type[$index] = $GLOBALS['alias']['type'][$typeIRI];
+					}
+				}
+				$type = array_unique( $type );
+				if ( sizeof( $type ) == 1 ) {
+					$output[$iri] = array_shift( $type );
+				} else {
+					throw new Exception( "Term has more than one type definition" );
+				}
 			}
 		}
 		return array( $output, $query );
@@ -363,6 +367,7 @@ END;
 			$describe = RDFQueryHelper::parseRDF( $json, $termIRI );
 			$describes[$termIRI] = $describe;
 		}
+		print_r($describes);
 		return array( $describes, $query );
 	}
 	

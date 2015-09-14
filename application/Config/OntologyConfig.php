@@ -110,6 +110,7 @@ $GLOBALS['ontology']['type'] = array(
 	'ObjectProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
 	'DatatypeProperty' => 'http://www.w3.org/2002/07/owl#DatatypeProperty',
 	'AnnotationProperty' => 'http://www.w3.org/2002/07/owl#AnnotationProperty',
+	'NamedIndividual' => 'http://www.w3.org/2002/07/owl#NamedIndividual',
 );
 
 

@@ -32,6 +32,8 @@ if ( !$this ) {
 }
 
 if ( isset( $xslt ) && $xslt ) {
+	header("Content-type: text/xml");
+	
 	echo
 <<<END
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
