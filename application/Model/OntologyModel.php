@@ -403,7 +403,6 @@ class OntologyModel {
 		$nodes = array();
 		$usage = array();
 		foreach ( $describeResult['usage']['term'] as $use ) {
-			if ( $use['o'] != 'nodeID://b339950503' ) continue;
 			$nodes[$use['o']] = $use['ref'];
 			$usage[$use['ref']] = array(
 					'label' => $use['label'],
