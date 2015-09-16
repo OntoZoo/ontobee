@@ -110,8 +110,39 @@ END;
 			}
 			
 			
+			# Picture annotation
+			$picture = array();
+			foreach ( $annotations as $iri => $annotation ) {
+				$label = $annotation['label'];
+				$values = $annotation['value'];
+				# depicted_by
+				if ( $iri == '' || $label == 'depicted_by') {
+					$text = '';
+					foreach ( $values as $value) {
+						$text .=
+						<<<END
+<li><span class="label">$label:
+</span><br/>
+END;
+						foreach ( Helper::convertUTFToUnicode( $value, true ) as $item ) {
+							$text .=
+							<<<END
+<span class="value" style="margin-right:10px"><a href="$item"><img src="$item" height="150" /></img></a></span>
+END;
+						}
+						$text .=
+						<<<END
+</li>
+END;
+					}
+					$picture[$label] = $text;
+					unset( $annotations[$iri] );
+					continue;
+				}
+			}
+			
 			$buffer = array();
-			# Special annotation & Rest
+			# Special annotation & Other Text
 			foreach ( $annotations as $iri => $annotation ) {
 				$label = $annotation['label'];
 				$values = $annotation['value'];
@@ -143,6 +174,7 @@ END;
 						}
 					}
 					$buffer[$label] = $text;
+					unset( $annotations[$iri] );
 					continue;
 				}
 				
@@ -177,6 +209,7 @@ END;
 END;
 					}
 					$buffer[$label] = $text;
+					unset( $annotations[$iri] );
 					continue;
 				}
 				
@@ -211,30 +244,7 @@ END;
 END;
 					}
 					$buffer[$label] = $text;
-					continue;
-				}
-				
-				# depicted_by
-				if ( $iri == '' || $label == 'depicted_by') {
-					$text = '';
-					foreach ( $values as $value) {
-						$text .= 
-<<<END
-<li><span class="label">$label:
-</span><br/>
-END;
-						foreach ( Helper::convertUTFToUnicode( $value, true ) as $item ) {
-							$text .=
-<<<END
-<span class="value" style=\"margin-right:10px\"><a href=\"$item\"><img src=\"$item\" height=\"150\"/></a></span>
-END;
-						}
-						$text .=
-<<<END
-</li>
-END;
-					}
-					$buffer[$label] = $text;
+					unset( $annotations[$iri] );
 					continue;
 				}
 				
@@ -265,14 +275,22 @@ END;
 <li><span class="label">$label:
 </span> <span class="value">$text</span></li>
 END;
+					unset( $annotations[$iri] );
 					continue;
 				}
 			}
+			
+			# Compute textual annotation and tidy HTML
 			ksort( $buffer );
 			foreach ( $buffer as $label => $values ) {
 				$html .= $values;
 			}
 			
+			# Compute textual annotation and tidy HTML
+			ksort( $picture );
+			foreach ( $picture as $label => $values ) {
+				$html .= $values;
+			}
 			
 			$html .=
 <<<END
@@ -280,7 +298,7 @@ END;
 </div>
 END;
 			
-			$html = Helper::tidyHTML( $html );
+			$html = Helper::tidyHTML( $html, true );
 		} else {
 			$html = '';
 		}

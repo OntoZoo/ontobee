@@ -31,7 +31,7 @@ namespace View;
 
 class Helper {
 
-	public static function tidyHTML( $html ) {
+	public static function tidyHTML( $html, $outputXML = false ) {
 		if ( extension_loaded( 'tidy' ) ) {
 			$tidy = new \tidy();
 			$cleanHTML = $tidy->repairString( $html, array(
@@ -39,6 +39,7 @@ class Helper {
 					'indent-spaces' => 2,
 					'show-body-only' => true,
 					'merge-divs' => false,
+					'output-xml' => $outputXML
 			) );
 			return $cleanHTML;
 		} else {
