@@ -54,24 +54,36 @@ class RDFQueryHelper {
 		return $json['results']['bindings'][0][$var]['value'];
 	}
 	
-	public static function parseSearchResult( $keywords, $searchResult, $graphs, $deprecated = array() ) {
+	public static function parseSearchResult( $keywords, $searchResult, $graphs ) {
 		$match = array();
-		$terms = array();
-		$count = 0;
+		
+		# Ontology Filter
+		if ( sizeof( $graphs ) == 1 ) {
+			$results = $searchResult;
+		} else {
+			$results = array();
+			foreach ( $searchResult as $result ) {
+				if ( array_key_exists( 'g', $result ) ) {
+					if ( in_array( $result['g'], $graphs ) ) {
+						$results[] = $result;
+					}
+				}
+			}
+		}
 		
 		# IRI Match
 		$results1 = array();
-		foreach ( $searchResult as $result ) {
+		foreach ( $results as $result ) {
 			if ( preg_match_all( '/([a-zA-Z]+)[:_]([a-zA-Z]*)[:_]?(\d+)/', $keywords, $matches, PREG_SET_ORDER ) ) {
 				if ( $matches[0][2] == '' ) {
 					$searchTermURL='http://purl.obolibrary.org/obo/' . $matches[0][1] . '_' . $matches[0][3];
 				} else {
 					$searchTermURL='http://purl.obolibrary.org/obo/' . $matches[0][2] . '_' . $matches[0][3];
 				}
-				$term = array_pop(preg_split( '/[\/#]/', $result['s'] ) );
+				$tokens = preg_split( '/[\/#]/', $result['s'] );
+				$term = array_pop( $tokens );
 				
 				if ( $searchTermURL == $result['s'] ) {
-					$count++;
 					if ( array_key_exists( 'g', $result ) ) {
 						$graphAbbr = array_search( $result['g'], $graphs );
 					} else {
@@ -84,85 +96,23 @@ class RDFQueryHelper {
 							'iri' => $result['s'],
 							'value' => $result['o'],
 							'label' => "{$result['o']} ($graphAbbr:$term)" ,
-							'deprecate' => in_array( $result['s'], $deprecated ),
+							'deprecate' => array_key_exists( 'd', $result ),
 					);
-					$terms[$result['o']] = 1;
+				} else {
+					$results1[] = $result;
 				}
+			} else {
+				$results1[] = $result;
 			}
 		}
 		
 		# Exact Match
 		$results2 = array();
-		foreach ( $searchResult as $result) {
+		foreach ( $results1 as $result) {
 			if ( strtolower( $result['o'] ) == strtolower( $keywords ) ) {
-				$term = array_pop(preg_split( '/[\/#]/', $result['s'] ) );
-	
-				if ( !isset( $terms[$result['o']] ) ) {
-					$count++;
-					if ( array_key_exists( 'g', $result ) ) {
-						$graphAbbr = array_search( $result['g'], $graphs );
-					} else {
-						$graphAbbr = key( $graphs );
-					}
-					$match[] = array(
-							'id' => $graphAbbr . ':::' . $result['s'],
-							'ontology' => $graphAbbr,
-							'iri' => $result['s'],
-							'value' => $result['o'],
-							'label' => "{$result['o']} ($graphAbbr:$term)" ,
-							'deprecate' => in_array( $result['s'], $deprecated ),
-					);
-					$terms[$result['o']] = 1;
-				}
-			}
-			else {
-				$results2[] = $result;
-			}
-		}
-		
-		# Partial Match
-		$results3=array();
-		foreach ( $searchResult as $result ) {
-			if ( $count>100 ) {
-				break;
-			}
-			if ( strpos( strtolower( $result['o'] ), strtolower( $keywords ) ) === 0 ) {
 				$tokens = preg_split( '/[\/#]/', $result['s'] );
 				$term = array_pop( $tokens );
 	
-				if ( !isset( $terms[$result['o']] ) ) {
-					$count++;
-					if ( array_key_exists( 'g', $result ) ) {
-						$graphAbbr = array_search( $result['g'], $graphs );
-					} else {
-						$graphAbbr = key( $graphs );
-					}
-					$match[] = array(
-							'id' => $graphAbbr . ':::' . $result['s'],
-							'ontology' => $graphAbbr,
-							'iri' => $result['s'],
-							'value' => $result['o'],
-							'label' => "{$result['o']} ($graphAbbr:$term)" ,
-							'deprecate' => in_array( $result['s'], $deprecated ),
-					);
-					$terms[$result['o']] = 1;
-				}
-			}
-			else {
-				$results3[]=$result;
-			}
-		}
-		
-		# Remaining Match (Regular Expression Match return by SPARQL)
-		foreach ( $searchResult as $result ) {
-			if ( $count>100 ) {
-				break;
-			}
-			$tokens = preg_split( '/[\/#]/', $result['s'] );
-			$term = array_pop( $tokens );
-	
-			if ( !isset( $terms[$result['o']] ) ) {
-				$count++;
 				if ( array_key_exists( 'g', $result ) ) {
 					$graphAbbr = array_search( $result['g'], $graphs );
 				} else {
@@ -174,10 +124,56 @@ class RDFQueryHelper {
 						'iri' => $result['s'],
 						'value' => $result['o'],
 						'label' => "{$result['o']} ($graphAbbr:$term)" ,
-						'deprecate' => in_array( $result['s'], $deprecated ),
+						'deprecate' =>  array_key_exists( 'd', $result ),
 				);
-				$terms[$result['o']] = 1;
+			} else {
+				$results2[] = $result;
 			}
+		}
+		
+		# Partial Match
+		$results3=array();
+		foreach ( $results2 as $result ) {
+			if ( strpos( strtolower( $result['o'] ), strtolower( $keywords ) ) === 0 ) {
+				$tokens = preg_split( '/[\/#]/', $result['s'] );
+				$term = array_pop( $tokens );
+	
+				if ( array_key_exists( 'g', $result ) ) {
+					$graphAbbr = array_search( $result['g'], $graphs );
+				} else {
+					$graphAbbr = key( $graphs );
+				}
+				$match[] = array(
+						'id' => $graphAbbr . ':::' . $result['s'],
+						'ontology' => $graphAbbr,
+						'iri' => $result['s'],
+						'value' => $result['o'],
+						'label' => "{$result['o']} ($graphAbbr:$term)" ,
+						'deprecate' =>  array_key_exists( 'd', $result ),
+				);
+			} else {
+				$results3[]=$result;
+			}
+		}
+		
+		# Remaining Match (Regular Expression Match return by SPARQL)
+		foreach ( $results3 as $result ) {
+			$tokens = preg_split( '/[\/#]/', $result['s'] );
+			$term = array_pop( $tokens );
+	
+			if ( array_key_exists( 'g', $result ) ) {
+				$graphAbbr = array_search( $result['g'], $graphs );
+			} else {
+				$graphAbbr = key( $graphs );
+			}
+			$match[] = array(
+					'id' => $graphAbbr . ':::' . $result['s'],
+					'ontology' => $graphAbbr,
+					'iri' => $result['s'],
+					'value' => $result['o'],
+					'label' => "{$result['o']} ($graphAbbr:$term)" ,
+					'deprecate' =>  array_key_exists( 'd', $result ),
+			);
 		}
 		
 		return $match;

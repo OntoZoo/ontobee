@@ -76,7 +76,11 @@ class SearchController extends Controller  {
 				$ontologies = $this->model->getAllOntology();
 			}
 			
-			$json = $this->model->searchKeyword( $keyword, $ontAbbr );
+			if ( !isset( $submit ) ) {
+				$json = $this->model->searchKeyword( $keyword, $ontAbbr, 50 );
+			} else {
+				$json = $this->model->searchKeyword( $keyword, $ontAbbr );
+			}
 			
 			$this->writeExcel( $json );
 			

@@ -61,7 +61,7 @@ class RDFStore {
 		}
 	}
 	
-	public function search( $graphs, $keywords, $limit = 30 ) {
+	public function search( $graphs, $keywords, $limit ) {
 		$propertiesQuery = '<' . join( '>,<', $this->search['property'] ) . '>';
 		
 		if ( sizeof( $graphs ) == 1 ) {
@@ -79,6 +79,7 @@ SELECT * FROM <$graph> WHERE{
 	?s ?p ?o .
 	FILTER ( ?p in ( $propertiesQuery ) ) .
 	FILTER ( ?s in ( <$searchTermURL> ) ) .
+	OPTIONAL { ?s <http://www.w3.org/2002/07/owl#deprecated> ?d }
 }
 LIMIT $limit
 END;
@@ -90,12 +91,12 @@ SELECT * FROM <$graph> WHERE{
 	FILTER ( ?p in ( $propertiesQuery ) ) .
 	FILTER ( isIRI( ?s ) ) .
 	FILTER ( REGEX( STR( ?o ), "$keywords", "i" ) ) .
+	OPTIONAL { ?s <http://www.w3.org/2002/07/owl#deprecated> ?d }
 }
 LIMIT $limit
 END;
 			}
 		} else {
-			$ontologiesQuery = '<' . join( '>,<', $graphs ) . '>';
 			if ( preg_match_all( '/([a-zA-Z]+)[:_]([a-zA-Z]*)[:_]?(\d+)/', $keywords, $matches, PREG_SET_ORDER ) ) {
 				if ( $matches[0][2] == '' ) {
 					$searchTermURL='http://purl.obolibrary.org/obo/' . $matches[0][1] . '_' . $matches[0][3];
@@ -110,8 +111,8 @@ SELECT * WHERE {
 		?s ?p ?o .
 		FILTER ( ?p in ( $propertiesQuery ) ) .
 		FILTER ( ?s in ( <$searchTermURL> ) ) .
+		OPTIONAL { ?s <http://www.w3.org/2002/07/owl#deprecated> ?d }
 	} .
-	FILTER ( ?g in ( $ontologiesQuery ) )
 }
 LIMIT $limit
 END;
@@ -127,8 +128,8 @@ SELECT * WHERE {
 		FILTER ( ?p in ( $propertiesQuery ) ) .
 		FILTER ( isIRI( ?s ) ) .
 		FILTER ( REGEX( STR( ?o ), "$keywords", "i" ) ) .
+		OPTIONAL { ?s <http://www.w3.org/2002/07/owl#deprecated> ?d }
 	}
-	FILTER ( ?g in ( $ontologiesQuery ) )
 }
 LIMIT $limit
 END;
@@ -142,8 +143,8 @@ SELECT * WHERE {
 		FILTER ( isIRI( ?s ) ) .
 		?o bif:contains "'$keypattern*'" .
 		FILTER ( REGEX( STR( ?o ), "$keywords", "i" ) ) .
+		OPTIONAL { ?s <http://www.w3.org/2002/07/owl#deprecated> ?d }
 	}
-	FILTER ( ?g in ( $ontologiesQuery ) )
 }
 LIMIT $limit
 END;
@@ -155,28 +156,7 @@ END;
 		
 		$results = RDFQueryHelper::parseSPARQLResult( $json );
 		
-		$terms = array();
-		if ( !empty( $results ) ) {
-			foreach ( $results as $result ) {
-				$terms[] = $result['s'];
-			}
-		}
-		
-		$termQuery = '<' . join( '>,<', $terms ) . '>';
-		$query =
-<<<END
-SELECT DISTINCT ?s WHERE {
-	GRAPH ?g {
-		?s <http://www.w3.org/2002/07/owl#deprecated> ?o .
-		FILTER ( ?s in ( $termQuery ) )
-	}
-}
-END;
-		$json = SPARQLQuery::queue( $this->endpoint, $query );
-		$deprecate = RDFQueryHelper::parseEntity( RDFQueryHelper::parseSPARQLResult( $json ), 's' );
-		
-		$match = RDFQueryHelper::parseSearchResult( $keywords, $results, $graphs, $deprecate );
-		
+		$match = RDFQueryHelper::parseSearchResult( $keywords, $results, $graphs );
 		return array( $match, $query );
 	}
 	

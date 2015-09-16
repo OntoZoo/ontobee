@@ -39,18 +39,22 @@ if (!$this) {
 <form action="<?php echo SITEURL; ?>search" method="get" id="keyword-search">
 
 <?php
-
 if ( isset( $ontologies ) && empty( $ontology ) ) {
 	echo '<select name="ontology" id="ontology"><option value="" selected>Please select an ontology (optional)</option>';
 END;
 	foreach ( $ontologies as $ontology ) {
-		echo '<option value="' .
-			$ontology->ontology_abbrv .
-			'">' .
-			$ontology->ontology_fullname .
-			' (' .
-			$ontology->ontology_abbrv .
-			')</option>';
+		print_r($keyOntology);
+		if ( isset( $keyOntology ) && $ontology->ontology_abbrv == $keyOntology->ontology_abbrv ) {
+			echo
+<<<END
+<option value="$ontology->ontology_abbrv" selected>$ontology->ontology_fullname ($ontology->ontology_abbrv)</option>
+END;
+		} else {
+			echo
+			<<<END
+<option value="$ontology->ontology_abbrv">$ontology->ontology_fullname ($ontology->ontology_abbrv)</option>
+END;
+		}
 	}
 	echo '</select>';
 } else {
@@ -63,7 +67,20 @@ END;
 	<strong>
 	<label for="keywords">Keywords: </label>
 	</strong>
+<?php 
+if ( isset( $keyword ) && !is_null( $keyword) ) {
+	echo 
+<<<END
+<input id="keywords" name="keywords" size="30" value="$keyword"/>
+END;
+} else {
+	echo
+<<<END
 <input id="keywords" name="keywords" size="30" />
+END;
+}
+?>
+
     <input type="submit" name="submit" value="Search terms" />
 </div>
 </form>
