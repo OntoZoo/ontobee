@@ -60,7 +60,7 @@ if ( empty( $json ) ) {
 <ol>
 
 <?php
-if ( !empty( $ontology ) && !empty( $json ) ) {
+if ( !empty( $keyOntology ) && !empty( $json ) ) {
 	foreach ( $json as $index => $match ) {
 		$termIRI = View\Helper::encodeURL( $match['iri'] );
 		if ( $match['ontology'] == $ontology->ontology_abbrv && !$match['deprecate'] ) {
@@ -68,14 +68,14 @@ if ( !empty( $ontology ) && !empty( $json ) ) {
 '<li>' .
 preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
 "<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\?o={$match['ontology']}&amp;iri=$termIRI\">{$match['iri']}</a></li>";
+			unset( $json[$index] );
 		}
-		unset( $json[$index] );
 	}
 }
 ?>
 
 <?php 
-if ( !empty( $ontology ) && !empty( $json ) ) {
+if ( !empty( $json ) ) {
 	foreach ( $json as $index => $match ) {
 		$termIRI = View\Helper::encodeURL( $match['iri'] );
 		if ( !$match['deprecate'] ) {
@@ -83,14 +83,14 @@ if ( !empty( $ontology ) && !empty( $json ) ) {
 			'<li>' .
 			preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
 			"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\?o={$match['ontology']}&amp;iri=$termIRI\">{$match['iri']}</a></li>";
+			unset( $json[$index] );
 		}
-		unset( $json[$index] );
 	}
 }
 ?>
 
 <?php 
-if ( !empty( $ontology ) && !empty( $json ) ) {
+if ( !empty( $json ) ) {
 	echo 
 <<<END
 <div style="margin-top:10px"><a href="javascript:switch_deprecate();" id="href_switch_deprecate">Show Deprecated Terms</a></div>
