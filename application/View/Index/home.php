@@ -35,6 +35,8 @@ if (!$this) {
 
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
 
+<h3 class="head3_darkred">Welcome to Ontobee!</h3>
+
 <p><strong>Ontobee: </strong>A <a href="http://www.w3.org/DesignIssues/LinkedData.html">linked data</a> server designed for ontologies. Ontobee is aimed to  facilitate ontology data sharing, visualization, query, integration, and analysis. Ontobee dynamically <a href="http://www.w3.org/2001/tag/doc/httpRange-14/2007-05-31/HttpRange-14">dereferences</a> and presents individual ontology term URIs to (i) <em>HTML web pages</em> for user-friendly web browsing and navigation, and to  (ii) <em>RDF source code </em>for <a href="http://en.wikipedia.org/wiki/Semantic_Web">Semantic Web</a> applications. Ontobee is the default linked data server for most <a href="http://obofoundry.org/">OBO Foundry  library ontologies</a>. Ontobee has also been used for many non-OBO ontologies. </p>
 
 <?php require TEMPLATE . 'search.keyword.php'; ?>
