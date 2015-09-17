@@ -33,24 +33,21 @@ if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-$termURL = SITEURL . "ontology/$ontAbbr?";
+$termURL = SITEURL . "ontology/$ontAbbr?iri=";
 $pageURL = SITEURL . "{$GLOBALS['controller']}/term/$ontAbbr?";
 $letterURL = SITEURL ."{$GLOBALS['controller']}/term/$ontAbbr?";
 
 if ( isset( $termIRI ) && !is_null( $termIRI ) && $termIRI != '' ) {
-	$termURL .= '&iri=' . Helper::encodeURL( $termIRI );
 	$pageURL .= '&iri=' . Helper::encodeURL( $termIRI );
 	$letterURL .= '&iri=' . Helper::encodeURL( $termIRI );
 }
 
 if ( isset( $prefix ) && !is_null( $prefix ) && $prefix != '' ) {
-	$termURL .= '&prefix=' . $prefix;
 	$pageURL .= '&prefix=' . $prefix;
 	$letterURL .= '&prefix=' . $prefix;
 }
 
 if ( isset( $listMaxTerms ) && !is_null( $listMaxTerms ) && $listMaxTerms != '' ) {
-	$termURL .= '&max=' . $listMaxTerms;
 	$pageURL .= '&max=' . $listMaxTerms;
 	$letterURL .= '&max=' . $listMaxTerms;
 }

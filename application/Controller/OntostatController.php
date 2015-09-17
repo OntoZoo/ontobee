@@ -34,6 +34,7 @@ use Controller\Controller;
 class OntostatController extends Controller {
 	public function index( $params = array() ) {
 		$GLOBALS['show_query'] = false;
+		
 		$ontAbbr = null;
 		if ( array_key_exists( 'ontology' , $params ) ) {
 			$ontAbbr = $params['ontology'];
