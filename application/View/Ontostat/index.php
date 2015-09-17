@@ -21,7 +21,7 @@
  */
 
 /**
- * @file ontology.php
+ * @file index.php
  * @author Edison Ong
  * @since Sep 8, 2015
  * @comment 
@@ -33,13 +33,13 @@ if ( !$this ) {
 	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
-$rootURL = SITEURL . 'statistic/';
+$rootURL = SITEURL . 'ontostat/';
 
 ?>
 
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
 
-<?php require TEMPLATE . 'Statistic/title.php'; ?>
+<?php require TEMPLATE . 'Ontostat/title.php'; ?>
 
 <?php
 $html = '';
@@ -68,7 +68,7 @@ $html .=
 END;
 
 $index = 0;
-foreach ( $stats as $prefix => $stat ) {
+foreach ( $stats as $graph => $stat ) {
 	$total = 0;
 	$index += 1;
 	if ( $index % 2 == 0 ) {
@@ -80,33 +80,24 @@ foreach ( $stats as $prefix => $stat ) {
 <<<END
 <tr align="center" height="25" bgcolor="$bgcolor">
 <td><strong>$index</strong></td>
-<td>$prefix</a></td>
+<td><a href="$rootURL{$ontologies[$graph]->ontology_abbrv}">
+{$ontologies[$graph]->ontology_abbrv}</a></td>
 END;
 	
 	foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
-		if ( !isset( $stat[$type] ) ) {
-			$stat[$type] = 0;
-		}
 		$html .=
 <<<END
-<td>
-<a href="{$rootURL}term/$ontAbbr?prefix=$prefix&iri={$GLOBALS['call_function']( Helper::encodeURL( $typeIRI ) )}">
-{$GLOBALS['call_function']( number_format( $stat[$type] ) )}</a>
-</td>
+<td>{$GLOBALS['call_function']( number_format( $stat[$type] ) )}</td>
 END;
 		$total += $stat[$type];
 		$totals[$type] += $stat[$type];
 	}
 	$html .=
 <<<END
-<td>
-<a href="{$rootURL}term/$ontAbbr?prefix=$prefix">
-{$GLOBALS['call_function']( number_format( $total ) )}</a>
-</td>
+<td>{$GLOBALS['call_function']( number_format( $total ) )}</td>
 </tr>
 END;
 }
-
 
 if ( $index % 2 == 0 ) {
 	$bgcolor = '#CCECFB';
@@ -124,19 +115,13 @@ END;
 foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
 	$html .=
 <<<END
-<td>
-<a href="{$rootURL}term/$ontAbbr?iri={$GLOBALS['call_function']( Helper::encodeURL( $typeIRI ) )}">
-<strong>{$GLOBALS['call_function']( number_format( $totals[$type] ) )}</strong></a>
-</td>
+<td><strong>{$GLOBALS['call_function']( number_format( $totals[$type] ) )}</strong></td>
 END;
 }
 
 $html .=
 <<<END
-<td>
-<a href="{$rootURL}term/$ontAbbr">
-<strong>{$GLOBALS['call_function']( number_format( array_sum( $totals ) ) )}</strong></a>
-</td>
+<td><strong>{$GLOBALS['call_function']( number_format( array_sum( $totals ) ) )}</strong></td>
 </tr>
 </table>
 END;
@@ -149,7 +134,3 @@ echo Helper::tidyHTML( $html );
 <p>&nbsp;</p>
 
 <?php require TEMPLATE . 'footer.default.dwt.php'; ?>
-
-
-
-?>

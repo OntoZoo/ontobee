@@ -31,8 +31,9 @@ namespace Controller;
 
 use Controller\Controller;
 
-class StatisticController extends Controller {
+class OntostatController extends Controller {
 	public function index( $params = array() ) {
+		$GLOBALS['show_query'] = false;
 		$ontAbbr = null;
 		if ( array_key_exists( 'ontology' , $params ) ) {
 			$ontAbbr = $params['ontology'];
@@ -51,12 +52,12 @@ class StatisticController extends Controller {
 				$this->model->loadOntology( $ontology->ontology_abbrv, $ontology->end_point, false );
 				$stats[$ontology->ontology_graph_url] = $this->model->countAllOntologyType();
 			}
-			require VIEWPATH . 'Statistic/index.php';
+			require VIEWPATH . 'Ontostat/index.php';
 		} else {
 			$this->model->loadOntology( $ontAbbr, null, false );
 			$ontology = $this->model->getOntology();
 			$stats = $this->model->countOntologyType();
-			require VIEWPATH . 'Statistic/ontology.php';
+			require VIEWPATH . 'Ontostat/ontology.php';
 		}
 		
 	}

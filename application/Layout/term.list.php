@@ -33,42 +33,34 @@ if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-if ( !isset( $prefix) || is_null( $prefix ) || $prefix == '' ) {
-	$termURL = SITEURL . "ontology/$ontAbbr?iri=";
-	
-	$pageURL =
-		SITEURL .
-		"{$GLOBALS['controller']}/term/$ontAbbr?iri=" .
-		urlencode( $termIRI ) .
-		"&letter=" .
-		urlencode( $letter ) .
-		"&page="
-	;
-	$letterURL =
-		SITEURL .
-		"{$GLOBALS['controller']}/term/$ontAbbr?iri=" .
-		urlencode( $termIRI ) .
-		"&letter="
-	;
-} else {
-	$termURL = SITEURL . "ontology/$ontAbbr?iri=";
-	
-	$pageURL =
-		SITEURL .
-		"{$GLOBALS['controller']}/term/$ontAbbr?prefix=$prefix&iri=" .
-		urlencode( $termIRI ) .
-		"&letter=" .
-		urlencode( $letter ) .
-		"&page="
-	;
-	$letterURL =
-		SITEURL .
-		"{$GLOBALS['controller']}/term/$ontAbbr?prefix=$prefix&iri=" .
-		urlencode( $termIRI ) .
-		"&letter="
-	;
+$termURL = SITEURL . "ontology/$ontAbbr?";
+$pageURL = SITEURL . "{$GLOBALS['controller']}/term/$ontAbbr?";
+$letterURL = SITEURL ."{$GLOBALS['controller']}/term/$ontAbbr?";
+
+if ( isset( $termIRI ) && !is_null( $termIRI ) && $termIRI != '' ) {
+	$termURL .= '&iri=' . Helper::encodeURL( $termIRI );
+	$pageURL .= '&iri=' . Helper::encodeURL( $termIRI );
+	$letterURL .= '&iri=' . Helper::encodeURL( $termIRI );
 }
 
+if ( isset( $prefix ) && !is_null( $prefix ) && $prefix != '' ) {
+	$termURL .= '&prefix=' . $prefix;
+	$pageURL .= '&prefix=' . $prefix;
+	$letterURL .= '&prefix=' . $prefix;
+}
+
+if ( isset( $listMaxTerms ) && !is_null( $listMaxTerms ) && $listMaxTerms != '' ) {
+	$termURL .= '&max=' . $listMaxTerms;
+	$pageURL .= '&max=' . $listMaxTerms;
+	$letterURL .= '&max=' . $listMaxTerms;
+}
+
+if ( isset( $letter ) && !is_null( $letter ) && $letter != '' ) {
+	$pageURL .= '&letter=' . urldecode( $letter );
+}
+
+$pageURL .= '&page=';
+$letterURL .= '&letter=';
 
 
 $html =

@@ -2,7 +2,6 @@
  * 
  */
 
-
 var moretext = "Read More";
 var lesstext = "Read Less";
 $( ".more-link" ).click( function() {
@@ -18,7 +17,8 @@ $( ".more-link" ).click( function() {
 	return false;
 } );
 
-$( "#list-max" ).change( function() {
+$(document.body).on( 'change', '#list-max', function() {
+	console.log('test');
 	var url = window.location.href.replace( /\&max\=[0-9]+/g, "" );
 	url.replace( /\&page\=[0-9]+/g, "" );
 	window.location = url + "&max=" + $( this ).val();

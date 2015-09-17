@@ -209,7 +209,7 @@ class OntologyModel {
 			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
 		}
 		$termResult = array();
-		if ( !is_null( $termIRI ) ) {
+		if ( !is_null( $termIRI ) && $termIRI != '' ) {
 			if ( !in_array( $termIRI, $GLOBALS['ontology']['type'] ) ) {
 				list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
 				$this->addQueries( $query );
