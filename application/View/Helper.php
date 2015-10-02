@@ -39,9 +39,14 @@ class Helper {
 					'indent-spaces' => 2,
 					'show-body-only' => true,
 					'merge-divs' => false,
-					'output-xml' => $outputXML
+					'output-xml' => $outputXML,
 			) );
-			return $cleanHTML;
+			if ( $outputXML ) {
+				preg_match( '/<body>(.*)<\/body>/s', $cleanHTML, $match );
+				return $match[1];
+			} else {
+				return $cleanHTML;
+			}
 		} else {
 			return $html;
 		}

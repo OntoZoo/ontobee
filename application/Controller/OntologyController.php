@@ -99,13 +99,13 @@ Class OntologyController extends Controller{
 						'Class',
 						'ObjectProperty',
 						'DatatypeProperty',
-						'AnnotationProperty'
+						'AnnotationProperty',
+						'NamedIndividual',
 				) ) ) {
 					$this->model->loadClass( $termIRI );
 					$term = $this->model->getClass();
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
-					file_put_contents(TMP.'test', $_SERVER);
 					require VIEWPATH . 'Ontology/class.php';
 				}
 					
