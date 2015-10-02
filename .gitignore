@@ -4,5 +4,6 @@
 composer.phar
 composer.lock
 vendor/
+ontology/
 
 application/Config/DB.php
