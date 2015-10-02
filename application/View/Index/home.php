@@ -82,7 +82,7 @@ END;
 </table>
 
 <p><strong>Please cite the following reference for Ontobee: </strong></p>
-<p>Xiang Z, Mungall C, Ruttenberg A, He Y. <a href="docs/Ontobee_ICBO-2011_Proceeding.pdf">Ontobee: A Linked Data Server and Browser for Ontology Terms</a>. <em>Proceedings of the 2nd International Conference on Biomedical Ontologies (ICBO)</em>, July 28-30, 2011, Buffalo, NY, USA. Pages 279-281. URL: <a href="http://ceur-ws.org/Vol-833/paper48.pdf">http://ceur-ws.org/Vol-833/paper48.pdf</a>. </p>
+<p>Xiang Z, Mungall C, Ruttenberg A, He Y. <a href="doc/Ontobee_ICBO-2011_Proceeding.pdf">Ontobee: A Linked Data Server and Browser for Ontology Terms</a>. <em>Proceedings of the 2nd International Conference on Biomedical Ontologies (ICBO)</em>, July 28-30, 2011, Buffalo, NY, USA. Pages 279-281. URL: <a href="http://ceur-ws.org/Vol-833/paper48.pdf">http://ceur-ws.org/Vol-833/paper48.pdf</a>. </p>
 <p>&nbsp;</p>
 
 <?php require TEMPLATE . 'footer.default.dwt.php'; ?>

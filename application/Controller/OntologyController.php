@@ -100,7 +100,7 @@ Class OntologyController extends Controller{
 						'ObjectProperty',
 						'DatatypeProperty',
 						'AnnotationProperty',
-						'NamedIndividual',
+						'Instance',
 				) ) ) {
 					$this->model->loadClass( $termIRI );
 					$term = $this->model->getClass();

@@ -457,6 +457,15 @@ class OntologyModel {
 		}
 		$class->annotation = $annotations;
 		
+		if ( $typeIRI == $GLOBALS['ontology']['type']['Class'] ) {
+			list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $termIRI );
+			$this->addQueries( $query );
+			$instances = array();
+			foreach ( $instanceResult as $instanceIRI => $instanceLabels ) {
+				$instances[$instanceIRI] = array_shift( $instanceLabels );
+			}
+			$class->instance = $instances;
+		}
 		
 		$this->class = $class;
 	}

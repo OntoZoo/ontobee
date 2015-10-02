@@ -247,6 +247,9 @@ END;
 			}
 		}
 		$type = array_unique( $type );
+		if ( in_array( $GLOBALS['ontology']['type']['Instance'], $type ) ) {
+			$type = array( $GLOBALS['ontology']['type']['Instance'] );
+		}
 		if ( sizeof( $type ) == 1 ) {
 			return array( array_shift( $type ), $query );
 		} else {
@@ -269,8 +272,8 @@ END;
 		$types = RDFQueryHelper::parseEntity( $result, 's', 'o' );
 		$output = array();
 		foreach ( $types as $iri => $type ) {
-			if ( in_array( $GLOBALS['ontology']['type']['NamedIndividual'], $type ) ) {
-				$output[$iri] = $GLOBALS['ontology']['type']['NamedIndividual'];
+			if ( in_array( $GLOBALS['ontology']['type']['Instance'], $type ) ) {
+				$output[$iri] = $GLOBALS['ontology']['type']['Instance'];
 			} else {
 				foreach ( $type as $index => $typeIRI ) {
 					if ( array_key_exists( $typeIRI, $GLOBALS['alias']['type'] ) ) {
@@ -581,6 +584,28 @@ END;
 		$json = SPARQLQuery::queue( $this->endpoint, $query );
 		$supClasses = RDFQueryHelper::parseSPARQLResult( $json );
 		return array( $supClasses, $query );
+	}
+	
+	public function selectInstance( $graph, $typeIRI ) {
+		$query =
+<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT ?instance ?label FROM <$graph> WHERE {
+	?instance rdf:type <$typeIRI> .
+	?instance rdfs:label ?label
+}
+END;
+		$fields = array();
+		$fields['default-graph-uri'] = '';
+		$fields['format'] = 'application/sparql-results+json';
+		$fields['debug'] = 'on';
+		$fields['query'] = $query;
+		$json = SPARQLQuery::queue( $this->endpoint, $query );
+		$result = RDFQueryHelper::parseSPARQLResult( $json );
+		$instance = RDFQueryHelper::parseEntity( $result, 'instance', 'label' );
+		return array( $instance, $query );
 	}
 	
 	public function selectTermFromType( $graph, $typeIRI ) {

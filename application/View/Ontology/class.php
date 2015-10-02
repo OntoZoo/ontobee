@@ -77,6 +77,8 @@ END;
 
 <?php require TEMPLATE . 'Ontology/ontology.use.php'; ?>
 
+<?php require TEMPLATE . 'Ontology/instance.php'; ?>
+
 <?php require TEMPLATE . 'sparql.query.php'; ?>
 
 <?php require TEMPLATE . 'system.time.php'; ?>
