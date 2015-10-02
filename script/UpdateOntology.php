@@ -80,9 +80,11 @@ Class UpdateOntology extends Maintenance {
 				$sql = "UPDATE ontology SET loaded='n' where id = '{$this->ontology->id}'";
 				$this->db->query( $sql );
 				
+				$usr = RDF_USERNAME;
+				$pwd = RDF_PASSWORD;
 				$cmd =
 <<<END
-/data/usr/local/virtuoso/bin/isql 1111 dba dJay0D2a verbose=on banner=off prompt=off echo=ON errors=stdout exec="log_enable(3,1);
+/data/usr/local/virtuoso/bin/isql 1111 $usr $pwd verbose=on banner=off prompt=off echo=ON errors=stdout exec="log_enable(3,1);
 sparql clear graph <{$this->ontology->ontology_graph_url}>;
 DB.DBA.RDF_LOAD_RDFXML_MT (file_to_string_output ('$this->file'), '', '{$this->ontology->ontology_graph_url}');"
 END;
