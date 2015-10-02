@@ -35,14 +35,8 @@ if ( !$this ) {
 
 class Annotation {
 	public static function show( $annotations ) {
-		
 		if ( !empty ( $annotations ) ) {
-			$html =
-<<<END
-<div class="section-title">Annotations</div>
-<div class="section">
-<ul>
-END;
+			$html = '';
 			
 			# Deprecated
 			$deprecateIRI = $GLOBALS['ontology']['namespace']['owl'] . 'deprecated';
@@ -292,15 +286,17 @@ END;
 				$html .= $values;
 			}
 			
-			$html .=
+			$html = Helper::tidyHTML( $html, true );
+		}
+		
+		if ( $html != '' ) {
+			$html =
 <<<END
-</ul>
+<div class="section-title">Annotations</div>
+<div class="section">
+$html
 </div>
 END;
-			
-			$html = Helper::tidyHTML( $html, true );
-		} else {
-			$html = '';
 		}
 		
 		return $html;
