@@ -543,14 +543,18 @@ class OntologyModel {
 		return $related;
 	}
 	
-	private function queryHierarchy( $termIRI, $supClassResults ) {
+	private function queryHierarchy( $termIRI, $supClassResults, $index = 0 ) {
 		$hierarchy = array();
 		$supClasses = array();
 		$sibClasses = array();
 		$subClasses = array();
 		$hasChild = array();
 		if ( !empty( $supClassResults ) ) {
-			foreach ( $supClassResults as $supClassResult ) {
+			foreach ( $supClassResults as $i => $supClassResult ) {
+				if ( $i != $index ) {
+					continue;
+				}
+				
 				foreach ( $supClassResult as $supClassIRI => $supClassLabel) {
 					if ( $supClassLabel != '' ) {
 						$supClasses[$supClassIRI] = $supClassLabel;
@@ -558,15 +562,14 @@ class OntologyModel {
 						$supClasses[$supClassIRI] = OntologyModelHelper::getShortTerm( $supClassIRI );
 					}
 				}
-	
+				
 				if ( !empty( $supClasses ) ) {
 					$tmpClasses = $supClasses;
 					end( $tmpClasses );
 					$supClass = key( $tmpClasses );
 					list( $sibClassResult, $query ) = $this->rdf->selectSubClass(
 						$this->ontology->ontology_graph_url,
-						$supClass,
-						$limit = 10
+						$supClass
 					);
 					$this->addQueries( $query );
 					$sibClassResult = OntologyModelHelper::parseClassResult( $sibClassResult );
@@ -580,11 +583,11 @@ class OntologyModel {
 						}
 					}
 				}
-					
+				#print_r($sibClasses);
+				#print_r($hasChild);
 				list( $subClassResult, $query ) = $this->rdf->selectSubClass(
 					$this->ontology->ontology_graph_url,
-					$termIRI,
-					$limit = 10
+					$termIRI
 				);
 				$this->addQueries( $query );
 				$subClassResult = OntologyModelHelper::parseClassResult( $subClassResult );
@@ -608,8 +611,7 @@ class OntologyModel {
 		} else {
 			list( $subClassResult, $query ) = $this->rdf->selectSubClass(
 				$this->ontology->ontology_graph_url,
-				$termIRI,
-				$limit = 10
+				$termIRI
 			);
 			$this->addQueries( $query );
 			$subClassResult = OntologyModelHelper::parseClassResult( $subClassResult );

@@ -76,14 +76,14 @@ END;
 				end($path);
 				$moreURL = 
 					SITEURL .
-					"ontology/term/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( key($path) )}";
+					"ontology/catalog/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( key($path) )}";
 				$html .= self::sibClassSection( $rootURL, $moreURL, $sibClasses, $hasChild );
 			}
 
 			$html .= self::curClassHeader( $rootURL, $term, $hasChild );
 
 			if ( !empty( $subClasses ) ) {
-				$moreURL = SITEURL . "ontology/term/$ontology->ontology_abbrv?iri=$term->iri";
+				$moreURL = SITEURL . "ontology/catalog/$ontology->ontology_abbrv?iri=$term->iri";
 				$html .= self::subClassSection( $rootURL, $moreURL, $subClasses, $hasChild );
 			}
 
@@ -97,12 +97,12 @@ END;
 				end($path);
 				$moreURL =
 				SITEURL .
-				"ontology/term/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( key($path) )}";
+				"ontology/catalog/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( key($path) )}";
 				$html .= self::sibClassSection( $rootURL, $moreURL, $sibClasses, $hasChild );
 			}
 			
 			if ( !empty( $subClasses ) ) {
-				$moreURL = SITEURL . "ontology/term/$ontology->ontology_abbrv?iri=$term->iri";
+				$moreURL = SITEURL . "ontology/catalog/$ontology->ontology_abbrv?iri=$term->iri";
 				$html .= self::subClassSection( $rootURL, $moreURL, $subClasses, $hasChild );
 			}
 

@@ -33,7 +33,7 @@ if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-$rootURL = SITEURL . "ontology/?ontology=$ontology->ontology_abbrv&iri=";
+$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
 if ( !empty( $term->usage ) ) {
 	$html =
 <<<END
@@ -44,7 +44,7 @@ END;
 	foreach ( $term->usage as $useIRI => $usage ) {
 		$html .=
 <<<END
-<li><a oncontextmenu="return false;" href="{$GLOBALS['call_function']( Helper::convertUTFToUnicode( $useIRI ) )}">
+<li><a oncontextmenu="return false;" href="$rootURL{$GLOBALS['call_function']( Helper::convertUTFToUnicode( $useIRI ) )}">
 {$usage['label']}</a> {$GLOBALS['call_function']( Helper::getShortTerm( $usage['type'] ) )} : 
 {$GLOBALS['call_function']( Helper::trimBracket( Helper::writeRecursiveManchester( $rootURL, $usage['axiom'], $term->related ) ) )}
 </li>
