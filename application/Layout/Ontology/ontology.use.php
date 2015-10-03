@@ -37,15 +37,15 @@ $site = SITEURL;
 
 $others = array();
 foreach( $term->other as $index => $graph ) {
-	if ( $graph == $ontology->ontology_graph_url ) {
-		unset( $term->other[$index] );
+	if ( $graph != $ontology->ontology_graph_url ) {
+		$others[] = $graph;
 	}
 }
 
-if ( !empty( $term->other ) ) {
+if ( !empty( $others ) ) {
 	$html =
 <<<END
-<div class="section-title">Ontologies that use the Class</div>
+<div class="section-title">Ontologies that use the $term->type</div>
 <div class="section">
 
 <table>
@@ -56,7 +56,7 @@ if ( !empty( $term->other ) ) {
 <td bgcolor="#EAF1F2" style="font-weight:bold">Project home page</td>
 </tr>
 END;
-	foreach ( $term->other as $graph ) {
+	foreach ( $others as $graph ) {
 		$other = $ontologyList[$graph];
 		if ( $other->download != '' ) {
 			$download = $other->download;

@@ -42,14 +42,13 @@ if ( preg_match( '/\/([a-zA-Z]+)_(\d+)$/', $term->iri, $match ) ) {
 		}
 	}
 	
-	if ( isset( $original ) ) {
+	if ( isset( $original ) && ( $original->ontology_abbrv != $ontology->ontology_abbrv ) ) {
 		
 		$termIRI = Helper::encodeURL( $term->iri );
 		$filename = Helper::getShortTerm( $original->download );
-		
 		$html =
 <<<END
-<div class="section-title"> Ontology in which the Class is published</div>
+<div class="section-title"> Ontology in which the $term->type is published</div>
 <div class="section">
 
 <table>
