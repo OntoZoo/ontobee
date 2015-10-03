@@ -37,4 +37,7 @@ define('DB_SCHEMA', 'schema');
 define('DB_USERNAME', 'username');
 define('DB_PASSWORD', 'password');
 
+define('RDF_USERNAME', 'username' );
+define('RDF_PASSWORD', 'password' );
+
 ?>
