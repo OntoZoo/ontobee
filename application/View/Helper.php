@@ -200,7 +200,7 @@ END;
 		if ( sizeof( $tokens ) == 1 ) {
 			$text =
 <<<END
-<li><span class="label">{$GLOBALS['call_function']( ucfirst( $label ) )}:</span> <span class="value more">
+<li><span class="label">$label:</span> <span class="value more">
 {$GLOBALS['call_function']( self::makeLink( $value ) )}</span></li>
 END;
 		} else {
