@@ -90,7 +90,7 @@ END;
 		$html .=
 <<<END
 <td>
-<a href="{$rootURL}term/$ontAbbr?prefix=$prefix&iri={$GLOBALS['call_function']( Helper::encodeURL( $typeIRI ) )}">
+<a href="{$rootURL}catalog/$ontAbbr?prefix=$prefix&iri={$GLOBALS['call_function']( Helper::encodeURL( $typeIRI ) )}">
 {$GLOBALS['call_function']( number_format( $stat[$type] ) )}</a>
 </td>
 END;
@@ -100,7 +100,7 @@ END;
 	$html .=
 <<<END
 <td>
-<a href="{$rootURL}term/$ontAbbr?prefix=$prefix">
+<a href="{$rootURL}catalog/$ontAbbr?prefix=$prefix">
 {$GLOBALS['call_function']( number_format( $total ) )}</a>
 </td>
 </tr>
@@ -125,7 +125,7 @@ foreach ( $GLOBALS['ontology']['type'] as $type => $typeIRI ) {
 	$html .=
 <<<END
 <td>
-<a href="{$rootURL}term/$ontAbbr?iri={$GLOBALS['call_function']( Helper::encodeURL( $typeIRI ) )}">
+<a href="{$rootURL}catalog/$ontAbbr?iri={$GLOBALS['call_function']( Helper::encodeURL( $typeIRI ) )}">
 <strong>{$GLOBALS['call_function']( number_format( $totals[$type] ) )}</strong></a>
 </td>
 END;
@@ -134,7 +134,7 @@ END;
 $html .=
 <<<END
 <td>
-<a href="{$rootURL}term/$ontAbbr">
+<a href="{$rootURL}catalog/$ontAbbr">
 <strong>{$GLOBALS['call_function']( number_format( array_sum( $totals ) ) )}</strong></a>
 </td>
 </tr>

@@ -63,7 +63,7 @@ class OntostatController extends Controller {
 		
 	}
 	
-	public function term( $params = array() ) {
+	public function catalog( $params = array() ) {
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
 		
 		if ( !is_null( $ontAbbr ) ) {
@@ -103,7 +103,7 @@ class OntostatController extends Controller {
 			$ontology = $this->model->getOntology();
 			if ( !empty( $ontology ) ) {
 				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $termIRI, $prefix, $letter, $page, $listMaxTerms );
-				require VIEWPATH . 'Ontology/term.php';
+				require VIEWPATH . 'Ontology/catalog.php';
 			} else {
 				throw new Exception ( "Invalid ontology." );
 			}

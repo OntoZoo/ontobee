@@ -102,11 +102,11 @@ Class OntologyController extends Controller{
 						'AnnotationProperty',
 						'Instance',
 				) ) ) {
-					$this->model->loadClass( $termIRI );
-					$term = $this->model->getClass();
+					$this->model->loadTerm( $termIRI );
+					$term = $this->model->getTerm();
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
-					require VIEWPATH . 'Ontology/class.php';
+					require VIEWPATH . 'Ontology/term.php';
 				}
 					
 			}
@@ -115,7 +115,7 @@ Class OntologyController extends Controller{
 		}
 	}
 	
-	public function term( $params = array() ) {
+	public function catalog( $params = array() ) {
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
 		if ( !is_null( $ontAbbr ) ) {
 			if ( array_key_exists( 'letter', $params ) ) {
@@ -148,7 +148,7 @@ Class OntologyController extends Controller{
 			$ontology = $this->model->getOntology();
 			if ( !empty( $ontology ) ) {
 				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $termIRI, null, $letter, $page, $listMaxTerms );
-				require VIEWPATH . 'Ontology/term.php';
+				require VIEWPATH . 'Ontology/catalog.php';
 			} else {
 				throw new Exception ( "Invalid ontology." );
 			}

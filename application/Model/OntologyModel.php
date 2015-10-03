@@ -49,7 +49,7 @@ class OntologyModel {
 	
 	private $ontology;
 	
-	private $class;
+	private $term;
 	
 	/**
 	 * Setter
@@ -92,8 +92,8 @@ class OntologyModel {
 	 *
 	 * @return $class
 	 */
-	public function getClass() {
-		return $this->class;
+	public function getTerm() {
+		return $this->term;
 	}
 	
 	/**
@@ -343,12 +343,12 @@ class OntologyModel {
 		}
 	}
 	
-	public function loadClass( $termIRI ) {
+	public function loadTerm( $termIRI ) {
 		if ( !isset( $this->rdf ) ) {
 			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
 		}
 		
-		$class = OntologyModelHelper::makeClass( array( 
+		$term = OntologyModelHelper::makeClass( array( 
 			'id' => OntologyModelHelper::getShortTerm( $termIRI ),
 			'iri' => $termIRI,
 		) );
@@ -357,12 +357,12 @@ class OntologyModel {
 		$this->addQueries( $query );
 		
 		$describes = $describeResult['describe'];
-		$class->describe = $describeResult['describe'];
+		$term->describe = $describeResult['describe'];
 		
 		$preferLabel = array();
 		foreach( $GLOBALS['ontology']['label']['priority'] as $labelIRI ) {
-			if ( array_key_exists( $labelIRI, $class->describe ) ) {
-				$tmpLabel = $class->describe[$labelIRI];
+			if ( array_key_exists( $labelIRI, $term->describe ) ) {
+				$tmpLabel = $term->describe[$labelIRI];
 				$preferLabel = $tmpLabel[0]['value'];
 				break;
 			}
@@ -372,9 +372,9 @@ class OntologyModel {
 		} else {
 			$preferLabel = OntologyModelHelper::getShortTerm( $termIRI );
 		}
-		$class->label = $preferLabel;
+		$term->label = $preferLabel;
 		
-		$typeResults = $class->describe[$GLOBALS['ontology']['namespace']['rdf'] . 'type'];
+		$typeResults = $term->describe[$GLOBALS['ontology']['namespace']['rdf'] . 'type'];
 		$typeIRIs = array();
 		foreach ( $typeResults as $typeResult ) {
 			if ( $typeResult['type'] == 'uri' ) {
@@ -387,18 +387,18 @@ class OntologyModel {
 			}
 		}
 		$typeIRIs = array_unique( $typeIRIs );
-		$class->type =array_search( array_shift( $typeIRIs ), $GLOBALS['ontology']['type'] );
+		$term->type =array_search( array_shift( $typeIRIs ), $GLOBALS['ontology']['type'] );
 		
 		$hierarchyResult = $describeResult['transitiveSupClass'];
 		$hierarchy = $this->queryHierarchy(
 			$termIRI,
 			$hierarchyResult
 		);
-		$class->hierarchy = $hierarchy;
+		$term->hierarchy = $hierarchy;
 		
-		$class->axiom = $describeResult['axiom'];
+		$term->axiom = $describeResult['axiom'];
 		
-		$class->annotation_annotation = $describeResult['annotation_annotation'];
+		$term->annotation_annotation = $describeResult['annotation_annotation'];
 		
 		$nodes = array();
 		$usage = array();
@@ -417,7 +417,7 @@ class OntologyModel {
 			$usage[$nodes[$nodeIRI]]['axiom'] = $nodeResult;
 			$describes[$refp][] = $nodeResult;
 		}
-		$class->usage = $usage;
+		$term->usage = $usage;
 		
 		$other = array();
 		$validOntology = $this->getAllOntology();
@@ -427,17 +427,17 @@ class OntologyModel {
 				$other[] = $graph['g'];
 			}
 		}
-		$class->other = $other;
+		$term->other = $other;
 		
 		$related = $this->queryRelated( $describes );
-		$related[$termIRI] = $class;
-		$class->related = $related;
+		$related[$termIRI] = $term;
+		$term->related = $related;
 		
 		$annotations = array();
-		foreach ( array_unique( array_keys( $class->describe ) ) as $property ) {
+		foreach ( array_unique( array_keys( $term->describe ) ) as $property ) {
 			if ( $related[$property]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
 				$values = array();
-				foreach ( $class->describe[$property] as $token ) {
+				foreach ( $term->describe[$property] as $token ) {
 					if ( array_key_exists( 'value', $token ) ) {
 						$values[] = $token['value'];
 					}
@@ -455,7 +455,7 @@ class OntologyModel {
 				);
 			}
 		}
-		$class->annotation = $annotations;
+		$term->annotation = $annotations;
 		
 		if ( $typeIRI == $GLOBALS['ontology']['type']['Class'] ) {
 			list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $termIRI );
@@ -464,10 +464,10 @@ class OntologyModel {
 			foreach ( $instanceResult as $instanceIRI => $instanceLabels ) {
 				$instances[$instanceIRI] = array_shift( $instanceLabels );
 			}
-			$class->instance = $instances;
+			$term->instance = $instances;
 		}
 		
-		$this->class = $class;
+		$this->term = $term;
 	}
 	
 	public function loadRDF( $termIRI ) {

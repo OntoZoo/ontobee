@@ -34,8 +34,8 @@ if ( !$this ) {
 }
 
 $termURL = SITEURL . "ontology/$ontAbbr?iri=";
-$pageURL = SITEURL . "{$GLOBALS['controller']}/term/$ontAbbr?";
-$letterURL = SITEURL ."{$GLOBALS['controller']}/term/$ontAbbr?";
+$pageURL = SITEURL . "{$GLOBALS['controller']}/catalog/$ontAbbr?";
+$letterURL = SITEURL ."{$GLOBALS['controller']}/catalog/$ontAbbr?";
 
 if ( isset( $termIRI ) && !is_null( $termIRI ) && $termIRI != '' ) {
 	$pageURL .= '&iri=' . Helper::encodeURL( $termIRI );
