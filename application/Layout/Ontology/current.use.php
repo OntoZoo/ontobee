@@ -48,7 +48,7 @@ if ( preg_match( '/\/([a-zA-Z]+)_(\d+)$/', $term->iri, $match ) ) {
 		$filename = Helper::getShortTerm( $original->download );
 		$html =
 <<<END
-<div class="section-title"> Ontology in which the $term->type is published</div>
+<div class="section-title"> This $term->type is originally defined in</div>
 <div class="section">
 
 <table>
