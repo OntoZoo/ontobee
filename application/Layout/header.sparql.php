@@ -22,6 +22,8 @@
 
 /**
  * @file header.sparql.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Sep 9, 2015
  * @comment 

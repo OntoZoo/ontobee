@@ -23,6 +23,8 @@
 /**
  * @file sparql.php
  * @author Edison Ong
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @since Sep 8, 2015
  * @comment 
  */

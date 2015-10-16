@@ -95,20 +95,36 @@ Class OntologyController extends Controller{
 					throw new Exception ( "Invalid ontology." );
 				}
 				$ontologyList = $this->model->getAllOntology();
-				if ( in_array( $this->model->askTermType( $termIRI), array(
+				if ( in_array( $this->model->askTermType( $termIRI ), array(
 						'Class',
-						'ObjectProperty',
-						'DatatypeProperty',
-						'AnnotationProperty',
-						'Instance',
+				) ) ) {
+					$this->model->loadClass( $termIRI );
+					$term = $this->model->getClass();
+					$annotations = $term->annotation;
+					$query = $this->model->getQueries();
+					require VIEWPATH . 'Ontology/term.php';
+				} else if ( in_array( $this->model->askTermType( $termIRI ), array(
+					'ObjectProperty',
+					'DatatypeProperty',
+					'AnnotationProperty',
+				) ) ) {
+					$this->model->loadProperty( $termIRI );
+					$term = $this->model->getTerm();
+					$annotations = $term->annotation;
+					$query = $this->model->getQueries();
+					require VIEWPATH . 'Ontology/term.php';
+				} else if ( in_array( $this->model->askTermType( $termIRI ), array(
+					'Instance',
 				) ) ) {
 					$this->model->loadTerm( $termIRI );
 					$term = $this->model->getTerm();
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
 					require VIEWPATH . 'Ontology/term.php';
+				} else {
+					throw new Exception( "Incorrect ontology term type." );
 				}
-					
+					 
 			}
 		} else {
 			throw new Exception( "Ontology is not specified." );

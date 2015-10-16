@@ -244,7 +244,7 @@ END;
 	public static function writeRecursiveManchester( $rootURL, $data, $mapping = array() ) {
 		if ( !is_array( $data ) ) {
 			$manchester = self::makeManchesterLink( $rootURL, $data, $mapping );
-		} else {
+		} else if ( array_key_exists( 'restrictionType', $data ) && ( array_key_exists( 'restrictionValue', $data ) ) ) {
 			$manchester = '';
 			$operations = $GLOBALS['ontology']['restriction']['operation'];
 			$types = $GLOBALS['ontology']['restriction']['type'];
@@ -286,6 +286,8 @@ END;
 					$manchester .= ')';
 				}
 			}
+		} else {
+			$manchester = '';
 		}
 		
 		return $manchester;

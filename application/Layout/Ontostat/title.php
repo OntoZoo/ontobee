@@ -23,6 +23,7 @@
 /**
  * @file title.php
  * @author Edison Ong
+ * @author Bin Zhao
  * @since Sep 8, 2015
  * @comment 
  */

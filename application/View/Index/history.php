@@ -22,6 +22,8 @@
 
 /**
  * @file history.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Sep 3, 2015
  * @comment 

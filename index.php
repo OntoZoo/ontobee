@@ -24,22 +24,28 @@
  * @file index.php
  * @author Edison Ong
  * @since Sep 3, 2015
- * @comment 
+ * @comment This is the first entry of any request made to Ontobee server.
+ *          This file will call composer for autoloading all classes.
+ *          Then call Config.php for setting up Ontobee server configuration.
+ *          Finally call Applicaton::webStart() for actually process of request.
  */
 
+# Define Ontobee installation path and application path
 DEFINE( 'SCRIPTPATH', __DIR__ . DIRECTORY_SEPARATOR );
 DEFINE( 'APPPATH', SCRIPTPATH . 'application' . DIRECTORY_SEPARATOR );
 
+# Call composer autoload function
 if ( file_exists( SCRIPTPATH . 'vendor/autoload.php' ) ) {
 	require SCRIPTPATH . 'vendor/autoload.php';
 } else {
-	#throw new Exception( 'Composer autoload required' );
-	#exit;
+	throw new Exception( 'Composer autoload required' );
+	exit;
 }
 
+# Load all required configuration
 require APPPATH . 'Config/Config.php';
 
+# Web start
 Application::webStart();
-
 
 ?>

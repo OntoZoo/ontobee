@@ -22,7 +22,9 @@
 
 /**
  * @file RDFStore.php
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
+ * @author Bin Zhao
  * @since Sep 4, 2015
  * @comment 
  */
@@ -504,37 +506,37 @@ END;
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
-SELECT DISTINCT ?class ?label ?subClass FROM <$graph> WHERE {
+SELECT DISTINCT ?term ?label ?subTerm FROM <$graph> WHERE {
 	{
-		?class rdfs:subClassOf <$termIRI> .
-		FILTER (isIRI(?class)).
-		OPTIONAL {?class rdfs:label ?label} .
-		OPTIONAL {?subClass rdfs:subClassOf ?class}
+		?term rdfs:subClassOf <$termIRI> .
+		FILTER (isIRI(?term)).
+		OPTIONAL {?term rdfs:label ?label} .
+		OPTIONAL {?subTerm rdfs:subClassOf ?term}
 	} UNION {
-		?class owl:equivalentClass ?s1 .
-		FILTER (isIRI(?class)).
+		?term owl:equivalentClass ?s1 .
+		FILTER (isIRI(?term)).
 		?s1 owl:intersectionOf ?s2 .
 		?s2 rdf:first <$termIRI> .
-		OPTIONAL {?class rdfs:label ?label} .
-		OPTIONAL {?subClass rdfs:subClassOf ?class}
+		OPTIONAL {?term rdfs:label ?label} .
+		OPTIONAL {?subTerm rdfs:subClassOf ?term}
 	} UNION {
-		?class rdfs:subClassOf <$termIRI> .
-		FILTER (isIRI(?class)).
-		OPTIONAL {?class rdfs:label ?label} .
+		?term rdfs:subClassOf <$termIRI> .
+		FILTER (isIRI(?term)).
+		OPTIONAL {?term rdfs:label ?label} .
 		OPTIONAL {
-			?subClass owl:equivalentClass ?s1 .
+			?subTerm owl:equivalentClass ?s1 .
 			?s1 owl:intersectionOf ?s2 .
-			?s2 rdf:first ?class
+			?s2 rdf:first ?term
 		}
 	} UNION {
-		?class owl:equivalentClass ?s1 .
-		FILTER (isIRI(?class)).
+		?term owl:equivalentClass ?s1 .
+		FILTER (isIRI(?term)).
 		?s1 owl:intersectionOf ?s2 .
 		?s2 rdf:first <$termIRI> .
-		OPTIONAL {?class rdfs:label ?label} .
-		OPTIONAL {?subClass owl:equivalentClass ?s3 .
+		OPTIONAL {?term rdfs:label ?label} .
+		OPTIONAL {?subTerm owl:equivalentClass ?s3 .
 		?s3 owl:intersectionOf ?s4 .
-		?s4 rdf:first ?class}
+		?s4 rdf:first ?term}
 	}
 }
 END;
@@ -573,6 +575,197 @@ END;
 		$json = SPARQLQuery::queue( $this->endpoint, $query );
 		$supClasses = RDFQueryHelper::parseSPARQLResult( $json );
 		return array( $supClasses, $query );
+	}
+	
+	public function describeProperty( $graph, $propertyIRI ) {
+		$this->sparql->clear();
+	
+		# Describe Term
+		$query =
+		<<<END
+DEFINE sql:describe-mode "CBD"
+DESCRIBE <$propertyIRI>
+FROM <$graph>
+END;
+		$this->sparql->add( 'describe', $query, '', 'application/rdf+json');
+		$queries[] = $query;
+	
+		# Transitive Super Properties
+		$query =
+		<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT ?path ?link ?label FROM <{$graph}> WHERE {
+	{
+		SELECT ?s ?o ?label WHERE {
+			{
+				?s rdfs:subPropertyOf ?o .
+				FILTER (isIRI(?o)).
+				OPTIONAL {?o rdfs:label ?label}
+			} UNION {
+				?s owl:equivalentProperty ?s1 .
+				?s1 owl:intersectionOf ?s2 .
+				?s2 rdf:first ?o  .
+				FILTER (isIRI(?o))
+				OPTIONAL {?o rdfs:label ?label}
+			}
+		}
+	}
+	OPTION (TRANSITIVE, t_in(?s), t_out(?o), t_step (?s) as ?link, t_step ('path_id') as ?path).
+	FILTER (isIRI(?o)).
+	FILTER (?s= <$propertyIRI>)
+}
+END;
+		$this->sparql->add( 'transitiveSupProperty', $query );
+		$queries[] = $query;
+	
+		# Annotation's other information
+		$query =
+		<<<END
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT * FROM <$graph> WHERE {
+	?nodeID owl:annotatedSource <$propertyIRI>.
+	#?nodeID rdf:type owl:Annotation.
+	?nodeID owl:annotatedProperty ?annotatedProperty.
+	?nodeID owl:annotatedTarget ?annotatedTarget.
+	?nodeID ?aaProperty ?aaPropertyTarget.
+	OPTIONAL {?annotatedProperty rdfs:label ?annotatedPropertyLabel}.
+	OPTIONAL {?aaProperty rdfs:label ?aaPropertyLabel}.
+	FILTER (isLiteral(?annotatedTarget)).
+	FILTER (not (?aaProperty in(owl:annotatedSource, rdf:type, owl:annotatedProperty, owl:annotatedTarget)))
+}
+END;
+		$this->sparql->add( 'annotation_annotation', $query );
+		$queries[] = $query;
+	
+		# Use by other terms in current Ontology
+		$query =
+		<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT DISTINCT ?ref ?refp ?label ?o FROM <$graph> WHERE {
+	?ref ?refp ?o .
+	FILTER ( ?refp IN ( owl:equivalentProperty, rdfs:subPropertyOf ) ) .
+	OPTIONAL { ?ref rdfs:label ?label } .
+	{
+		{
+			SELECT ?s ?o FROM <$graph> WHERE {
+				?o ?p ?s .
+				FILTER ( ?p IN ( rdf:first, rdf:rest, owl:intersectionOf, owl:unionOf, owl:someValuesFrom, owl:hasValue, owl:allValuesFrom, owl:complementOf, owl:inverseOf, owl:onClass, owl:onProperty ) )
+			}
+		}
+		OPTION ( TRANSITIVE, t_in( ?s ), t_out( ?o ), t_step( ?s ) as ?link ).
+		FILTER ( ?s= <$propertyIRI> )
+	}
+}
+END;
+		$this->sparql->add( 'term', $query );
+		$queries[] = $query;
+	
+		# Exist in other Ontology
+		$query =
+		<<<END
+SELECT DISTINCT ?g WHERE {
+	GRAPH ?g {
+		<$propertyIRI> ?p ?o
+	}
+}
+END;
+		$this->sparql->add( 'ontology', $query );
+		$queries[] = $query;
+	
+		$results = $this->sparql->execute();
+		# Potential virtuoso problem reported in ontobee
+		#$json = preg_replace( '/\'\);\ndocument.writeln\(\'/', '', $json );
+	
+		$describeArray = json_decode( $results['describe'], true );
+		$property['describe'] = RDFQueryHelper::parseRDF( $results['describe'], $propertyIRI );
+	
+		$property['annotation_annotation'] = RDFQueryHelper::parseSPARQLResult( $results['annotation_annotation'] );
+	
+		$property['transitiveSupProperty'] = RDFQueryHelper::parseTransitivePath(
+				RDFQueryHelper::parseSPARQLResult( $results['transitiveSupProperty'] )
+		);
+	
+		$usage = array();
+		$usage['term'] = RDFQueryHelper::parseSPARQLResult( $results['term'] );
+		$usage['ontology'] = RDFQueryHelper::parseSPARQLResult( $results['ontology'] );
+		$property['usage'] = $usage;
+	
+		$axiom = array( 'subclassof' => array(), 'equivalent' => array() );
+		if ( array_key_exists( $this->prefixNS['rdfs'] . 'subPropertyOf', $describeArray[$propertyIRI] ) ) {
+			$subclassof = $describeArray[$propertyIRI][$this->prefixNS['rdfs'] . 'subPropertyOf'];
+			foreach ( $subclassof as $node ) {
+				if ( $node['type'] == 'uri' ) {
+					$axiom['subclassof'][] = $node['value'];
+				} else {
+					$axiom['subclassof'][] = RDFQueryHelper::parseRecursiveRDFNode( $describeArray, $node['value'] );
+				}
+			}
+		}
+		if ( array_key_exists( $this->prefixNS['owl'] . 'equivalentProperty', $describeArray[$propertyIRI] ) ) {
+			$equivalent = $describeArray[$propertyIRI][$this->prefixNS['owl'] . 'equivalentProperty'];
+			foreach ( $equivalent as $node ) {
+				if ( $node['type'] == 'uri' ) {
+					$axiom['subclassof'][] = $node['value'];
+				} else {
+					$axiom['equivalent'][] = RDFQueryHelper::parseRecursiveRDFNode( $describeArray, $node['value'] );
+				}
+			}
+		}
+		$property['axiom'] = $axiom;
+	
+		return array( $property, $queries );
+	}
+	
+	public function selectSubProperty( $graph, $termIRI ) {
+		$query =
+		<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT DISTINCT ?term ?label ?subTerm FROM <$graph> WHERE {
+	{
+		?term rdfs:subPropertyOf <$termIRI> .
+		FILTER (isIRI(?term)).
+		OPTIONAL {?term rdfs:label ?label} .
+		OPTIONAL {?subTerm rdfs:subPropertyOf ?term}
+	} UNION {
+		?term owl:equivalentProperty ?s1 .
+		FILTER (isIRI(?term)).
+		?s1 owl:intersectionOf ?s2 .
+		?s2 rdf:first <$termIRI> .
+		OPTIONAL {?term rdfs:label ?label} .
+		OPTIONAL {?subTerm rdfs:subPropertyOf ?term}
+	} UNION {
+		?term rdfs:subPropertyOf <$termIRI> .
+		FILTER (isIRI(?term)).
+		OPTIONAL {?term rdfs:label ?label} .
+		OPTIONAL {
+			?subTerm owl:equivalentProperty ?s1 .
+			?s1 owl:intersectionOf ?s2 .
+			?s2 rdf:first ?term
+		}
+	} UNION {
+		?term owl:equivalentProperty ?s1 .
+		FILTER (isIRI(?term)).
+		?s1 owl:intersectionOf ?s2 .
+		?s2 rdf:first <$termIRI> .
+		OPTIONAL {?term rdfs:label ?label} .
+		OPTIONAL {?subTerm owl:equivalentProperty ?s3 .
+		?s3 owl:intersectionOf ?s4 .
+		?s4 rdf:first ?term}
+	}
+}
+END;
+	
+		$json = SPARQLQuery::queue( $this->endpoint, $query );
+		$subProperties = RDFQueryHelper::parseSPARQLResult( $json );
+		return array( $subProperties, $query );
 	}
 	
 	public function selectInstance( $graph, $typeIRI ) {
@@ -750,214 +943,6 @@ END;
 		return array( $rdf, $queries );
 	}
 	
-	/*
-		public function selectTransitiveSupClass( $graph, $termIRI ) {
-		$query =
-<<<END
-PREFIX rdf: <{$this->prefixNS['rdf']}>
-PREFIX rdfs: <{$this->prefixNS['rdfs']}>
-PREFIX owl: <{$this->prefixNS['owl']}>
-SELECT ?path ?link ?label FROM <{$graph}> WHERE {
-	{
-		SELECT ?s ?o ?label WHERE {
-			{
-				?s rdfs:subClassOf ?o .
-				FILTER (isURI(?o)).
-				OPTIONAL {?o rdfs:label ?label}
-			} UNION {
-				?s owl:equivalentClass ?s1 .
-				?s1 owl:intersectionOf ?s2 .
-				?s2 rdf:first ?o  .
-				FILTER (isURI(?o))
-				OPTIONAL {?o rdfs:label ?label}
-			}
-		}
-	}
-	OPTION (TRANSITIVE, t_in(?s), t_out(?o), t_step (?s) as ?link, t_step ('path_id') as ?path).
-	FILTER (isIRI(?o)).
-	FILTER (?s= <$termIRI>)
-}
-END;
-		$json = SPARQLQuery::queue( $this->endpoint, $query );
-		$result = RDFQueryHelper::parseSPARQLResult( $json );
-		$transitivePath = RDFQueryHelper::parseTransitivePath( $result );
-		return array( $transitivePath, $query );
-	}
-	
-	public function selectTermUsage( $graph, $termIRI ) {
-		$this->sparql->clear();
-		$query =
-<<<END
-PREFIX rdf: <{$this->prefixNS['rdf']}>
-PREFIX rdfs: <{$this->prefixNS['rdfs']}>
-PREFIX owl: <{$this->prefixNS['owl']}>
-SELECT DISTINCT ?ref ?refp ?label ?o FROM <$graph> WHERE {
-	?ref ?refp ?o .
-	FILTER ( ?refp IN ( owl:equivalentClass, rdfs:subClassOf ) ) .
-	OPTIONAL { ?ref rdfs:label ?label } .
-	{
-		{
-			SELECT ?s ?o FROM <$graph> WHERE {
-				?o ?p ?s .
-				FILTER ( ?p IN ( rdf:first, rdf:rest, owl:intersectionOf, owl:unionOf, owl:someValuesFrom, owl:hasValue, owl:allValuesFrom, owl:complementOf, owl:inverseOf, owl:onClass, owl:onProperty ) ) 
-			}
-		}
-		OPTION ( TRANSITIVE, t_in( ?s ), t_out( ?o ), t_step( ?s ) as ?link ).
-		FILTER ( ?s= <$termIRI> )
-	}
-}
-END;
-		$this->sparql->add( 'term', $query );
-		$query =
-<<<END
-SELECT DISTINCT ?g WHERE {
-	GRAPH ?g {
-		<$termIRI> ?p ?o
-	}
-}
-END;
-		$this->sparql->add( 'ontology', $query );
-		$jsons = $this->sparql->execute();
-		$usage['term'] = RDFQueryHelper::parseSPARQLResult( $jsons['term'] );
-		$usage['ontology'] = RDFQueryHelper::parseSPARQLResult( $jsons['ontology'] );
-		return $usage;
-	}
-	*/
-	
-	
-	
-	/*
-	public function existClass( $graph, $term ) {
-		$rdf = $this->prefixNS['rdf'];
-		$owl = $this->prefixNS['owl'];
-		
-		$query =
-<<<END
-PREFIX rdf: <$rdf>
-PREFIX owl: <$owl>
-SELECT DISTINCT ?class FROM <$graph> WHERE {
-	?class rdf:type owl:Class .
-	FILTER ( ?class = <$term> )
-}
-END;
-		$fields = array();
-		$fields['default-graph-uri'] = '';
-		$fields['format'] = 'application/sparql-results+json';
-		$fields['debug'] = 'on';
-		$fields['query'] = $query;
-		$json = CurlRequest::curlPostContents( $this->endpoint, $fields );
-		$result = RDFQueryHelper::parseSPARQLResult( $json );
-		$class = RDFQueryHelper::parseEntity( $result, 'class' );
-		if ( sizeof( $class ) >= 1 ) {
-			return true;
-		}
-	}
-	
-
-	
-	public function countAllClass( $graph ) {
-		$rdf = $this->prefixNS['rdf'];
-		$rdfs = $this->prefixNS['rdfs'];
-		$owl = $this->prefixNS['owl'];
-	
-		$query =
-<<<END
-PREFIX rdf: <$rdf>
-PREFIX rdfs: <$rdfs>
-PREFIX owl: <$owl>
-SELECT COUNT( ?class ) FROM <$graph> WHERE {
-	{
-		?class rdf:type owl:Class .
-		FILTER ( isURI( ?class ) ).
-	}
-}
-END;
-	
-		$fields = array();
-		$fields['default-graph-uri'] = '';
-		$fields['format'] = 'application/sparql-results+json';
-		$fields['debug'] = 'on';
-		$fields['query'] = $query;
-		$json = CurlRequest::curlPostContents( $this->endpoint, $fields );
-		$count = RDFQueryHelper::parseCountResult( $json );
-		return $count;
-	}
-	
-	
-	
-	public function getObject( $graph, $subject, $property ) {
-		$query =
-<<<END
-SELECT ?object FROM <$graph> WHERE {
-	<$subject> <$property> ?object
-}
-END;
-		$fields = array();
-		$fields['default-graph-uri'] = '';
-		$fields['format'] = 'application/sparql-results+json';
-		$fields['debug'] = 'on';
-		$fields['query'] = $query;
-		$json = CurlRequest::curlPostContents( $this->endpoint, $fields );
-		$result = RDFQueryHelper::parseSPARQLResult( $json );
-		$object = RDFQueryHelper::parseEntity( $result, 'object' );
-		return $object;
-	}
-	
-	public function getSubject( $graph, $property, $object ) {
-		$query =
-		<<<END
-SELECT ?subject FROM <$graph> WHERE {
-	?subject <$property> <$object>
-}
-END;
-		$fields = array();
-		$fields['default-graph-uri'] = '';
-		$fields['format'] = 'application/sparql-results+json';
-		$fields['debug'] = 'on';
-		$fields['query'] = $query;
-		$json = CurlRequest::curlPostContents( $this->endpoint, $fields );
-		$result = RDFQueryHelper::parseSPARQLResult( $json );
-		$subject = RDFQueryHelper::parseEntity( $result, 'subject' );
-		return $subject;
-		}
-	
-	public function exportDescribe( $graph, $terms ) {
-		$termsQuery = "<" . join( '>,<', $terms ) . ">";
-		
-		$query =
-<<<END
-DEFINE sql:describe-mode "CBD"
-DESCRIBE ?class FROM <$graph> WHERE {
-	?class ?property ?object .
-	FILTER ( ?class in ( $termsQuery ) )
-}
-END;
-		$fields = array();
-		$fields['default-graph-uri'] = '';
-		$fields['format'] = 'application/rdf+xml';
-		$fields['debug'] = 'on';
-		$fields['query'] = $query;
-		$rdf = CurlRequest::curlPostContents( $this->endpoint, $fields );
-		return $rdf;
-	}
-	
-	public function exportOntology( $graph ) {
-		$query =
-<<<END
-DEFINE sql:describe-mode "CBD"
-DESCRIBE ?class FROM <$graph> WHERE {
-	?class ?property ?object
-}
-END;
-		$fields = array();
-		$fields['default-graph-uri'] = '';
-		$fields['format'] = 'application/rdf+xml';
-		$fields['debug'] = 'on';
-		$fields['query'] = $query;
-		$rdf = CurlRequest::curlPostContents( $this->endpoint, $fields );
-		return $rdf;
-	}
-	*/
 }
 
 ?>

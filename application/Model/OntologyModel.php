@@ -22,7 +22,9 @@
 
 /**
  * @file OntologyModel.php
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
+ * @author Bin Zhao
  * @since Sep 3, 2015
  * @comment 
  */
@@ -92,8 +94,17 @@ class OntologyModel {
 	 *
 	 * @return $class
 	 */
-	public function getTerm() {
-		return $this->term;
+	public function getClass() {
+		return $this->class;
+	}
+	
+	/**
+	 * Getter
+	 *
+	 * @return $property
+	 */
+	public function getProperty() {
+		return $this->property;
 	}
 	
 	/**
@@ -213,7 +224,7 @@ class OntologyModel {
 			if ( !in_array( $termIRI, $GLOBALS['ontology']['type'] ) ) {
 				list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
 				$this->addQueries( $query );
-				$subClasses = OntologyModelHelper::parseClassResult( $subClasses );
+				$subClasses = OntologyModelHelper::parseTermResult( $subClasses );
 				foreach( $subClasses as $subClass ) {
 					$termResult[$subClass->iri][] = $subClass->label;
 				}
@@ -343,26 +354,26 @@ class OntologyModel {
 		}
 	}
 	
-	public function loadTerm( $termIRI ) {
+	public function loadClass( $classIRI ) {
 		if ( !isset( $this->rdf ) ) {
 			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
 		}
-		
-		$term = OntologyModelHelper::makeClass( array( 
-			'id' => OntologyModelHelper::getShortTerm( $termIRI ),
-			'iri' => $termIRI,
+	
+		$class = OntologyModelHelper::makeClass( array(
+				'id' => OntologyModelHelper::getShortTerm( $classIRI ),
+				'iri' => $classIRI,
 		) );
-		
-		list( $describeResult, $query ) = $this->rdf->describeClass( $this->ontology->ontology_graph_url, $termIRI );
+	
+		list( $describeResult, $query ) = $this->rdf->describeClass( $this->ontology->ontology_graph_url, $classIRI );
 		$this->addQueries( $query );
-		
+	
 		$describes = $describeResult['describe'];
-		$term->describe = $describeResult['describe'];
-		
+		$class->describe = $describeResult['describe'];
+	
 		$preferLabel = array();
 		foreach( $GLOBALS['ontology']['label']['priority'] as $labelIRI ) {
-			if ( array_key_exists( $labelIRI, $term->describe ) ) {
-				$tmpLabel = $term->describe[$labelIRI];
+			if ( array_key_exists( $labelIRI, $class->describe ) ) {
+				$tmpLabel = $class->describe[$labelIRI];
 				$preferLabel = $tmpLabel[0]['value'];
 				break;
 			}
@@ -370,11 +381,11 @@ class OntologyModel {
 		if ( !empty( $preferLabel ) ) {
 			$preferLabel = $preferLabel;
 		} else {
-			$preferLabel = OntologyModelHelper::getShortTerm( $termIRI );
+			$preferLabel = OntologyModelHelper::getShortTerm( $classIRI );
 		}
-		$term->label = $preferLabel;
-		
-		$typeResults = $term->describe[$GLOBALS['ontology']['namespace']['rdf'] . 'type'];
+		$class->label = $preferLabel;
+	
+		$typeResults = $class->describe[$GLOBALS['ontology']['namespace']['rdf'] . 'type'];
 		$typeIRIs = array();
 		foreach ( $typeResults as $typeResult ) {
 			if ( $typeResult['type'] == 'uri' ) {
@@ -387,19 +398,20 @@ class OntologyModel {
 			}
 		}
 		$typeIRIs = array_unique( $typeIRIs );
-		$term->type =array_search( array_shift( $typeIRIs ), $GLOBALS['ontology']['type'] );
-		
+		$class->type =array_search( array_shift( $typeIRIs ), $GLOBALS['ontology']['type'] );
+	
 		$hierarchyResult = $describeResult['transitiveSupClass'];
 		$hierarchy = $this->queryHierarchy(
-			$termIRI,
-			$hierarchyResult
+				$classIRI,
+				$class->type,
+				$hierarchyResult
 		);
-		$term->hierarchy = $hierarchy;
-		
-		$term->axiom = $describeResult['axiom'];
-		
-		$term->annotation_annotation = $describeResult['annotation_annotation'];
-		
+		$class->hierarchy = $hierarchy;
+	
+		$class->axiom = $describeResult['axiom'];
+	
+		$class->annotation_annotation = $describeResult['annotation_annotation'];
+	
 		$nodes = array();
 		$usage = array();
 		foreach ( $describeResult['usage']['term'] as $use ) {
@@ -417,8 +429,8 @@ class OntologyModel {
 			$usage[$nodes[$nodeIRI]]['axiom'] = $nodeResult;
 			$describes[$refp][] = $nodeResult;
 		}
-		$term->usage = $usage;
-		
+		$class->usage = $usage;
+	
 		$other = array();
 		$validOntology = $this->getAllOntology();
 		$validGraph = array_keys( $validOntology );
@@ -427,17 +439,17 @@ class OntologyModel {
 				$other[] = $graph['g'];
 			}
 		}
-		$term->other = $other;
-		
+		$class->other = $other;
+	
 		$related = $this->queryRelated( $describes );
-		$related[$termIRI] = $term;
-		$term->related = $related;
-		
+		$related[$classIRI] = $class;
+		$class->related = $related;
+	
 		$annotations = array();
-		foreach ( array_unique( array_keys( $term->describe ) ) as $property ) {
+		foreach ( array_unique( array_keys( $class->describe ) ) as $property ) {
 			if ( $related[$property]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
 				$values = array();
-				foreach ( $term->describe[$property] as $token ) {
+				foreach ( $class->describe[$property] as $token ) {
 					if ( array_key_exists( 'value', $token ) ) {
 						$values[] = $token['value'];
 					}
@@ -455,19 +467,147 @@ class OntologyModel {
 				);
 			}
 		}
-		$term->annotation = $annotations;
-		
+		$class->annotation = $annotations;
+	
 		if ( $typeIRI == $GLOBALS['ontology']['type']['Class'] ) {
-			list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $termIRI );
+			list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $classIRI );
 			$this->addQueries( $query );
 			$instances = array();
 			foreach ( $instanceResult as $instanceIRI => $instanceLabels ) {
 				$instances[$instanceIRI] = array_shift( $instanceLabels );
 			}
-			$term->instance = $instances;
+			$class->instance = $instances;
 		}
-		
-		$this->term = $term;
+	
+		$this->class = $class;
+	}
+	
+	public function loadProperty( $propertyIRI ) {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+	
+		$property = OntologyModelHelper::makeClass( array(
+				'id' => OntologyModelHelper::getShortTerm( $propertyIRI ),
+				'iri' => $propertyIRI,
+		) );
+	
+		list( $describeResult, $query ) = $this->rdf->describeProperty( $this->ontology->ontology_graph_url, $propertyIRI );
+		$this->addQueries( $query );
+	
+		$describes = $describeResult['describe'];
+		$property->describe = $describeResult['describe'];
+	
+		$preferLabel = array();
+		foreach( $GLOBALS['ontology']['label']['priority'] as $labelIRI ) {
+			if ( array_key_exists( $labelIRI, $property->describe ) ) {
+				$tmpLabel = $property->describe[$labelIRI];
+				$preferLabel = $tmpLabel[0]['value'];
+				break;
+			}
+		}
+		if ( !empty( $preferLabel ) ) {
+			$preferLabel = $preferLabel;
+		} else {
+			$preferLabel = OntologyModelHelper::getShortTerm( $propertyIRI );
+		}
+		$property->label = $preferLabel;
+	
+		$typeResults = $property->describe[$GLOBALS['ontology']['namespace']['rdf'] . 'type'];
+		$typeIRIs = array();
+		foreach ( $typeResults as $typeResult ) {
+			if ( $typeResult['type'] == 'uri' ) {
+				$typeIRIs[] = $typeResult['value'];
+			}
+		}
+		foreach ( $typeIRIs as $index => $typeIRI ) {
+			if ( array_key_exists( $typeIRI, $GLOBALS['alias']['type'] ) ) {
+				$typeIRIs[$index] = $GLOBALS['alias']['type'][$typeIRI];
+			}
+		}
+		$typeIRIs = array_unique( $typeIRIs );
+		$property->type =array_search( array_shift( $typeIRIs ), $GLOBALS['ontology']['type'] );
+	
+		$hierarchyResult = $describeResult['transitiveSupProperty'];
+		$hierarchy = $this->queryHierarchy(
+				$propertyIRI,
+				$property->type,
+				$hierarchyResult
+		);
+		$property->hierarchy = $hierarchy;
+	
+		$property->axiom = $describeResult['axiom'];
+	
+		$property->annotation_annotation = $describeResult['annotation_annotation'];
+	
+		$nodes = array();
+		$usage = array();
+		foreach ( $describeResult['usage']['term'] as $use ) {
+			$nodes[$use['o']] = $use['ref'];
+			$usage[$use['ref']] = array(
+					'label' => $use['label'],
+					'type' => $use['refp'],
+			);
+		}
+		list( $nodeResults, $query ) = $this->rdf->describeAll($this->ontology->ontology_graph_url, array_keys( $nodes ) );
+		$this->addQueries( $query );
+		foreach ( $nodeResults as $nodeIRI => $nodeResult ) {
+			$ref = $nodes[$nodeIRI];
+			$refp = $usage[$ref]['type'];
+			$usage[$nodes[$nodeIRI]]['axiom'] = $nodeResult;
+			$describes[$refp][] = $nodeResult;
+		}
+		$property->usage = $usage;
+	
+		$other = array();
+		$validOntology = $this->getAllOntology();
+		$validGraph = array_keys( $validOntology );
+		foreach ( $describeResult['usage']['ontology'] as $graph ) {
+			if ( in_array( $graph['g'], $validGraph ) ) {
+				$other[] = $graph['g'];
+			}
+		}
+		$property->other = $other;
+	
+		$related = $this->queryRelated( $describes );
+		$related[$propertyIRI] = $property;
+		$property->related = $related;
+	
+		$annotations = array();
+		foreach ( array_unique( array_keys( $property->describe ) ) as $object ) {
+			if ( $related[$object]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
+				$values = array();
+				foreach ( $property->describe[$object] as $token ) {
+					if ( array_key_exists( 'value', $token ) ) {
+						$values[] = $token['value'];
+					}
+				}
+				if ( empty( $values ) ) {
+					continue;
+				}
+				$label = $related[$object]->label;
+				if ( $label == '' ) {
+					$label = OntologyModelHelper::getShortTerm( $object );
+				}
+				$annotations[$object] = array(
+						'label' => $label,
+						'value' => $values,
+				);
+			}
+		}
+		$property->annotation = $annotations;
+	
+		if ( $typeIRI == $GLOBALS['ontology']['type']['Class'] ) {
+			list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $propertyIRI );
+			$this->addQueries( $query );
+			$instances = array();
+			foreach ( $instanceResult as $instanceIRI => $instanceLabels ) {
+				$instances[$instanceIRI] = array_shift( $instanceLabels );
+			}
+			$property->instance = $instances;
+		}
+	
+		$this->property = $property;
 	}
 	
 	public function loadRDF( $termIRI ) {
@@ -543,92 +683,130 @@ class OntologyModel {
 		return $related;
 	}
 	
-	private function queryHierarchy( $termIRI, $supClassResults, $index = 0 ) {
+	private function queryHierarchy( $termIRI, $type, $supTermResults, $index = 0 ) {
 		$hierarchy = array();
-		$supClasses = array();
-		$sibClasses = array();
-		$subClasses = array();
+		$supTerms = array();
+		$sibTerms = array();
+		$subTerms = array();
 		$hasChild = array();
-		if ( !empty( $supClassResults ) ) {
-			foreach ( $supClassResults as $i => $supClassResult ) {
+		if ( !empty( $supTermResults ) ) {
+			foreach ( $supTermResults as $i => $supTermResult ) {
 				if ( $i != $index ) {
 					continue;
 				}
 				
-				foreach ( $supClassResult as $supClassIRI => $supClassLabel) {
-					if ( $supClassLabel != '' ) {
-						$supClasses[$supClassIRI] = $supClassLabel;
+				foreach ( $supTermResult as $supTermIRI => $supTermLabel) {
+					if ( $supTermLabel != '' ) {
+						$supTerms[$supTermIRI] = $supTermLabel;
 					} else {
-						$supClasses[$supClassIRI] = OntologyModelHelper::getShortTerm( $supClassIRI );
+						$supTerms[$supTermIRI] = OntologyModelHelper::getShortTerm( $supTermIRI );
 					}
 				}
 				
-				if ( !empty( $supClasses ) ) {
-					$tmpClasses = $supClasses;
-					end( $tmpClasses );
-					$supClass = key( $tmpClasses );
-					list( $sibClassResult, $query ) = $this->rdf->selectSubClass(
-						$this->ontology->ontology_graph_url,
-						$supClass
-					);
+				if ( !empty( $supTerms ) ) {
+					$tmpTerms = $supTerms;
+					end( $tmpTerms );
+					$supTerm = key( $tmpTerms );
+					if ( in_array( $type, array(
+						'Class',
+					) ) ) {
+						list( $sibTermResult, $query ) = $this->rdf->selectSubClass(
+							$this->ontology->ontology_graph_url,
+							$supTerm
+						);
+					} else if ( in_array( $type, array(
+						'ObjectProperty',
+						'DatatypeProperty',
+						'AnnotationProperty',
+					) ) ) {
+						list( $sibTermResult, $query ) = $this->rdf->selectSubProperty(
+								$this->ontology->ontology_graph_url,
+								$supTerm
+						);
+					}
 					$this->addQueries( $query );
-					$sibClassResult = OntologyModelHelper::parseClassResult( $sibClassResult );
-					unset( $sibClassResult[$termIRI] );
-					foreach ( $sibClassResult as $sibClassIRI => $sibClassObject ) {
-						$sibClasses[$sibClassIRI] = $sibClassObject->label;
-						if ( $sibClassObject->hasChild ) {
-							$hasChild[$sibClassIRI] = true;
+					$sibTermResult = OntologyModelHelper::parseTermResult( $sibTermResult );
+					unset( $sibTermResult[$termIRI] );
+					foreach ( $sibTermResult as $sibTermIRI => $sibTermObject ) {
+						$sibTerms[$sibTermIRI] = $sibTermObject->label;
+						if ( $sibTermObject->hasChild ) {
+							$hasChild[$sibTermIRI] = true;
 						} else {
-							$hasChild[$sibClassIRI] = false;
+							$hasChild[$sibTermIRI] = false;
 						}
 					}
 				}
-				#print_r($sibClasses);
-				#print_r($hasChild);
-				list( $subClassResult, $query ) = $this->rdf->selectSubClass(
-					$this->ontology->ontology_graph_url,
-					$termIRI
-				);
+				
+				if ( in_array( $type, array(
+						'Class',
+					) ) ) {
+					list( $subTermResult, $query ) = $this->rdf->selectSubClass(
+						$this->ontology->ontology_graph_url,
+						$termIRI
+					);
+				} else if ( in_array( $type, array(
+					'ObjectProperty',
+					'DatatypeProperty',
+					'AnnotationProperty',
+				) ) ) {
+					list( $subTermResult, $query ) = $this->rdf->selectSubProperty(
+							$this->ontology->ontology_graph_url,
+							$termIRI
+					);
+				}
 				$this->addQueries( $query );
-				$subClassResult = OntologyModelHelper::parseClassResult( $subClassResult );
-				foreach ( $subClassResult as $subClassIRI => $subClassObject ) {
-					$subClasses[$subClassIRI] = $subClassObject->label;
-					if ( $subClassObject->hasChild ) {
-						$hasChild[$subClassIRI] = true;
+				$subTermResult = OntologyModelHelper::parseTermResult( $subTermResult );
+				foreach ( $subTermResult as $subTermIRI => $subTermObject ) {
+					$subTerms[$subTermIRI] = $subTermObject->label;
+					if ( $subTermObject->hasChild ) {
+						$hasChild[$subTermIRI] = true;
 					} else {
-						$hasChild[$subClassIRI] = false;
+						$hasChild[$subTermIRI] = false;
 					}
 				}
 					
 				$hierarchy[] = array(
-						'path' => $supClasses,
-						'supClass' => $supClass,
-						'sibClasses' => $sibClasses,
-						'subClasses' => $subClasses,
+						'path' => $supTerms,
+						'supTerm' => $supTerm,
+						'sibTerms' => $sibTerms,
+						'subTerms' => $subTerms,
 						'hasChild' => $hasChild,
 				);
 			}
 		} else {
-			list( $subClassResult, $query ) = $this->rdf->selectSubClass(
+			if ( in_array( $type, array(
+				'Class',
+			) ) ) {
+				list( $subTermResult, $query ) = $this->rdf->selectSubClass(
 				$this->ontology->ontology_graph_url,
 				$termIRI
-			);
+				);
+			} else if ( in_array( $type, array(
+				'ObjectProperty',
+				'DatatypeProperty',
+				'AnnotationProperty',
+			) ) ) {
+				list( $subTermResult, $query ) = $this->rdf->selectSubProperty(
+						$this->ontology->ontology_graph_url,
+						$termIRI
+				);
+			}
 			$this->addQueries( $query );
-			$subClassResult = OntologyModelHelper::parseClassResult( $subClassResult );
-			foreach ( $subClassResult as $subClassIRI => $subClassObject ) {
-				$subClasses[$subClassIRI] = $subClassObject->label;
-				if ( $subClassObject->hasChild ) {
-					$hasChild[$subClassIRI] = true;
+			$subTermResult = OntologyModelHelper::parseTermResult( $subTermResult );
+			foreach ( $subTermResult as $subTermIRI => $subTermObject ) {
+				$subTerms[$subTermIRI] = $subTermObject->label;
+				if ( $subTermObject->hasChild ) {
+					$hasChild[$subTermIRI] = true;
 				} else {
-					$hasChild[$subClassIRI] = false;
+					$hasChild[$subTermIRI] = false;
 				}
 			}
 	
 			$hierarchy[] = array(
 					'path' => null,
-					'supClass' => null,
-					'sibClasses' => null,
-					'subClasses' => $subClasses,
+					'supTerm' => null,
+					'sibTerms' => null,
+					'subTerms' => $subTerms,
 					'hasChild' => $hasChild,
 			);
 		}
@@ -672,34 +850,34 @@ class OntologyModelHelper {
 		return $result;
 	}
 	
-	public static function parseClassResult( $classResult ) {
-		$classes = array();
-		foreach ( $classResult as $result ) {
-			if ( isset( $classes[$result['class']] ) ) {
-				if ( isset( $result['subClass'] ) ) {
-					$classes[$result['class']]->hasChild = true;
+	public static function parseTermResult( $termResult ) {
+		$terms = array();
+		foreach ( $termResult as $result ) {
+			if ( isset( $terms[$result['term']] ) ) {
+				if ( isset( $result['subTerm'] ) ) {
+					$terms[$result['term']]->hasChild = true;
 				}
 			} else {
-				$class = self::makeClass( array(
-						'iri' => $result['class'],
+				$term = self::makeClass( array(
+						'iri' => $result['term'],
 						'label' => null,
 						'type' => null,
 						'hasChild' => null,
 				) );
-				$class->label = '';
+				$term->label = '';
 				if (isset( $result['label'] ) ) {
-					$class->label = $result['label'];
+					$term->label = $result['label'];
 				}
-				$class->hasChild = false;
-				if ( isset( $result['subClass'] ) ) {
-					$class->hasChild = true;
+				$term->hasChild = false;
+				if ( isset( $result['subTerm'] ) ) {
+					$term->hasChild = true;
 				}
-				$classes[$result['class']] = $class;
+				$terms[$result['term']] = $term;
 			}
 				
 		}
-		asort( $classes );
-		return $classes;
+		asort( $terms );
+		return $terms;
 	}
 	
 	public static function parseTermList( $termResult, $prefix, $letter ) {

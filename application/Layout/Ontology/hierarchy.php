@@ -22,6 +22,8 @@
 
 /**
  * @file hierarchy.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Sep 5, 2015
  * @comment 
@@ -39,8 +41,8 @@ class Hierarchy {
 		$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
 		
 		$path = $hierarchy['path'];
-		$subClasses = $hierarchy['subClasses'];
-		$sibClasses = $hierarchy['sibClasses'];
+		$subTerms = $hierarchy['subTerms'];
+		$sibTerms = $hierarchy['sibTerms'];
 		$hasChild = $hierarchy['hasChild'];
 		if ( $term->type == 'Class' ) {
 			$html = 
@@ -70,43 +72,43 @@ END;
 			$html .= '<ul class="top"><li class="top-term">Top<ul>';
 		}
 		if ( !empty( $path ) ) {
-			$html .= self::supClassHeader( $rootURL, $path );
+			$html .= self::supTermHeader( $rootURL, $path );
 
-			if( !empty( $sibClasses ) ) {
+			if( !empty( $sibTerms ) ) {
 				end($path);
 				$moreURL = 
 					SITEURL .
 					"ontology/catalog/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( key($path) )}";
-				$html .= self::sibClassSection( $rootURL, $moreURL, $sibClasses, $hasChild );
+				$html .= self::sibTermSection( $rootURL, $moreURL, $sibTerms, $hasChild );
 			}
 
-			$html .= self::curClassHeader( $rootURL, $term, $hasChild );
+			$html .= self::curTermHeader( $rootURL, $term, $hasChild );
 
-			if ( !empty( $subClasses ) ) {
+			if ( !empty( $subTerms ) ) {
 				$moreURL = SITEURL . "ontology/catalog/$ontology->ontology_abbrv?iri=$term->iri";
-				$html .= self::subClassSection( $rootURL, $moreURL, $subClasses, $hasChild );
+				$html .= self::subTermSection( $rootURL, $moreURL, $subTerms, $hasChild );
 			}
 
-			$html .= self::curClassBottom();
+			$html .= self::curTermBottom();
 
-			$html .= self::supClassBottom( $path );
+			$html .= self::supTermBottom( $path );
 		} else {
-			$html .= self::curClassHeader( $rootURL, $term, $hasChild );
+			$html .= self::curTermHeader( $rootURL, $term, $hasChild );
 			
-			if( !empty( $sibClasses ) ) {
+			if( !empty( $sibTerms ) ) {
 				end($path);
 				$moreURL =
 				SITEURL .
 				"ontology/catalog/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( key($path) )}";
-				$html .= self::sibClassSection( $rootURL, $moreURL, $sibClasses, $hasChild );
+				$html .= self::sibTermSection( $rootURL, $moreURL, $sibTerms, $hasChild );
 			}
 			
-			if ( !empty( $subClasses ) ) {
+			if ( !empty( $subTerms ) ) {
 				$moreURL = SITEURL . "ontology/catalog/$ontology->ontology_abbrv?iri=$term->iri";
-				$html .= self::subClassSection( $rootURL, $moreURL, $subClasses, $hasChild );
+				$html .= self::subTermSection( $rootURL, $moreURL, $subTerms, $hasChild );
 			}
 
-			$html .= self::curClassBottom();
+			$html .= self::curTermBottom();
 			
 			$html .= '</ul></li></ul></div></div>';
 		}
@@ -156,25 +158,25 @@ END;
 	}
 
 	/**
-	 * Static function to generate Super-Class Header HTML
+	 * Static function to generate Super-Term Header HTML
 	 *
 	 * @param $ontAbbr
 	 * @param $rootURL
 	 * @param $path
 	 * @return $html
 	 */
-	private static function supClassHeader( $rootURL, $path ) {
-		$html = '<!-- Hierarchy Super Class Opening -->';
-		foreach ( $path as $supClassIRI => $supClassLabel ) {
-			if ( $supClassLabel == '' ) {
-				$supClassLabel = Helper::getShortTerm( $supClassIRI );
+	private static function supTermHeader( $rootURL, $path ) {
+		$html = '<!-- Hierarchy Super Term Opening -->';
+		foreach ( $path as $supTermIRI => $supTermLabel ) {
+			if ( $supTermLabel == '' ) {
+				$supTermLabel = Helper::getShortTerm( $supTermIRI );
 			}
-			if ( $supClassIRI != 'http://www.w3.org/2002/07/owl#Thing' ) {
+			if ( $supTermIRI != 'http://www.w3.org/2002/07/owl#Thing' ) {
 				$html .= '<li>+ ';
 				$html .= self::entitiy(
 						'sup-term',
-						$rootURL . $supClassIRI,
-						$supClassLabel
+						$rootURL . $supTermIRI,
+						$supTermLabel
 				);
 				$html .= '<ul>';
 			}
@@ -183,48 +185,48 @@ END;
 	}
 
 	/**
-	 * Static function to generate Sibling-Class Section HTML
+	 * Static function to generate Sibling-Term Section HTML
 	 *
 	 * @param $ontAbbr
 	 * @param $rootURL
-	 * @param $sibClasses
+	 * @param $sibTerms
 	 * @param $hasChild
 	 * @return $html
 	 */
-	private static function sibClassSection( $rootURL, $moreURL, $sibClasses, $hasChild ) {
+	private static function sibTermSection( $rootURL, $moreURL, $sibTerms, $hasChild ) {
 		$sibHasChildMax = $GLOBALS['ontology']['hierarchy']['sibhasmax'];
 		$sibNoChildMax =$GLOBALS['ontology']['hierarchy']['sibnomax'];
 
-		$html = '<!-- Hierarchy Sibling Class Opening -->';
+		$html = '<!-- Hierarchy Sibling Term Opening -->';
 		$noChildCount = 0;
 		$hasChildCount = 0;
 		$showMore = false;
-		foreach ( $sibClasses as $sibClassIRI => $sibClassLabel ) {
+		foreach ( $sibTerms as $sibTermIRI => $sibTermLabel ) {
 			if ( ( $hasChildCount > $sibHasChildMax ) && ( $noChildCount > $sibNoChildMax ) ) {
 				break;
 			}
-			if ( $sibClassLabel == '' ) {
-				$sibClassLabel = Helper::getShortTerm( $sibClassIRI );
+			if ( $sibTermLabel == '' ) {
+				$sibTermLabel = Helper::getShortTerm( $sibTermIRI );
 			}
-			if ( $hasChild[$sibClassIRI] && ( $hasChildCount <= $sibHasChildMax) ) {
+			if ( $hasChild[$sibTermIRI] && ( $hasChildCount <= $sibHasChildMax) ) {
 				$hasChildCount++;
 				$html .= '<li>+ ';
 				$html .= self::entitiy(
 						'sup-term',
-						$rootURL . $sibClassIRI,
-						$sibClassLabel
+						$rootURL . $sibTermIRI,
+						$sibTermLabel
 				);
 				$html .= '</li>';
 			} elseif ( $hasChildCount > $sibHasChildMax ) {
 				$showMore = true;
 			}
-			if ( !$hasChild[$sibClassIRI] && ( $noChildCount <= $sibNoChildMax ) ) {
+			if ( !$hasChild[$sibTermIRI] && ( $noChildCount <= $sibNoChildMax ) ) {
 				$noChildCount++;
 				$html .= '<li>- ';
 				$html .= self::entitiy(
 						'sup-term',
-						$rootURL . $sibClassIRI,
-						$sibClassLabel
+						$rootURL . $sibTermIRI,
+						$sibTermLabel
 				);
 				$html .= '</li>';
 			} elseif ( $noChildCount > $sibNoChildMax ) {
@@ -234,77 +236,77 @@ END;
 		if ( $showMore ) {
 			$html .= self::more( $moreURL, 'sib' );
 		}
-		$html .= '<!-- Hierarchy Sibling Class Closing -->';
+		$html .= '<!-- Hierarchy Sibling Term Closing -->';
 		return $html;
 	}
 
 	/**
-	 * Static function to generate Current-Class Header HTML
+	 * Static function to generate Current-Term Header HTML
 	 *
 	 * @param $ontAbbr
 	 * @param $rootURL
 	 * @param $term
 	 * @return $html
 	 */
-	private static function curClassHeader( $rootURL, $term, $hasChild ) {
-		$html = '<!-- Hierarchy Current Class Opening -->';
-		$curClassIRI = $term->iri;
-		$curClassLabel = $term->label;
-		if ( isset( $hasChild[ $curClassIRI ] ) ) {
+	private static function curTermHeader( $rootURL, $term, $hasChild ) {
+		$html = '<!-- Hierarchy Current Term Opening -->';
+		$curTermIRI = $term->iri;
+		$curTermLabel = $term->label;
+		if ( isset( $hasChild[ $curTermIRI ] ) ) {
 			$html .= '<li>+ ';
 		} else {
 			$html .= '<li>- ';
 		}
 		$html .= self::entitiy(
 				'cur-term',
-				$rootURL . $curClassIRI,
-				$curClassLabel
+				$rootURL . $curTermIRI,
+				$curTermLabel
 		);
 		return $html;
 	}
 
 	/**
-	 * Static function to generate Sub-Class Section HTML
+	 * Static function to generate Sub-Term Section HTML
 	 *
-	 * @param $subClasses
+	 * @param $subTerms
 	 * @param $hasChild
 	 * @return $html
 	 */
-	private static function subClassSection( $rootURL, $moreURL, $subClasses, $hasChild ) {
+	private static function subTermSection( $rootURL, $moreURL, $subTerms, $hasChild ) {
 		$subHasChildMax = $GLOBALS['ontology']['hierarchy']['subhasmax'];
 		$subNoChildMax = $GLOBALS['ontology']['hierarchy']['subnomax'];
 
-		$html = '<!-- Hierarchy Sub Class Opening -->';
+		$html = '<!-- Hierarchy Sub Term Opening -->';
 		$html .= '<ul>';
 		$noChildCount = 0;
 		$hasChildCount = 0;
 		$showMore = false;
-		foreach ( $subClasses as $subClassIRI => $subClassLabel ) {
+		foreach ( $subTerms as $subTermIRI => $subTermLabel ) {
 			if ( ( $hasChildCount > $subHasChildMax ) && ( $noChildCount > $subNoChildMax ) ) {
 				break;
 			}
-			if ( $subClassLabel == '' ) {
-				$subClassLabel = Helper::getShortTerm( $subClassIRI );
+			if ( $subTermLabel == '' ) {
+				$subTermLabel = Helper::getShortTerm( $subTermIRI );
 			}
-			if ( $hasChild[$subClassIRI] && ( $hasChildCount <= $subHasChildMax ) ) {
+			if ( $hasChild[$subTermIRI] && ( $hasChildCount <= $subHasChildMax ) ) {
 				$hasChildCount++;
 				$html .= '<li>+ ';
 				$html .= self::entitiy(
 						'sub-term',
-						$rootURL . $subClassIRI,
-						$subClassLabel
+						$rootURL . $subTermIRI,
+						$subTermLabel
 				);
 				$html .= '</li>';
 			} elseif ( $hasChildCount > $subHasChildMax ) {
 				$showMore = true;
 			}
-			if ( !$hasChild[$subClassIRI] && ( $noChildCount <= $subNoChildMax ) ) {
+			if ( !$hasChild[$subTermIRI] && ( $noChildCount <= $subNoChildMax ) ) {
 				$noChildCount++;
 				$html .= '<li>- ';
 				$html .= self::entitiy(
 						'sub-term',
-						$rootURL . $subClassIRI,
-						$subClassLabel
+						$rootURL . $subTermIRI,
+						$subTermLabel
 				);
 				$html .= '</li>';
 			} elseif ( $noChildCount > $subNoChildMax ) {
@@ -315,7 +317,7 @@ END;
 			$html .= self::more( $moreURL, 'sub' );
 		}
 		$html .= '</ul>';
-		$html .= '<!-- Hierarchy Sub Class Closing -->';
+		$html .= '<!-- Hierarchy Sub Term Closing -->';
 		return $html;
 	}
 
@@ -324,24 +326,24 @@ END;
 	 *
 	 * @return $html
 	 */
-	private static function curClassBottom() {
-		return '</li><!-- Hierarchy Super Class Closing -->';
+	private static function curTermBottom() {
+		return '</li><!-- Hierarchy Current Term Closing -->';
 	}
 
 	/**
-	 * Static function to generate Sup-Class Bottom HTML
+	 * Static function to generate Sup-Term Bottom HTML
 	 *
 	 * @param $path
 	 * @return $html
 	 */
-	private static function supClassBottom( $path ) {
+	private static function supTermBottom( $path ) {
 		$html = '';
-		foreach ( $path as $supClassIRI => $supClassLabel ) {
-			if ( $supClassIRI != 'http://www.w3.org/2002/07/owl#Thing' ) {
+		foreach ( $path as $supTermIRI => $supTermLabel ) {
+			if ( $supTermIRI != 'http://www.w3.org/2002/07/owl#Thing' ) {
 				$html .= '</ul></li>';
 			}
 		}
-		$html .= '<!-- Hierarchy Super Class Closing -->';
+		$html .= '<!-- Hierarchy Super Term Closing -->';
 		return $html;
 	}
 

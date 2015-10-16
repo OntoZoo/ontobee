@@ -22,6 +22,7 @@
 
 /**
  * @file SearchController.php
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Sep 4, 2015
  * @comment 

@@ -22,6 +22,8 @@
 
 /**
  * @file search.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Sep 6, 2015
  * @comment 
@@ -67,7 +69,7 @@ if ( !empty( $keyOntology ) && !empty( $json ) ) {
 			echo 
 '<li>' .
 preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\?o={$match['ontology']}&amp;iri=$termIRI\">{$match['iri']}</a></li>";
+"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\\{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
 			unset( $json[$index] );
 		}
 	}
@@ -82,7 +84,7 @@ if ( !empty( $json ) ) {
 			echo
 			'<li>' .
 			preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-			"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\?o={$match['ontology']}&amp;iri=$termIRI\">{$match['iri']}</a></li>";
+			"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\\{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
 			unset( $json[$index] );
 		}
 	}
@@ -101,7 +103,7 @@ END;
 		echo
 		'<li style="text-decoration:line-through">' .
 		preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-		"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\?o={$match['ontology']}&amp;iri=$termIRI\">{$match['iri']}</a></li>";
+		"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\\{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
 	}
 }
 ?>

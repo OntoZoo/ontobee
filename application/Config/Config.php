@@ -24,32 +24,36 @@
  * @file Config.php
  * @author Edison Ong
  * @since Sep 3, 2015
- * @comment 
+ * @comment This is basic configuration file of Ontobee installation.
+ *          Memory is set to 4096Mb in order to handle large ontologies such as Gene Ontology(GO).
+ *          If ENVIRONMENT is set to development, both SPARQL query and PHP error message will be display.
+ *          This file also call DB.php and OntologyConfig.php for database and ontology configuration respectively.
  */
 
+# Set maximum memory
 ini_set( 'memory_limit', '4096M' );
 
+# Error and SPARQL reporting if under development
 DEFINE( 'ENVIRONMENT', 'development' );
 if ( ENVIRONMENT == 'development' ) {
 	error_reporting(E_ALL);
 	ini_set("display_errors", 1);
 }
 
-if ( !isset( $_SERVER['HTTP_X_FORWARD_ACCEPT'] ) ) {
-	DEFINE( 'SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/' );
-} else {
-	DEFINE( 'SITEURL', 'http://' . 'e4ong.fwd.wf' . '/' );
-}
-
+# Define site URL and path constant
+DEFINE( 'SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/' );
 DEFINE( 'VIEWPATH', SCRIPTPATH . 'application/View' . DIRECTORY_SEPARATOR );
 DEFINE( 'TEMPLATE', SCRIPTPATH . 'application/Layout' . DIRECTORY_SEPARATOR );
 DEFINE( 'PHPLIB', SCRIPTPATH . 'library/php' . DIRECTORY_SEPARATOR );
 DEFINE ( 'TMP', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
 
+# Load database configuration
 require APPPATH . 'Config/DB.php';
 
+# Load ontology configuration
 require APPPATH . 'Config/OntologyConfig.php';
 
+# Define function caller variable
 $GLOBALS['call_function'] = function( $function ) {
 	return $function;
 };

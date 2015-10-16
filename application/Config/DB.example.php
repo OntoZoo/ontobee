@@ -24,19 +24,19 @@
  * @file DB.example.php
  * @author Edison Ong
  * @since Sep 6, 2015
- * @comment 
+ * @comment Define database configuration in this file.
+ *          Example set up for DB.php.
+ *          After editing the correct configuration, please change the file name to DB.php
  */
 
-
-# Example set up for DB.php
-# After editing the correct configuration, please change the file name to DB.php
-
+# SQL database
 define('DB_DRIVER', 'mysql');
 define('DB_HOST', '127.0.0.1');
 define('DB_SCHEMA', 'schema');
 define('DB_USERNAME', 'username');
 define('DB_PASSWORD', 'password');
 
+# RDF database
 define('RDF_USERNAME', 'username' );
 define('RDF_PASSWORD', 'password' );
 

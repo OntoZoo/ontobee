@@ -22,6 +22,8 @@
 
 /**
  * @file instance.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Oct 1, 2015
  * @comment 
