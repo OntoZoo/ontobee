@@ -21,24 +21,23 @@
  */
 
 /**
- * @file equivalent.axiom.php
+ * @file subclass.axiom.php
  * @author Yongqun Oliver He
  * @author Zuoshuang Allen Xiang
  * @author Edison Ong
- * @since Sep 6, 2015
+ * @since Sep 5, 2015
  * @comment 
  */
  
 use View\Helper;
-
+ 
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-class EquivalentAxiom {
-	public static function show( $ontology, $term ) {
-		$html = '';
-		if ( !empty ( $term->axiom['equivalent'] ) ) {
+class SubClassOfAxiom {
+	public static function show( $superAxiomTitle, $ontology, $term ) {
+		if ( !empty ( $term->axiom['super'] ) ) {
 			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
 			
 			$operations = $GLOBALS['ontology']['restriction']['operation'];
@@ -46,11 +45,11 @@ class EquivalentAxiom {
 			
 			$html =
 <<<END
-<div class="section-title">Equivalents</div>
+<div class="section-title">$superAxiomTitle</div>
 <div class="section"><ul>
 END;
 			
-			foreach ( $term->axiom['equivalent'] as $data ) {
+			foreach ( $term->axiom['super'] as $data ) {
 				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
 				$html .=
 <<<END
@@ -58,10 +57,12 @@ END;
 END;
 			}
 			
-			$html .=
+			$html .
 <<<END
 </ul></div>
 END;
+		} else {
+			$html = '';
 		}
 	
 		return $html;
@@ -69,9 +70,8 @@ END;
 }
 
 ?>
-
-<!-- Equivalent Axiom Display Start -->
+<!-- SubClassOf Axiom Display Start -->
 <?php 
-echo Helper::tidyHTML( EquivalentAxiom::show( $ontology, $term ) );
+echo Helper::tidyHTML( SubClassOfAxiom::show( $superAxiomTitle, $ontology, $term ) );
 ?>
-<!-- Equivalent Axiom Display End -->
+<!-- SubClassOfAxiom Display End -->

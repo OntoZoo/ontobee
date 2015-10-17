@@ -99,10 +99,10 @@ Class OntologyController extends Controller{
 						'Class',
 				) ) ) {
 					$this->model->loadClass( $termIRI );
-					$term = $this->model->getClass();
+					$term = $this->model->getTerm();
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
-					require VIEWPATH . 'Ontology/term.php';
+					require VIEWPATH . 'Ontology/class.php';
 				} else if ( in_array( $this->model->askTermType( $termIRI ), array(
 					'ObjectProperty',
 					'DatatypeProperty',
@@ -112,15 +112,15 @@ Class OntologyController extends Controller{
 					$term = $this->model->getTerm();
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
-					require VIEWPATH . 'Ontology/term.php';
+					require VIEWPATH . 'Ontology/property.php';
 				} else if ( in_array( $this->model->askTermType( $termIRI ), array(
 					'Instance',
 				) ) ) {
-					$this->model->loadTerm( $termIRI );
+					$this->model->loadInstance( $termIRI );
 					$term = $this->model->getTerm();
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
-					require VIEWPATH . 'Ontology/term.php';
+					require VIEWPATH . 'Ontology/instance.php';
 				} else {
 					throw new Exception( "Incorrect ontology term type." );
 				}

@@ -21,11 +21,9 @@
  */
 
 /**
- * @file equivalent.axiom.php
- * @author Yongqun Oliver He
- * @author Zuoshuang Allen Xiang
+ * @file range.php
  * @author Edison Ong
- * @since Sep 6, 2015
+ * @since Oct 16, 2015
  * @comment 
  */
  
@@ -35,43 +33,14 @@ if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-class EquivalentAxiom {
-	public static function show( $ontology, $term ) {
-		$html = '';
-		if ( !empty ( $term->axiom['equivalent'] ) ) {
-			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
-			
-			$operations = $GLOBALS['ontology']['restriction']['operation'];
-			$types = $GLOBALS['ontology']['restriction']['type'];
-			
-			$html =
-<<<END
-<div class="section-title">Equivalents</div>
-<div class="section"><ul>
+if ( !empty( $term->domain ) ) {
+	echo
+	<<<END
+<div class="section-title">Range</div>
+<div class="section"><ul><li>
+<a href="{$term->range['iri']}">{$term->range['label']}</a>
+</li></ul></div>
 END;
-			
-			foreach ( $term->axiom['equivalent'] as $data ) {
-				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
-				$html .=
-<<<END
-<li>{$GLOBALS['call_function']( Helper::trimBracket( $axiom ) )}</li>
-END;
-			}
-			
-			$html .=
-<<<END
-</ul></div>
-END;
-		}
-	
-		return $html;
-	}
 }
 
 ?>
-
-<!-- Equivalent Axiom Display Start -->
-<?php 
-echo Helper::tidyHTML( EquivalentAxiom::show( $ontology, $term ) );
-?>
-<!-- Equivalent Axiom Display End -->

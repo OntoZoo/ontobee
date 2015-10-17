@@ -47,14 +47,15 @@ END;
 		$html .=
 <<<END
 <li><a oncontextmenu="return false;" href="$rootURL{$GLOBALS['call_function']( Helper::convertUTFToUnicode( $useIRI ) )}">
-{$usage['label']}</a> {$GLOBALS['call_function']( Helper::getShortTerm( $usage['type'] ) )} : 
+{$GLOBALS['call_function']( htmlspecialchars( $usage['label'] ) )}
+</a> {$GLOBALS['call_function']( Helper::getShortTerm( $usage['type'] ) )} : 
 {$GLOBALS['call_function']( Helper::trimBracket( Helper::writeRecursiveManchester( $rootURL, $usage['axiom'], $term->related ) ) )}
 </li>
 END;
 	}
 	$html .= '</ul></div>';
 	
-	echo Helper::tidyHTML( $html );
+	echo Helper::tidyHTML( $html, true );
 }
 
 ?>

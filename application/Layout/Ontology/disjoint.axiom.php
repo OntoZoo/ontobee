@@ -21,65 +21,55 @@
  */
 
 /**
- * @file subclass.axiom.php
- * @author Yongqun Oliver He
- * @author Zuoshuang Allen Xiang
+ * @file disjoint.php
  * @author Edison Ong
- * @since Sep 5, 2015
+ * @since Oct 17, 2015
  * @comment 
  */
  
 use View\Helper;
- 
+
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-class SubClassOfAxiom {
+class DisjointAxiom {
 	public static function show( $ontology, $term ) {
-		if ( !empty ( $term->axiom['subclassof'] ) ) {
+		$html = '';
+		if ( !empty ( $term->axiom['disjoint'] ) ) {
 			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
-			
+
 			$operations = $GLOBALS['ontology']['restriction']['operation'];
 			$types = $GLOBALS['ontology']['restriction']['type'];
-			
-			if ( in_array( $term->type, array( 'ObjectProperty', 'AnnotationProperty', 'DataProperty' ) ) ) {
-				$html =
+
+			$html =
 <<<END
-<div class="section-title">Superproperties</div>
+<div class="section-title">Disjoints</div>
 <div class="section"><ul>
 END;
-			} else {
-				$html =
-<<<END
-<div class="section-title">Superclasses &amp; Asserted Axioms</div>
-<div class="section"><ul>
-END;
-			}
-			
-			foreach ( $term->axiom['subclassof'] as $data ) {
+
+			foreach ( $term->axiom['disjoint'] as $data ) {
 				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
 				$html .=
 <<<END
 <li>{$GLOBALS['call_function']( Helper::trimBracket( $axiom ) )}</li>
 END;
 			}
-			
-			$html .
+
+			$html .=
 <<<END
 </ul></div>
 END;
-		} else {
-			$html = '';
 		}
-	
+
 		return $html;
 	}
 }
 
 ?>
-<!-- SubClassOf Axiom Display Start -->
+
+<!-- InverseOf Axiom Display Start -->
 <?php 
-echo Helper::tidyHTML( SubClassOfAxiom::show( $ontology, $term ) );
+echo Helper::tidyHTML( DisjointAxiom::show( $ontology, $term ) );
 ?>
-<!-- SubClassOfAxiom Display End -->
+<!-- InverseOf Axiom Display End -->

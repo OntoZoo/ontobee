@@ -21,11 +21,9 @@
  */
 
 /**
- * @file equivalent.axiom.php
- * @author Yongqun Oliver He
- * @author Zuoshuang Allen Xiang
+ * @file inverse.axiom.php
  * @author Edison Ong
- * @since Sep 6, 2015
+ * @since Oct 17, 2015
  * @comment 
  */
  
@@ -35,43 +33,43 @@ if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-class EquivalentAxiom {
+class InverseAxiom {
 	public static function show( $ontology, $term ) {
 		$html = '';
-		if ( !empty ( $term->axiom['equivalent'] ) ) {
+		if ( !empty ( $term->axiom['inverse'] ) ) {
 			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
-			
+
 			$operations = $GLOBALS['ontology']['restriction']['operation'];
 			$types = $GLOBALS['ontology']['restriction']['type'];
-			
+
 			$html =
 <<<END
-<div class="section-title">Equivalents</div>
+<div class="section-title">Inverse Properties</div>
 <div class="section"><ul>
 END;
-			
-			foreach ( $term->axiom['equivalent'] as $data ) {
+
+			foreach ( $term->axiom['inverse'] as $data ) {
 				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
 				$html .=
 <<<END
 <li>{$GLOBALS['call_function']( Helper::trimBracket( $axiom ) )}</li>
 END;
 			}
-			
+
 			$html .=
-<<<END
+			<<<END
 </ul></div>
 END;
 		}
-	
+
 		return $html;
 	}
 }
 
 ?>
 
-<!-- Equivalent Axiom Display Start -->
+<!-- InverseOf Axiom Display Start -->
 <?php 
-echo Helper::tidyHTML( EquivalentAxiom::show( $ontology, $term ) );
+echo Helper::tidyHTML( InverseAxiom::show( $ontology, $term ) );
 ?>
-<!-- Equivalent Axiom Display End -->
+<!-- InverseOf Axiom Display End -->

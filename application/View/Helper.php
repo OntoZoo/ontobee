@@ -40,6 +40,9 @@ class Helper {
 					'show-body-only' => true,
 					'merge-divs' => false,
 					'output-xml' => $outputXML,
+					'input-encoding' => 'utf8',
+					'output-encoding' => 'utf8',
+					'preserve-entities' => true,
 			) );
 			if ( $outputXML ) {
 				preg_match( '/<body>(.*)<\/body>/s', $cleanHTML, $match );
@@ -244,36 +247,55 @@ END;
 	public static function writeRecursiveManchester( $rootURL, $data, $mapping = array() ) {
 		if ( !is_array( $data ) ) {
 			$manchester = self::makeManchesterLink( $rootURL, $data, $mapping );
-		} else if ( array_key_exists( 'restrictionType', $data ) && ( array_key_exists( 'restrictionValue', $data ) ) ) {
+		} else if ( array_key_exists( 'restrictionValue', $data ) ) {
 			$manchester = '';
 			$operations = $GLOBALS['ontology']['restriction']['operation'];
 			$types = $GLOBALS['ontology']['restriction']['type'];
-			$type = $data['restrictionType'];
 			$value = $data['restrictionValue'];
-			
-			if ( in_array( $type, array_keys( $types ) ) ) {
-				$property = self::makeManchesterLink( $rootURL, $value[0], $mapping );
-				$manchester .= "$property $type ";
-				if ( !is_array( $value[1] ) ) {
-					$manchester .= self::makeManchesterLink( $rootURL, $value[1], $mapping );
-				} else {
-					$manchester .= self::writeRecursiveManchester( $rootURL, $value[1], $mapping );
-				}
-			} else if ( in_array( $type, array_keys( $operations ) ) ) {
-				if ( sizeof( $value ) > 1 ) {
-					$manchester .= '(';
-				}
-				foreach ( $value as $index => $node ) {
-					if ( $type == 'not' ) {
-						if ( $index != 0 ) {
-							$manchester .= " $type ";
-						} else {
-							$manchester .= "$type ";
-						}
+			if ( array_key_exists( 'restrictionType', $data ) ) {
+				$type = $data['restrictionType'];
+				
+				if ( in_array( $type, array_keys( $types ) ) ) {
+					$property = self::makeManchesterLink( $rootURL, $value[0], $mapping );
+					$manchester .= "$property $type ";
+					if ( !is_array( $value[1] ) ) {
+						$manchester .= self::makeManchesterLink( $rootURL, $value[1], $mapping );
 					} else {
-						if ( $index != 0 ) {
-							$manchester .= " $type ";
+						$manchester .= self::writeRecursiveManchester( $rootURL, $value[1], $mapping );
+					}
+				} else if ( in_array( $type, array_keys( $operations ) ) ) {
+					if ( sizeof( $value ) > 1 ) {
+						$manchester .= '(';
+					}
+					foreach ( $value as $index => $node ) {
+						if ( $type == 'not' ) {
+							if ( $index != 0 ) {
+								$manchester .= " $type ";
+							} else {
+								$manchester .= "$type ";
+							}
+						} else {
+							if ( $index != 0 ) {
+								$manchester .= " $type ";
+							}
 						}
+						if ( !is_array( $node ) ) {
+							$manchester .= self::makeManchesterLink( $rootURL, $node, $mapping );
+						} else {
+							$manchester .= '(' . self::writeRecursiveManchester( $rootURL, $node, $mapping ) . ')';
+						}
+					}
+				
+				if ( sizeof( $value ) > 1 ) {
+						$manchester .= ')';
+					}
+				}
+			} else if ( sizeof( $value ) > 1 ){
+				$type = '|';
+				$manchester .= '(';
+				foreach ( $value as $index => $node ) {
+					if ( $index != 0 ) {
+						$manchester .= " $type ";
 					}
 					if ( !is_array( $node ) ) {
 						$manchester .= self::makeManchesterLink( $rootURL, $node, $mapping );
@@ -281,10 +303,7 @@ END;
 						$manchester .= '(' . self::writeRecursiveManchester( $rootURL, $node, $mapping ) . ')';
 					}
 				}
-			
-			if ( sizeof( $value ) > 1 ) {
-					$manchester .= ')';
-				}
+				$manchester .= ')';
 			}
 		} else {
 			$manchester = '';

@@ -92,19 +92,10 @@ class OntologyModel {
 	/**
 	 * Getter
 	 *
-	 * @return $class
+	 * @return $term
 	 */
-	public function getClass() {
-		return $this->class;
-	}
-	
-	/**
-	 * Getter
-	 *
-	 * @return $property
-	 */
-	public function getProperty() {
-		return $this->property;
+	public function getTerm() {
+		return $this->term;
 	}
 	
 	/**
@@ -469,17 +460,15 @@ class OntologyModel {
 		}
 		$class->annotation = $annotations;
 	
-		if ( $typeIRI == $GLOBALS['ontology']['type']['Class'] ) {
-			list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $classIRI );
-			$this->addQueries( $query );
-			$instances = array();
-			foreach ( $instanceResult as $instanceIRI => $instanceLabels ) {
-				$instances[$instanceIRI] = array_shift( $instanceLabels );
-			}
-			$class->instance = $instances;
+		list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $classIRI );
+		$this->addQueries( $query );
+		$instances = array();
+		foreach ( $instanceResult as $instanceIRI => $instanceLabels ) {
+			$instances[$instanceIRI] = array_shift( $instanceLabels );
 		}
+		$class->instance = $instances;
 	
-		$this->class = $class;
+		$this->term = $class;
 	}
 	
 	public function loadProperty( $propertyIRI ) {
@@ -494,10 +483,10 @@ class OntologyModel {
 	
 		list( $describeResult, $query ) = $this->rdf->describeProperty( $this->ontology->ontology_graph_url, $propertyIRI );
 		$this->addQueries( $query );
-	
+		
 		$describes = $describeResult['describe'];
 		$property->describe = $describeResult['describe'];
-	
+		
 		$preferLabel = array();
 		foreach( $GLOBALS['ontology']['label']['priority'] as $labelIRI ) {
 			if ( array_key_exists( $labelIRI, $property->describe ) ) {
@@ -520,13 +509,16 @@ class OntologyModel {
 				$typeIRIs[] = $typeResult['value'];
 			}
 		}
+		$characteristics = array();
 		foreach ( $typeIRIs as $index => $typeIRI ) {
 			if ( array_key_exists( $typeIRI, $GLOBALS['alias']['type'] ) ) {
 				$typeIRIs[$index] = $GLOBALS['alias']['type'][$typeIRI];
+				$characteristics[] = $typeIRI;
 			}
 		}
 		$typeIRIs = array_unique( $typeIRIs );
 		$property->type =array_search( array_shift( $typeIRIs ), $GLOBALS['ontology']['type'] );
+		$property->characteristics = $characteristics;
 	
 		$hierarchyResult = $describeResult['transitiveSupProperty'];
 		$hierarchy = $this->queryHierarchy(
@@ -539,16 +531,24 @@ class OntologyModel {
 		$property->axiom = $describeResult['axiom'];
 	
 		$property->annotation_annotation = $describeResult['annotation_annotation'];
-	
+		
 		$nodes = array();
 		$usage = array();
 		foreach ( $describeResult['usage']['term'] as $use ) {
 			$nodes[$use['o']] = $use['ref'];
-			$usage[$use['ref']] = array(
+			if ( array_key_exists( 'label', $use ) ) {
+				$usage[$use['ref']] = array(
 					'label' => $use['label'],
 					'type' => $use['refp'],
-			);
+				);
+			} else {
+				$usage[$use['ref']] = array(
+					'label' => OntologyModelHelper::getShortTerm( $use['ref'] ),
+					'type' => $use['refp'],
+				);
+			}
 		}
+		
 		list( $nodeResults, $query ) = $this->rdf->describeAll($this->ontology->ontology_graph_url, array_keys( $nodes ) );
 		$this->addQueries( $query );
 		foreach ( $nodeResults as $nodeIRI => $nodeResult ) {
@@ -596,18 +596,149 @@ class OntologyModel {
 			}
 		}
 		$property->annotation = $annotations;
-	
-		if ( $typeIRI == $GLOBALS['ontology']['type']['Class'] ) {
-			list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $propertyIRI );
-			$this->addQueries( $query );
-			$instances = array();
-			foreach ( $instanceResult as $instanceIRI => $instanceLabels ) {
-				$instances[$instanceIRI] = array_shift( $instanceLabels );
-			}
-			$property->instance = $instances;
+		
+		if ( array_key_exists( $GLOBALS['ontology']['namespace']['rdfs'] . 'domain', $describes ) ) {
+			$domainIRI = $describes[$GLOBALS['ontology']['namespace']['rdfs'] . 'domain'][0]['value'];
+			$property->domain = array(
+					'iri' => $domainIRI,
+					'label' => $related[$domainIRI]->label 
+			);
+		} else {
+			$property->domain = null;
+		}
+		
+		if ( array_key_exists( $GLOBALS['ontology']['namespace']['rdfs'] . 'range', $describes ) ) {
+			$rangeIRI = $describes[$GLOBALS['ontology']['namespace']['rdfs'] . 'range'][0]['value'];
+			$property->range = array(
+				'iri' => $rangeIRI,
+				'label' => $related[$rangeIRI]->label
+			);
+		} else {
+			$property->range = null;
 		}
 	
-		$this->property = $property;
+		$this->term = $property;
+	}
+	
+	public function loadInstance( $instanceIRI ) {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+	
+		$instance = OntologyModelHelper::makeClass( array(
+				'id' => OntologyModelHelper::getShortTerm( $instanceIRI ),
+				'iri' => $instanceIRI,
+		) );
+	
+		list( $describeResult, $query ) = $this->rdf->describeInstance( $this->ontology->ontology_graph_url, $instanceIRI );
+		$this->addQueries( $query );
+	
+		$describes = $describeResult['describe'];
+		$instance->describe = $describeResult['describe'];
+	
+		$preferLabel = array();
+		foreach( $GLOBALS['ontology']['label']['priority'] as $labelIRI ) {
+			if ( array_key_exists( $labelIRI, $instance->describe ) ) {
+				$tmpLabel = $instance->describe[$labelIRI];
+				$preferLabel = $tmpLabel[0]['value'];
+				break;
+			}
+		}
+		if ( !empty( $preferLabel ) ) {
+			$preferLabel = $preferLabel;
+		} else {
+			$preferLabel = OntologyModelHelper::getShortTerm( $instanceIRI );
+		}
+		$instance->label = $preferLabel;
+	
+		$typeResults = $instance->describe[$GLOBALS['ontology']['namespace']['rdf'] . 'type'];
+		$typeIRIs = array();
+		foreach ( $typeResults as $typeResult ) {
+			if ( $typeResult['type'] == 'uri' ) {
+				$typeIRIs[] = $typeResult['value'];
+			}
+		}
+		foreach ( $typeIRIs as $index => $typeIRI ) {
+			if ( array_key_exists( $typeIRI, $GLOBALS['alias']['type'] ) ) {
+				$typeIRIs[$index] = $GLOBALS['alias']['type'][$typeIRI];
+			}
+		}
+		$typeIRIs = array_unique( $typeIRIs );
+		if ( in_array( $GLOBALS['ontology']['type']['Instance'], $typeIRIs ) ) {
+			$instance->type = 'Instance';
+			unset( $typeIRIs[array_search( $GLOBALS['ontology']['type']['Instance'], $typeIRIs )] );
+		}
+	
+		$instance->annotation_annotation = $describeResult['annotation_annotation'];
+	
+		$nodes = array();
+		$usage = array();
+		foreach ( $describeResult['usage']['term'] as $use ) {
+			$nodes[$use['o']] = $use['ref'];
+			$usage[$use['ref']] = array(
+					'label' => $use['label'],
+					'type' => $use['refp'],
+			);
+		}
+		list( $nodeResults, $query ) = $this->rdf->describeAll($this->ontology->ontology_graph_url, array_keys( $nodes ) );
+		$this->addQueries( $query );
+		foreach ( $nodeResults as $nodeIRI => $nodeResult ) {
+			$ref = $nodes[$nodeIRI];
+			$refp = $usage[$ref]['type'];
+			$usage[$nodes[$nodeIRI]]['axiom'] = $nodeResult;
+			$describes[$refp][] = $nodeResult;
+		}
+		$instance->usage = $usage;
+	
+		$other = array();
+		$validOntology = $this->getAllOntology();
+		$validGraph = array_keys( $validOntology );
+		foreach ( $describeResult['usage']['ontology'] as $graph ) {
+			if ( in_array( $graph['g'], $validGraph ) ) {
+				$other[] = $graph['g'];
+			}
+		}
+		$instance->other = $other;
+	
+		$related = $this->queryRelated( $describes );
+		$related[$instanceIRI] = $instance;
+		$instance->related = $related;
+	
+		$annotations = array();
+		foreach ( array_unique( array_keys( $instance->describe ) ) as $property ) {
+			if ( $related[$property]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
+				$values = array();
+				foreach ( $instance->describe[$property] as $token ) {
+					if ( array_key_exists( 'value', $token ) ) {
+						$values[] = $token['value'];
+					}
+				}
+				if ( empty( $values ) ) {
+					continue;
+				}
+				$label = $related[$property]->label;
+				if ( $label == '' ) {
+					$label = OntologyModelHelper::getShortTerm( $property );
+				}
+				$annotations[$property] = array(
+						'label' => $label,
+						'value' => $values,
+				);
+			}
+		}
+		$instance->annotation = $annotations;
+		
+		if ( sizeof( $typeIRIs ) == 1 ) {
+			$classIRI = array_shift( $typeIRIs );
+			$instance->class = array(
+				'iri' => $classIRI,
+				'label' => $related[$classIRI]->label
+			);
+		} else {
+			throw new Exception( "Instance belongs to more than one class." );
+		}
+	
+		$this->term = $instance;
 	}
 	
 	public function loadRDF( $termIRI ) {

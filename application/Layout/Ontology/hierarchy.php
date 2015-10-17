@@ -37,32 +37,19 @@ if ( !$this ) {
 
 class Hierarchy {
 
-	public static function show( $ontology, $term, $hierarchy ) {
+	public static function show( $hierarchyTitle, $ontology, $term, $hierarchy ) {
 		$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
 		
 		$path = $hierarchy['path'];
 		$subTerms = $hierarchy['subTerms'];
 		$sibTerms = $hierarchy['sibTerms'];
 		$hasChild = $hierarchy['hasChild'];
-		if ( $term->type == 'Class' ) {
-			$html = 
+		
+		$html = 
 <<<END
-<div class="section-title">Class Hierarchy</div>
+<div class="section-title">$hierarchyTitle</div>
 <div class="section main">
 END;
-		} else if ( in_array( $term->type, array( 'ObjectProperty', 'AnnotationProperty', 'DataProperty' ) ) ) {
-			$html =
-<<<END
-<div class="section-title">Property Hierarchy</div>
-<div class="section main">
-END;
-		} else {
-			$html =
-<<<END
-<div class="section-title">Hierarchy</div>
-<div class="section main">
-END;
-		}
 		
 		$top = Helper::getShortTerm( array_search( $term->type, $GLOBALS['ontology']['top_level_term']) );
 		
@@ -354,7 +341,7 @@ END;
 <!-- Ontobee Hierarchy Display Start -->
 <div class="hierarchy">
 <?php
-echo Helper::tidyHTML( Hierarchy::show( $ontology, $term, $term->hierarchy[0] ) );
+echo Helper::tidyHTML( Hierarchy::show( $hierarchyTitle, $ontology, $term, $term->hierarchy[0] ) );
 ?>
 </div>
 <!-- Ontobee Hierarchy Display End -->

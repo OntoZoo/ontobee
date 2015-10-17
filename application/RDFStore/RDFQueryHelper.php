@@ -34,8 +34,10 @@ use stdClass;
 
 class RDFQueryHelper {
 	
-	public static function parseSPARQLResult( $json ) {
-		$json = json_decode( $json, true );
+	public static function parseSPARQLResult( $json, $decode = true ) {
+		if ( $decode ) {
+			$json = json_decode( $json, true );
+		}
 		$results = array();
 		if ( isset( $json['results']['bindings'] ) ) {
 			foreach ( $json['results']['bindings'] as $binding ) {
@@ -49,8 +51,10 @@ class RDFQueryHelper {
 		return $results;
 	}
 	
-	public static function parseCountResult( $json ) {
-		$json = json_decode( $json, true );
+	public static function parseCountResult( $json, $decode = true ) {
+		if ( $decode ) {
+			$json = json_decode( $json, true );
+		}
 		$var = $json['head']['vars'][0];
 		return $json['results']['bindings'][0][$var]['value'];
 	}
@@ -256,8 +260,10 @@ class RDFQueryHelper {
 		return array_reverse( $path, true );
 	}
 	
-	public static function parseRDF ( $json, $term ) {
-		$json = json_decode( $json, true );
+	public static function parseRDF ( $json, $term, $decode = true ) {
+		if ( $decode ) {
+			$json = json_decode( $json, true );
+		}
 		if ( !is_null( $json ) ) {
 			if ( preg_match( '/nodeID:\/\//', $term ) ) {
 				$term = preg_replace( '/nodeID:\/\//', '_:v', $term );
