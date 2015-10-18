@@ -291,7 +291,7 @@ END;
 			$html = Helper::tidyHTML( $html, true );
 		}
 		
-		if ( $html != '' ) {
+		if ( isset( $html ) && $html != '' ) {
 			$html =
 <<<END
 <div class="section-title">Annotations</div>
@@ -299,9 +299,12 @@ END;
 $html
 </div>
 END;
+			return $html;
+		} else {
+			return '';
 		}
 		
-		return $html;
+		
 	}
 }
 

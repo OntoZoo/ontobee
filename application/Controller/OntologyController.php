@@ -54,6 +54,7 @@ Class OntologyController extends Controller{
 	}
 	
 	public function rdf( $params = array() ) {
+		$GLOBALS['show_query'] = false;
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
 		$title = "Ontobee: $ontAbbr";
 		$this->loadModel( 'Ontology' );

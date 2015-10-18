@@ -750,14 +750,17 @@ class OntologyModel {
 			$termIRI,
 			$this->ontology->ontology_url
 		);
-		
 		$tmpFile = tmpfile();
 		fwrite( $tmpFile, $rdf );
 		$tmpMeta = stream_get_meta_data( $tmpFile );
 		$tmpName = $tmpMeta['uri'];
-		exec( 'java -cp "' . SCRIPTPATH . "library/java/*\" org.hegroup.rdfconvert.Reformat $tmpName" );
-		$rdf = file_get_contents( $tmpName );
-		$this->rdf = $rdf;
+		exec( 'java -cp "' . SCRIPTPATH . "library/java/*\" org.hegroup.rdfconvert.Reformat $tmpName", $output, $status );
+		$owl = file_get_contents( $tmpName );
+		if ( $owl != '' ) {
+			$this->rdf = $owl;
+		} else {
+			$this->rdf = $rdf;
+		}
 		fclose( $tmpFile );
 	}
 	

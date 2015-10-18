@@ -46,5 +46,7 @@ $site = SITEURL;
 
 $stylesheet = "<?xml-stylesheet type=\"text/xsl\" href=\"{$site}ontology/view/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( Helper::encodeURL( $termIRI ) )}\"?>";
 
+$rdf = preg_replace( '/\s?encoding\s?=\s?\"utf-8\"\s?/', '', $rdf );
+
 echo preg_replace( '/(\<\?xml[\s]?version[\s]?=[\s]?"[\d]+.[\d]"[^?]*\?>)/', '$1' . PHP_EOL . $stylesheet, $rdf );
 ?>
