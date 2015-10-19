@@ -29,16 +29,21 @@
 
 $GLOBALS['show_query'] = true;
 
+$GLOBALS['obo_registry'] = 'https://obofoundry.github.io/registry/ontologies';
+
 $GLOBALS['search']['property'] = array(
-		'http://www.w3.org/2000/01/rdf-schema#label',
-		'http://purl.obolibrary.org/obo/IAO_0000111',
-		'http://purl.obolibrary.org/obo/IAO_0000118',
-		'http://www.geneontology.org/formats/oboInOwl#hasExactSynonym',
-		'http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym',
-		'http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym',
-		'http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym',
+	'http://www.w3.org/2000/01/rdf-schema#label',
+	'http://purl.obolibrary.org/obo/IAO_0000111',
+	'http://purl.obolibrary.org/obo/IAO_0000118',
+	'http://www.geneontology.org/formats/oboInOwl#hasExactSynonym',
+	'http://www.geneontology.org/formats/oboInOwl#hasRelatedSynonym',
+	'http://www.geneontology.org/formats/oboInOwl#hasNarrowSynonym',
+	'http://www.geneontology.org/formats/oboInOwl#hasBroadSynonym',
 );
-$GLOBALS['search']['endpoint'] ="http://sparql.hegroup.org/sparql";
+$GLOBALS['endpoint'] = array(
+	'search' => "http://sparql.hegroup.org/sparql",
+	'default' => "http://sparql.hegroup.org/sparql",
+);
 
 
 $GLOBALS['ontology'] = array();

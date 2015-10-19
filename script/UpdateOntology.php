@@ -43,7 +43,10 @@ Class UpdateOntology extends Maintenance {
 		$this->openPDOConnection();
 		
 		$this->tmpDir = TMP . 'rdf' . DIRECTORY_SEPARATOR;
-		mkdir( $this->tmpDir );
+		if ( !file_exists( $this->tmpDir ) ) {
+			mkdir( $this->tmpDir );
+			chmod( $this->tmpDir, 0777 );
+		}
 		
 		$sql = "SELECT * FROM ontology WHERE ontology_abbrv = '$ontAbbr'";
 		$query = $this->db->prepare( $sql );
