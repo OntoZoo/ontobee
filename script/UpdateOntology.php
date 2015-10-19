@@ -27,12 +27,9 @@
  * @comment 
  */
 
-if (PHP_SAPI == 'cli' ) {
+if ( PHP_SAPI == 'cli' ) {
 	require( 'Maintenance.php' );
 }
-
-use Exception;
-use PDO;
 
 Class UpdateOntology extends Maintenance {
 	private $tmpDir;
@@ -41,7 +38,7 @@ Class UpdateOntology extends Maintenance {
 	public $fileName;
 	public $file;
 	
-	public function __construct( $ontAbbr, $options ) {
+	public function __construct( $ontAbbr, $options = array() ) {
 		$this->setup();
 		$this->openPDOConnection();
 		
@@ -90,7 +87,7 @@ DB.DBA.RDF_LOAD_RDFXML_MT (file_to_string_output ('$this->file'), '', '{$this->o
 END;
 				exec( $cmd, $output);
 				$output = join( "\n", $output );
-				$sql = "UPDATE ontofox.ontology SET log=" . $this->db->quote( $output ) . " where id = '{$this->ontology->id}'";
+				$sql = "UPDATE ontology SET log=" . $this->db->quote( $output ) . " where id = '{$this->ontology->id}'";
 				$this->db->query( $sql );
 				
 				if ( !preg_match( '/Error/', $output ) ) {
@@ -183,7 +180,7 @@ END;
 		file_put_contents( "$this->tmpDir/$this->fileName.json", json_encode( $settings ) );
 		
 		$importDir = SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR;
-		exec( 'java -Xmx8g -cp "' . SCRIPTPATH . "library/java/*\" org.hegroup.owlmerge.OWLMerge $this->tmpDir/$this->fileName.json $importDir" );
+		exec( 'java -Xmx8g -cp "' . SCRIPTPATH . "library/java/OWLMerge/*\" org.hegroup.owlmerge.OWLMerge $this->tmpDir/$this->fileName.json $importDir" );
 		if ( file_exists( $settings['output_file'] ) ) {
 			$this->file = $settings['output_file'];
 		}
@@ -209,7 +206,7 @@ END;
 	
 }
 
-if (PHP_SAPI == 'cli' ) {
+if ( PHP_SAPI == 'cli' ) {
 	if ( sizeof( $argv ) > 1 ) {
 		$args = $argv;
 		unset( $args[0] );
