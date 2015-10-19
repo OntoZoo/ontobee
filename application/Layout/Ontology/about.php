@@ -54,19 +54,24 @@ END;
  	if ( $ontology->download != '' ) {
  		$html .= 
 <<<END
-<li><span class="label">Download:</span> <a href=\"$ontology->download\">$ontology->download</a></li>
+<li><span class="label">Download:</span> <a href="{$GLOBALS['call_function']( Helper::encodeURL( $ontology->download ) )}">
+$ontology->download</a></li>
 END;
  	}
  	if ( $ontology->alternative_download != '' ) {
  	 	$html .= 
 <<<END
-<li><span class="label">Alternative Download:</span> <a href=\"$ontology->alternative_download\">$ontology->alternative_download</a></li>
+<li><span class="label">Alternative Download:</span> <a href=
+"{$GLOBALS['call_function']( Helper::encodeURL( $ontology->alternative_download ) )}"
+>$ontology->alternative_download</a></li>
 END;
  	}
  	if ( $ontology->source != '' ) {
 		$html .= 
 <<<END
-<li><span class="label">Source:</span> <a href=\"$ontology->source\">$ontology->source</a></li>
+<li><span class="label">Source:</span> <a href=
+"{$GLOBALS['call_function']( Helper::encodeURL( $ontology->source ) )}"
+>$ontology->source</a></li>
 END;
 	}
  	if ( $ontology->home != '' ) {
