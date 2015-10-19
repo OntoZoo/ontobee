@@ -26,7 +26,9 @@
  * @since Oct 1, 2015
  * @comment 
  */
- 
+
+ini_set( 'memory_limit', '4096M' );
+
 abstract class Maintenance {
 	protected $db;
 	

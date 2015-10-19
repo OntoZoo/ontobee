@@ -35,10 +35,18 @@ if ( PHP_SAPI == 'cli' ) {
 class UpdateOBOOntology extends Maintenance {
 	public $url;
 	public $format;
+	public $options;
 	
-	public function __construct( $format = 'jsonld', $options = array() ) {
+	public function __construct( $options = array() ) {
 		$this->setup();
 		$this->openPDOConnection();
+		
+		if ( array_key_exists( 'format', $options ) ) {
+			$format = $options['format'];
+		} else {
+			$format = 'jsonld';
+		}
+		$this->options = $options;
 		
 		$url = $GLOBALS['obo_registry'] . '.' . $format;
 		
@@ -50,9 +58,6 @@ class UpdateOBOOntology extends Maintenance {
 		else {
 			throw new Exception( 'Invalid URL. Please check OBOFoundry registry link in configuration file.' );
 		}
-		
-		
-		
 	}
 	
 	public function doUpdate() {
@@ -69,6 +74,10 @@ class UpdateOBOOntology extends Maintenance {
 	public function updateSQL( $ontologies ) {
 		$ontAbbrs = array();
 		foreach ( $ontologies as $ontology ) {
+			if ( array_key_exists( 'ontologies', $this->options ) && 
+				!in_array( $ontology['id'], $this->options['ontologies'] ) ) {
+				continue;
+			}
 			if ( array_key_exists( 'ontology_purl', $ontology ) ) {
 				if ( array_key_exists( 'is_obsolete', $ontology ) ) {
 					if ( !$ontology['is_obsolete'] ) {
@@ -133,20 +142,18 @@ if ( PHP_SAPI == 'cli' ) {
 		$args = $argv;
 		unset( $args[0] );
 		$args = array_values( $args );
-		$format = $args[0];
-		unset( $args[0] );
-		$args = array_values( $args );
 		$options = array();
 		if ( sizeof( $args ) > 0 ) {
 			if ( sizeof( $args ) % 2 == 0 ) {
 				for ( $i = 0; $i < sizeof( $args ) / 2; $i++ ) {
-					$options[$args[$i]] = $args[$i+1];
+					$tokens = preg_split( '/[;]+/', $args[$i+1] );
+					$options[$args[$i]] = $tokens;
 				}
 			} else {
 				throw new Exception( 'Invalid arguments.' );
 			}
 		}
-		$update = new UpdateOBOOntology( $format, $options );
+		$update = new UpdateOBOOntology( $options );
 	} else {
 		$update = new UpdateOBOOntology();
 	}
