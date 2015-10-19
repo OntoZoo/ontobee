@@ -139,6 +139,7 @@ class OntologyModel {
 		$query = $this->db->prepare( $sql );
 		$query->execute();
 		$results = $query->fetchAll();
+		$ontologies = array();
 		foreach( $results as $result ) {
 			$ontologies[$result->ontology_graph_url] = $result;
 		}
@@ -259,7 +260,7 @@ class OntologyModel {
 			$ontologies[$this->ontology->ontology_abbrv] = $this->ontology->ontology_graph_url;
 		}
 		
-		$rdf = new RDFStore( $GLOBALS['search']['endpoint'] );
+		$rdf = new RDFStore( $GLOBALS['endpoint']['search'] );
 		
 		list( $match, $query ) = $rdf->search( $ontologies, $keyword, $limit );
 		$this->addQueries( $query );
