@@ -88,6 +88,14 @@ class UpdateOBOOntology extends Maintenance {
 				}
 			}
 			
+			if ( array_key_exists( 'in_foundry_order' ) && intval( $ontology['in_foundry_order'] ) == 1 ) {
+				$foundry = 'Foundry';
+			} else if ( array_key_exists( 'in_foundry', $ontology ) && $ontology['in_foundry'] ) {
+				$foundry = 'Library';
+			} else {
+				$foundry = 'No';
+			}
+			
 			$params = array(
 				'id' => $ontology['id'],
 				'ontology_abbrv' => strtoupper( $ontology['id'] ),
@@ -104,8 +112,8 @@ class UpdateOBOOntology extends Maintenance {
 				'contact' => array_key_exists( 'contact', $ontology ) ? $ontology['contact'] : null,
 				'description' => array_key_exists( 'description', $ontology ) ? $ontology['description'] : null,
 				'help' => array_key_exists( 'mailing_list', $ontology ) ? $ontology['mailing_list'] : null,		
-				//'source' => null,
-				//'foundry' => 'Yes',
+				'source' => $this->getFinalURL( $ontology['ontology_purl'] ),
+				'foundry' => $foundry,
 			);
 			
 			$column = array();
