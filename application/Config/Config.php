@@ -45,7 +45,7 @@ DEFINE( 'SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/' );
 DEFINE( 'VIEWPATH', SCRIPTPATH . 'application/View' . DIRECTORY_SEPARATOR );
 DEFINE( 'TEMPLATE', SCRIPTPATH . 'application/Layout' . DIRECTORY_SEPARATOR );
 DEFINE( 'PHPLIB', SCRIPTPATH . 'library/php' . DIRECTORY_SEPARATOR );
-DEFINE ( 'TMP', sys_get_temp_dir() );
+DEFINE ( 'TMP', sys_get_temp_dir() . DIRECTORY_SEPARATOR );
 
 # Load database configuration
 require APPPATH . 'Config/DB.php';

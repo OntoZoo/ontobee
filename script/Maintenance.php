@@ -26,8 +26,6 @@
  * @since Oct 1, 2015
  * @comment 
  */
-
-use PDO;
  
 abstract class Maintenance {
 	protected $db;
@@ -37,16 +35,17 @@ abstract class Maintenance {
 		$dir = implode( DIRECTORY_SEPARATOR, array_splice( $tokens, 0, -1 ) );
 		DEFINE( 'SCRIPTPATH',  $dir . DIRECTORY_SEPARATOR );
 		DEFINE( 'APPPATH', SCRIPTPATH . 'application' . DIRECTORY_SEPARATOR );
-		DEFINE ( 'TMP', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
+		DEFINE ( 'TMP', sys_get_temp_dir() . DIRECTORY_SEPARATOR );
 		require APPPATH . 'Config/DB.php';
+		require APPPATH . 'Config/OntologyConfig.php';
 	}
 	
 	protected function openPDOConnection() {
 		$options = array(
-			PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_WARNING,
+			\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
+			\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING,
 		);
-		$this->db = new PDO( DB_DRIVER . ':host=' . DB_HOST . ';dbname=' . DB_SCHEMA, DB_USERNAME, DB_PASSWORD, $options );
+		$this->db = new \PDO( DB_DRIVER . ':host=' . DB_HOST . ';dbname=' . DB_SCHEMA, DB_USERNAME, DB_PASSWORD, $options );
 	}
 	
 	protected function getFinalURL( $url ) {
