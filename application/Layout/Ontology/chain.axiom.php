@@ -53,7 +53,7 @@ END;
 				
 				$html .=
 <<<END
-<li>$axiom subPropertyOf <a href="$term->iri">$term->label</a></li>
+<li>$axiom subPropertyOf <a href="$rootURL{$GLOBALS['call_function']( Helper::encodeURL( $term->iri ) )}">$term->label</a></li>
 END;
 			}
 				
