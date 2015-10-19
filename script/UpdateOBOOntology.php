@@ -88,7 +88,7 @@ class UpdateOBOOntology extends Maintenance {
 				}
 			}
 			
-			if ( array_key_exists( 'in_foundry_order' ) && intval( $ontology['in_foundry_order'] ) == 1 ) {
+			if ( array_key_exists( 'in_foundry_order', $ontology ) && intval( $ontology['in_foundry_order'] ) == 1 ) {
 				$foundry = 'Foundry';
 			} else if ( array_key_exists( 'in_foundry', $ontology ) && $ontology['in_foundry'] ) {
 				$foundry = 'Library';
