@@ -79,9 +79,10 @@ Class UpdateOntology extends Maintenance {
 				
 				$usr = RDF_USERNAME;
 				$pwd = RDF_PASSWORD;
+				$isql = RDF_ISQL_COMMAND;
 				$cmd =
 <<<END
-/data/usr/local/virtuoso/bin/isql 1111 $usr $pwd verbose=on banner=off prompt=off echo=ON errors=stdout exec="log_enable(3,1);
+$isql 1111 $usr $pwd verbose=on banner=off prompt=off echo=ON errors=stdout exec="log_enable(3,1);
 sparql clear graph <{$this->ontology->ontology_graph_url}>;
 DB.DBA.RDF_LOAD_RDFXML_MT (file_to_string_output ('$this->file'), '', '{$this->ontology->ontology_graph_url}');"
 END;

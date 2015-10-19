@@ -39,5 +39,6 @@ define('DB_PASSWORD', 'password');
 # RDF database
 define('RDF_USERNAME', 'username' );
 define('RDF_PASSWORD', 'password' );
+define('RDF_ISQL_COMMAND', '/usr/local/virtuoso/bin/isql' );
 
 ?>
