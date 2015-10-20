@@ -143,6 +143,7 @@ $html .=
 END;
 
 echo Helper::tidyHTML( $html );
+
 ?>
 
 <br>
@@ -150,7 +151,3 @@ echo Helper::tidyHTML( $html );
 <p>&nbsp;</p>
 
 <?php require TEMPLATE . 'footer.default.dwt.php'; ?>
-
-
-
-?>
