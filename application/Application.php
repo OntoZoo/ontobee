@@ -74,9 +74,6 @@ class Application {
 			}
 		}
 		
-		#print_r( "$controller : $method" );
-		#print_r( $params );
-		
 		if ( !is_null( $controller ) && class_exists( $controller )) {
 			$controller = new $controller();
 			if ( !is_null( $method ) && method_exists( $controller, $method ) ) {

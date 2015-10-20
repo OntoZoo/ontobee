@@ -34,6 +34,7 @@ namespace Model;
 use stdClass;
 use Exception;
 
+use Hook;
 use RDFStore\RDFStore;
 use RDFStore\RDFQueryHelper;
 
@@ -214,6 +215,7 @@ class OntologyModel {
 		$termResult = array();
 		if ( !is_null( $termIRI ) && $termIRI != '' ) {
 			if ( !in_array( $termIRI, $GLOBALS['ontology']['type'] ) ) {
+				# Ontology term hierarchy more display
 				list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
 				$this->addQueries( $query );
 				$subClasses = OntologyModelHelper::parseTermResult( $subClasses );
@@ -221,10 +223,12 @@ class OntologyModel {
 					$termResult[$subClass->iri][] = $subClass->label;
 				}
 			} else {
+				# Ontostat/Ontology individual type display
 				list( $termResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $termIRI );
 				$this->addQueries( $query );
 			}
 		} else {
+				# Ontostat all Ttype display
 			foreach ( $GLOBALS['ontology']['type'] as $typeIRI ) {
 				list( $tmpResult, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $typeIRI );
 				$this->addQueries( $query );
@@ -277,7 +281,8 @@ class OntologyModel {
 		return $type;
 	}
 	
-	public function loadOntology( $ontAbbr, $endpoint = null, $detail = true ) {
+	public function loadOntology( &$ontAbbr, &$termIRI, $endpoint = null, $detail = true ) {
+		Hook::run( 'BeforeLoadOntology', array( &$ontAbbr, &$termIRI ) );
 		$sql = "SELECT * FROM ontology WHERE ontology_abbrv = '$ontAbbr'";
 		$query = $this->db->prepare( $sql );
 		$query->execute();

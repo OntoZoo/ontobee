@@ -53,6 +53,9 @@ require APPPATH . 'Config/DB.php';
 # Load ontology configuration
 require APPPATH . 'Config/OntologyConfig.php';
 
+# Load hooks
+require APPPATH . 'Config/HookConfig.php';
+
 # Define function caller variable
 $GLOBALS['call_function'] = function( $function ) {
 	return $function;

@@ -41,9 +41,9 @@ Class OntologyController extends Controller{
 		} else {
 			$GLOBALS['show_query'] = false;
 			$xslt = true;
-			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
-			$this->model->loadOntology( $ontAbbr, null, false );
+			$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
+			$title = "Ontobee: $ontAbbr";
 			$ontology = $this->model->getOntology();
 			if ( empty( $ontology ) ) {
 				throw new Exception ( "Invalid ontology." );
@@ -58,9 +58,9 @@ Class OntologyController extends Controller{
 		$GLOBALS['show_query'] = false;
 		$xslt = false;
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
-		$title = "Ontobee: $ontAbbr";
 		$this->loadModel( 'Ontology' );
-		$this->model->loadOntology( $ontAbbr, null, false );
+		$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
+		$title = "Ontobee: $ontAbbr";
 		$ontology = $this->model->getOntology();
 		if ( empty( $ontology ) ) {
 			throw new Exception ( "Invalid ontology." );
@@ -79,11 +79,10 @@ Class OntologyController extends Controller{
 		
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
 		if ( !is_null( $ontAbbr ) ) {
-			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
-		
 			if ( is_null( $termIRI ) ) {
-				$this->model->loadOntology( $ontAbbr );
+				$this->model->loadOntology( $ontAbbr, $termIRI );
+				$title = "Ontobee: $ontAbbr";
 				$ontology = $this->model->getOntology();
 				if ( empty( $ontology ) ) {
 					throw new Exception ( "Invalid ontology." );
@@ -92,7 +91,8 @@ Class OntologyController extends Controller{
 				$query = $this->model->getQueries();
 				require VIEWPATH . 'Ontology/ontology.php';
 			} else {
-				$this->model->loadOntology( $ontAbbr, null, false );
+				$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
+				$title = "Ontobee: $ontAbbr";
 				$ontology = $this->model->getOntology();
 				if ( empty( $ontology ) ) {
 					throw new Exception ( "Invalid ontology." );
@@ -161,9 +161,9 @@ Class OntologyController extends Controller{
 				$listMaxTerms = $GLOBALS['ontology']['term_max_per_page'][0];
 			}
 			
-			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
-			$this->model->loadOntology( $ontAbbr, null, false );
+			$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
+			$title = "Ontobee: $ontAbbr";
 			$ontology = $this->model->getOntology();
 			if ( !empty( $ontology ) ) {
 				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $termIRI, null, $letter, $page, $listMaxTerms );
