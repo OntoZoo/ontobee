@@ -108,10 +108,17 @@ END;
 	}
  	if ( $ontology->contact != '' ) {
 		$tokens = preg_split( '/[|\t]/', $ontology->contact );
-		$html .= 
+		if ( sizeof( $tokens ) < 3 ) {
+			$html .=
+<<<END
+<li><span class="label">Contact:</span> <a href="mailto:$ontology->contact">$ontology->contact</a></li>
+END;
+		} else {
+			$html .= 
 <<<END
 <li><span class="label">Contact:</span> <a href="mailto:{$tokens[1]}@{$tokens[2]}">{$tokens[0]}</a></li>
 END;
+		}
  	}
  	if ( $ontology->help != '' ) {
 		$tokens = preg_split( '/[|\t]/', $ontology->help );
