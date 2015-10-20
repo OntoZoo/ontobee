@@ -40,6 +40,7 @@ Class OntologyController extends Controller{
 			$this->view( $params );
 		} else {
 			$GLOBALS['show_query'] = false;
+			$xslt = true;
 			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
 			$this->model->loadOntology( $ontAbbr, null, false );
@@ -55,6 +56,7 @@ Class OntologyController extends Controller{
 	
 	public function rdf( $params = array() ) {
 		$GLOBALS['show_query'] = false;
+		$xslt = false;
 		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
 		$title = "Ontobee: $ontAbbr";
 		$this->loadModel( 'Ontology' );
