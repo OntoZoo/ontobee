@@ -37,6 +37,7 @@ Class UpdateOntology extends Maintenance {
 	
 	public $fileName;
 	public $file;
+	public $options;
 	
 	public function __construct( $ontAbbr, $options = array() ) {
 		$this->setup();
@@ -53,6 +54,7 @@ Class UpdateOntology extends Maintenance {
 		$query->execute();
 		$this->ontology = $query->fetch();
 		$this->fileName = $this->ontology->ontology_abbrv;
+		$this->options = $options;
 	}
 	
 	public function doUpdate() {
@@ -61,12 +63,12 @@ Class UpdateOntology extends Maintenance {
 			$this->download( $this->ontology->download );
 		}
 		
-		if ( !file_exists( $this->file ) && $this->ontology->alternative_download != '' ) {
-			$this->download( $this->ontology->alternative_download );
-		}
-		
 		if ( !file_exists( $this->file ) && $this->ontology->source != '' ) {
 			$this->download( $this->ontology->source );
+		}
+		
+		if ( !file_exists( $this->file ) && $this->ontology->ontology_url != '' ) {
+			$this->download( $this->ontology->ontology_url );
 		}
 		
 		if ( !file_exists( $this->file ) ) {
@@ -204,6 +206,11 @@ END;
 				$mapping['from'] = $strFolder . '/' . $match[2];
 				$mappings[] = $mapping;
 			}
+		}
+		foreach( $GLOBALS['alias']['ontology_url'] as $fromIRI => $toIRI ) {
+			$mapping['to'] = $toIRI;
+			$mapping['from'] = $fromIRI;
+			$mappings[] = $mapping;
 		}
 		return $mappings;
 	}

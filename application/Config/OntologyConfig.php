@@ -134,4 +134,8 @@ $GLOBALS['alias']['type'] = array(
 	'http://www.w3.org/2002/07/owl#InverseFunctionalProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
 );
 
+$GLOBALS['alias']['ontology_url'] = array(
+	'http://purl.obolibrary.org/obo/ro/releases/2015-02-11/core.owl' => 'http://purl.obolibrary.org/obo/ro/releases/2015-10-07/ro.owl',
+);
+
 ?>
