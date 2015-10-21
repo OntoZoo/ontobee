@@ -59,16 +59,16 @@ Class UpdateOntology extends Maintenance {
 	
 	public function doUpdate() {
 		
-		if ( $this->ontology->download != '' ) {
+		if ( $this->ontology->ontology_url != '' ) {
+			$this->download( $this->ontology->ontology_url );
+		}
+		
+		if ( !file_exists( $this->file ) && $this->ontology->download != '' ) {
 			$this->download( $this->ontology->download );
 		}
 		
 		if ( !file_exists( $this->file ) && $this->ontology->source != '' ) {
 			$this->download( $this->ontology->source );
-		}
-		
-		if ( !file_exists( $this->file ) && $this->ontology->ontology_url != '' ) {
-			$this->download( $this->ontology->ontology_url );
 		}
 		
 		if ( !file_exists( $this->file ) ) {
