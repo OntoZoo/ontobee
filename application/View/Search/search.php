@@ -69,7 +69,7 @@ if ( !empty( $keyOntology ) && !empty( $json ) ) {
 			echo 
 '<li>' .
 preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\\{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
+"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology/{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
 			unset( $json[$index] );
 		}
 	}
@@ -84,7 +84,7 @@ if ( !empty( $json ) ) {
 			echo
 			'<li>' .
 			preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-			"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\\{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
+			"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology/{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
 			unset( $json[$index] );
 		}
 	}
@@ -103,7 +103,7 @@ END;
 		echo
 		'<li style="text-decoration:line-through">' .
 		preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-		"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology\\{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
+		"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology/{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
 	}
 }
 ?>
