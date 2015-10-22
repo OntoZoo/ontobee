@@ -68,7 +68,7 @@ class SearchController extends Controller  {
 		}
 		if ( !is_null( $keyword ) ) {
 			if ( !is_null( $ontAbbr ) && $ontAbbr != '' ) {
-				$this->model->loadOntology( $ontAbbr, null, false );
+				$this->model->loadOntology( $ontAbbr, $keyword, null, false );
 				$keyOntology = $this->model->getOntology();
 				if ( empty( $ontology ) ) {
 					$ontologies = $this->model->getAllOntology();

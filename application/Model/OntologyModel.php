@@ -260,7 +260,7 @@ class OntologyModel {
 				$ontologies[$ontology->ontology_abbrv] = $ontology->ontology_graph_url;
 			}
 		} else {
-			$this->loadOntology( $ontAbbr );
+			$this->loadOntology( $ontAbbr, $keyword );
 			$ontologies[$this->ontology->ontology_abbrv] = $this->ontology->ontology_graph_url;
 		}
 		

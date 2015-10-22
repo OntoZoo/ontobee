@@ -156,7 +156,6 @@ END;
 		}
 		$json = SPARQLQuery::queue( $this->endpoint, $query );
 		$queries[] = $query;
-		print_r($queries);
 		
 		$results = RDFQueryHelper::parseSPARQLResult( $json );
 		
