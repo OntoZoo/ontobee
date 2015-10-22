@@ -151,10 +151,17 @@ END;
 <<<END
 <p class="section-title">$term->type: <span class="section-title-value">$term->label</span></p>
 END;
-	$html .=
+	if ( $term->deprecate ) {
+		$html .=
+<<<END
+<div class="iri">Term IRI: <a href="$term->iri"><strike>$term->iri</strike></a></div>
+END;
+	} else {
+		$html .=
 <<<END
 <div class="iri">Term IRI: <a href="$term->iri">$term->iri</a></div>
 END;
+	}
 	foreach ( $GLOBALS['ontology']['definition']['priority'] as $defIRI ) {
 		if ( isset( $term->describe[$defIRI] ) ) {
 			foreach ($term->describe[$defIRI] as $object ) {

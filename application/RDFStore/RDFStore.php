@@ -64,6 +64,7 @@ class RDFStore {
 	}
 	
 	public function search( $graphs, $keywords, $limit ) {
+		$keywords = str_replace( ' ', '_', $keywords );
 		$propertiesQuery = '<' . join( '>,<', $this->search['property'] ) . '>';
 		
 		if ( sizeof( $graphs ) == 1 ) {
@@ -155,6 +156,7 @@ END;
 		}
 		$json = SPARQLQuery::queue( $this->endpoint, $query );
 		$queries[] = $query;
+		print_r($queries);
 		
 		$results = RDFQueryHelper::parseSPARQLResult( $json );
 		

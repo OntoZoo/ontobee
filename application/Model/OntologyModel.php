@@ -443,12 +443,17 @@ class OntologyModel {
 		$class->related = $related;
 	
 		$annotations = array();
+		$deprecate = false;
 		foreach ( array_unique( array_keys( $class->describe ) ) as $property ) {
 			if ( $related[$property]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
 				$values = array();
 				foreach ( $class->describe[$property] as $token ) {
 					if ( array_key_exists( 'value', $token ) ) {
-						$values[] = $token['value'];
+						if ( array_key_exists( $token['value'], $related ) ) {
+							$values[] = $related[$token['value']]->label;
+						} else {
+							$values[] = $token['value'];
+						}
 					}
 				}
 				if ( empty( $values ) ) {
@@ -459,12 +464,19 @@ class OntologyModel {
 					$label = OntologyModelHelper::getShortTerm( $property );
 				}
 				$annotations[$property] = array(
-						'label' => $label,
-						'value' => $values,
+					'label' => $label,
+					'value' => $values,
+				);
+			} else if ( $related[$property]->iri == $GLOBALS['ontology']['namespace']['owl'] . 'deprecated' ) {
+				$deprecate = true;
+				$annotations[$property] = array(
+					'label' => $label,
+					'value' => $values,
 				);
 			}
 		}
 		$class->annotation = $annotations;
+		$class->deprecate = $deprecate;
 	
 		list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $classIRI );
 		$this->addQueries( $query );
@@ -580,6 +592,7 @@ class OntologyModel {
 		$property->related = $related;
 	
 		$annotations = array();
+		$deprecate = false;
 		foreach ( array_unique( array_keys( $property->describe ) ) as $object ) {
 			if ( $related[$object]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
 				$values = array();
@@ -599,9 +612,16 @@ class OntologyModel {
 						'label' => $label,
 						'value' => $values,
 				);
+			} else if ( $related[$property]->iri == $GLOBALS['ontology']['namespace']['owl'] . 'deprecated' ) {
+				$deprecate = true;
+				$annotations[$property] = array(
+						'label' => $label,
+						'value' => $values,
+				);
 			}
 		}
 		$property->annotation = $annotations;
+		$property->deprecate = $deprecate;
 		
 		if ( array_key_exists( $GLOBALS['ontology']['namespace']['rdfs'] . 'domain', $describes ) ) {
 			$domainIRI = $describes[$GLOBALS['ontology']['namespace']['rdfs'] . 'domain'][0]['value'];
@@ -711,6 +731,7 @@ class OntologyModel {
 		$instance->related = $related;
 	
 		$annotations = array();
+		$deprecate = false;
 		foreach ( array_unique( array_keys( $instance->describe ) ) as $property ) {
 			if ( $related[$property]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
 				$values = array();
@@ -730,9 +751,16 @@ class OntologyModel {
 						'label' => $label,
 						'value' => $values,
 				);
+			} else if ( $related[$property]->iri == $GLOBALS['ontology']['namespace']['owl'] . 'deprecated' ) {
+				$deprecate = true;
+				$annotations[$property] = array(
+					'label' => $label,
+					'value' => $values,
+				);
 			}
 		}
 		$instance->annotation = $annotations;
+		$instance->deprecate = $deprecate;
 		
 		if ( sizeof( $typeIRIs ) == 1 ) {
 			$classIRI = array_shift( $typeIRIs );
