@@ -50,8 +50,9 @@ class OntostatController extends Controller {
 		if ( is_null( $ontAbbr ) ) {
 			$ontologies = $this->model->getAllOntology();
 			$stats = array();
+			$termIRI = null;
 			foreach ( $ontologies as $ontology ) {
-				$this->model->loadOntology( $ontology->ontology_abbrv, $ontology->end_point, false );
+				$this->model->loadOntology( $ontology->ontology_abbrv, $termIRI, $ontology->end_point, false );
 				$stats[$ontology->ontology_graph_url] = $this->model->countAllOntologyType();
 			}
 			require VIEWPATH . 'Ontostat/index.php';
