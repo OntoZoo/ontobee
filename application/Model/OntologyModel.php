@@ -469,10 +469,6 @@ class OntologyModel {
 				);
 			} else if ( $related[$property]->iri == $GLOBALS['ontology']['namespace']['owl'] . 'deprecated' ) {
 				$deprecate = true;
-				$annotations[$property] = array(
-					'label' => $label,
-					'value' => $values,
-				);
 			}
 		}
 		$class->annotation = $annotations;
@@ -614,10 +610,6 @@ class OntologyModel {
 				);
 			} else if ( $related[$property]->iri == $GLOBALS['ontology']['namespace']['owl'] . 'deprecated' ) {
 				$deprecate = true;
-				$annotations[$property] = array(
-						'label' => $label,
-						'value' => $values,
-				);
 			}
 		}
 		$property->annotation = $annotations;
@@ -753,10 +745,6 @@ class OntologyModel {
 				);
 			} else if ( $related[$property]->iri == $GLOBALS['ontology']['namespace']['owl'] . 'deprecated' ) {
 				$deprecate = true;
-				$annotations[$property] = array(
-					'label' => $label,
-					'value' => $values,
-				);
 			}
 		}
 		$instance->annotation = $annotations;
