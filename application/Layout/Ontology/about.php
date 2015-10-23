@@ -21,7 +21,7 @@
  */
 
 /**
- * @file general.php
+ * @file about.php
  * @author Yongqun Oliver He
  * @author Zuoshuang Allen Xiang
  * @author Edison Ong
@@ -91,7 +91,7 @@ END;
 END;
 	}
  	if ( $ontology->documentation != '' ) {
-		$tokens = preg_split( '/[|\t]/', $ontology->documentation );
+		$tokens = preg_split( '/[|\t\\t]/', $ontology->documentation );
 		$html .=
 <<<END
 <li><span class="label">Documentation:</span> <a href="
@@ -108,30 +108,47 @@ END;
 	}
  	if ( $ontology->contact != '' ) {
 		$tokens = preg_split( '/[|\t]/', $ontology->contact );
-		if ( sizeof( $tokens ) < 3 ) {
-			$html .=
+		switch ( sizeof( $tokens ) ) {
+			case 1:
+				$html .=
 <<<END
 <li><span class="label">Contact:</span> <a href="mailto:$ontology->contact">$ontology->contact</a></li>
 END;
-		} else {
-			$html .= 
+				break;
+			case 2:
+				$html .=
+<<<END
+<li><span class="label">Contact:</span> <a href="mailto:{$tokens[1]}">{$tokens[0]}</a></li>
+END;
+				break;
+			case 3:
+				$html .= 
 <<<END
 <li><span class="label">Contact:</span> <a href="mailto:{$tokens[1]}@{$tokens[2]}">{$tokens[0]}</a></li>
 END;
+				break;
 		}
  	}
  	if ( $ontology->help != '' ) {
-		$tokens = preg_split( '/[|\t]/', $ontology->help );
-		if ( sizeof( $tokens ) < 3 ) {
-			$html .=
+		$tokens = preg_split( '/[|\t\\t]/', $ontology->help );
+		switch ( sizeof( $tokens ) ) {
+			case 1:
+				$html .=
 <<<END
 <li><span class="-label">Help:</span> <a href="$ontology->help">$ontology->help</a></li>
 END;
-		} else {
-			$html .=
+				break;
+			case 2:
+				$html .=
+<<<END
+<li><span class="-label">Help:</span> <a href="mailto:{$tokens[1]}">{$tokens[0]}</a></li>
+END;
+			case 3:
+				$html .=
 <<<END
 <li><span class="label">Help:</span> <a href="mailto:{$tokens[1]}@{$tokens[2]}">{$tokens[0]}</a></li>
 END;
+				break;
 		}
  	}
  	if ( $ontology->description != '' ) {
