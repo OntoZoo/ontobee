@@ -54,6 +54,27 @@ abstract class Controller {
 		$model = "Model\\{$modelName}Model";
 		$this->model = new $model( $this->db );
 	}
+	
+	protected function parseOntologyParameter( $params ) {
+		$ontAbbr = null;
+		$termIRI = null;
+	
+		if ( array_key_exists( 'ontology' , $params ) ) {
+			$ontAbbr = $params['ontology'];
+		} else if ( array_key_exists( 'o', $params ) ) {
+			$ontAbbr = $params['o'];
+		} else {
+			$ontAbbr = array_shift( $params );
+		}
+			
+		if ( array_key_exists( 'iri' , $params ) ) {
+			$termIRI = $params['iri'];
+		} else if ( array_key_exists( 'i', $params ) ) {
+			$termIRI = $params['i'];
+		}
+	
+		return array( $ontAbbr, $termIRI );
+	}
 }
 
 

@@ -35,7 +35,7 @@ use Model\OntologyModel;
 
 Class OntologyController extends Controller{	
 	public function index( $params = array() ) {
-		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
+		list( $ontAbbr, $termIRI ) = $this->parseOntologyParameter( $params );
 		if ( is_null( $termIRI ) ) {
 			$this->view( $params );
 		} else {
@@ -57,7 +57,7 @@ Class OntologyController extends Controller{
 	public function rdf( $params = array() ) {
 		$GLOBALS['show_query'] = false;
 		$xslt = false;
-		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
+		list( $ontAbbr, $termIRI ) = $this->parseOntologyParameter( $params );
 		$this->loadModel( 'Ontology' );
 		$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
 		$title = "Ontobee: $ontAbbr";
@@ -71,13 +71,11 @@ Class OntologyController extends Controller{
 	}
 	
 	public function view( $params ) {
-		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
+		list( $ontAbbr, $termIRI ) = $this->parseOntologyParameter( $params );
 		if ( !is_null( $termIRI ) ) {
 			$GLOBALS['show_query'] = false;
 			$xslt = true;
 		}
-		
-		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
 		if ( !is_null( $ontAbbr ) ) {
 			$this->loadModel( 'Ontology' );
 			if ( is_null( $termIRI ) ) {
@@ -135,7 +133,7 @@ Class OntologyController extends Controller{
 	}
 	
 	public function catalog( $params = array() ) {
-		list( $ontAbbr, $termIRI ) = self::parseOntologyParameter( $params );
+		list( $ontAbbr, $termIRI ) = $this->parseOntologyParameter( $params );
 		if ( !is_null( $ontAbbr ) ) {
 			if ( array_key_exists( 'letter', $params ) ) {
 				$letter = strtoupper( $params['letter'] );
@@ -174,27 +172,6 @@ Class OntologyController extends Controller{
 		} else {
 			throw new Exception( "Invalid parameters." );
 		}
-	}
-	
-	private static function parseOntologyParameter( $params ) {
-		$ontAbbr = null;
-		$termIRI = null;
-		
-		if ( array_key_exists( 'ontology' , $params ) ) {
-			$ontAbbr = $params['ontology'];
-		} else if ( array_key_exists( 'o', $params ) ) {
-			$ontAbbr = $params['o'];
-		} else {
-			$ontAbbr = array_shift( $params );
-		}
-			
-		if ( array_key_exists( 'iri' , $params ) ) {
-			$termIRI = $params['iri'];
-		} else if ( array_key_exists( 'i', $params ) ) {
-			$termIRI = $params['i'];
-		}
-		
-		return array( $ontAbbr, $termIRI );
 	}
 }
 

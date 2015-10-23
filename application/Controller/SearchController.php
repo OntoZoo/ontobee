@@ -47,14 +47,7 @@ class SearchController extends Controller  {
 			unset( $params['submit'] );
 		}
 		
-		$ontAbbr = null;
-		if ( array_key_exists( 'ontology' , $params ) ) {
-			$ontAbbr = $params['ontology'];
-			unset( $params['ontology'] );
-		} else if ( array_key_exists( 'o' , $params ) ) {
-			$ontAbbr = $params['o'];
-			unset( $params['o'] );
-		}
+		list( $ontAbbr, $termIRI ) = $this->parseOntologyParameter( $params );
 		
 		$keyword = null;
 		if ( array_key_exists( 'term' , $params ) ) {

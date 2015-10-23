@@ -64,7 +64,6 @@ class RDFStore {
 	}
 	
 	public function search( $graphs, $keywords, $limit ) {
-		$keywords = str_replace( ' ', '_', $keywords );
 		$propertiesQuery = '<' . join( '>,<', $this->search['property'] ) . '>';
 		
 		if ( sizeof( $graphs ) == 1 ) {
