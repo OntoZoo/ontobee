@@ -68,7 +68,7 @@ class UpdateOBOOntology extends Maintenance {
 				$data = json_decode( $file, true );
 		}
 		$ontAbbrs = $this->updateSQL( $data['ontologies'] );
-		$this->updateRDF( $ontAbbrs );
+		#$this->updateRDF( $ontAbbrs );
 	}
 	
 	public function updateSQL( $ontologies ) {
@@ -86,7 +86,11 @@ class UpdateOBOOntology extends Maintenance {
 				} else {
 					$ontAbbrs[] = $ontology['id'];
 				}
+			} else {
+				continue;
 			}
+			
+			print_r( PHP_EOL . "Loading {$ontology['id']}" );
 			
 			if ( array_key_exists( 'in_foundry_order', $ontology ) && intval( $ontology['in_foundry_order'] ) == 1 ) {
 				$foundry = 'Foundry';
@@ -123,7 +127,7 @@ class UpdateOBOOntology extends Maintenance {
 				if ( !is_null( $val ) ) {
 					$column[] = $key;
 					if ( is_array( $val ) ) {
-						$value = $this->db->quote( join( '\t', $val ) );
+						$value = $this->db->quote( join( '|', $val ) );
 					} else {
 						$value = $this->db->quote( $val );
 					}
