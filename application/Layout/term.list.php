@@ -28,8 +28,6 @@
  * @since Sep 8, 2015
  * @comment 
  */
-
-use View\Helper;
  
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
@@ -67,7 +65,7 @@ $html =
 <p>{$GLOBALS['call_function']( sizeof( $terms ) )} terms(s) returned
 END;
 
-if ( sizeof( $terms ) >= 10000 ) {
+if ( sizeof( $terms ) >= 1000000 ) {
 	$html .=
 <<<END
 </br>
@@ -186,7 +184,7 @@ $termsToShow = array_slice(
 foreach ( $termsToShow as $showIRI => $showLabel ) {
 	$html .=
 <<<END
-<li><a href="$termURL{$GLOBALS['call_function']( Helper::encodeURL( $showIRI ) )}">
+<li><a class="term" href="$termURL{$GLOBALS['call_function']( Helper::encodeURL( $showIRI ) )}">
 {$GLOBALS['call_function']( htmlentities( $showLabel ) )}</a></li>
 END;
 }

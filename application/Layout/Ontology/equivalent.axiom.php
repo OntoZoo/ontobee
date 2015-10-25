@@ -28,8 +28,6 @@
  * @since Sep 6, 2015
  * @comment 
  */
- 
-use View\Helper;
 
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));

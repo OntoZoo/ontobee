@@ -96,7 +96,8 @@ Class OntologyController extends Controller{
 					throw new Exception ( "Invalid ontology." );
 				}
 				$ontologyList = $this->model->getAllOntology();
-				if ( in_array( $this->model->askTermType( $termIRI ), array(
+				$type = $this->model->askTermType( $termIRI );
+				if ( in_array( $type, array(
 						'Class',
 				) ) ) {
 					$this->model->loadClass( $termIRI );
@@ -104,17 +105,17 @@ Class OntologyController extends Controller{
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
 					require VIEWPATH . 'Ontology/class.php';
-				} else if ( in_array( $this->model->askTermType( $termIRI ), array(
+				} else if ( in_array( $type, array(
 					'ObjectProperty',
 					'DatatypeProperty',
 					'AnnotationProperty',
 				) ) ) {
-					$this->model->loadProperty( $termIRI );
+					$this->model->loadProperty( $termIRI, $type );
 					$term = $this->model->getTerm();
 					$annotations = $term->annotation;
 					$query = $this->model->getQueries();
 					require VIEWPATH . 'Ontology/property.php';
-				} else if ( in_array( $this->model->askTermType( $termIRI ), array(
+				} else if ( in_array( $type, array(
 					'Instance',
 				) ) ) {
 					$this->model->loadInstance( $termIRI );

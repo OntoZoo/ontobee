@@ -28,8 +28,6 @@
  * @since Sep 5, 2015
  * @comment 
  */
- 
-use View\Helper;
 
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
@@ -114,7 +112,7 @@ END;
 	 * @return $html
 	 */
 	private static function entitiy( $class, $link, $label ) {
-		$html = '<a class="';
+		$html = '<a class="term ';
 		$html .= $class;
 		$html .= '" oncontextmenu="return false;" href="';
 		$html .= "{$GLOBALS['call_function']( Helper::encodeURL( $link ) )}";

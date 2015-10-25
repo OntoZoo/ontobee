@@ -31,10 +31,13 @@
 class Hook {
 	public static function run( $hook, $params = array() ) {
 		$hooks = $GLOBALS['Hooks'];
-		
 		if ( array_key_exists( $hook, $hooks ) ) {
 			foreach( $hooks[$hook] as $callback ) {
-				call_user_func_array( $callback, $params );
+				if ( is_callable( $callback ) ) {
+					call_user_func_array( $callback, $params );
+				} else {
+					trigger_error( "Unable to call $callback", E_USER_WARNING );
+				}
 			}
 		}
 	}

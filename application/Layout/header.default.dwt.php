@@ -54,6 +54,9 @@ if ( !isset( $title ) ) {
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.widget.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.position.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.autocomplete.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/ontobee.autocomplete.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/ontobee.deprecate.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/ontobee.infobox.js"></script>
 
 <style>
 .ui-autocomplete-loading { background: white url('<?php echo SITEURL; ?>public/images/ui-anim_basic_16x16.gif') right center no-repeat; }

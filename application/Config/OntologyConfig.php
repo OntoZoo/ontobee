@@ -74,24 +74,6 @@ $GLOBALS['ontology']['hierarchy']['sibnomax'] =10;
 $GLOBALS['ontology']['hierarchy']['subhasmax'] = 10;
 $GLOBALS['ontology']['hierarchy']['subnomax'] =10;
 
-$GLOBALS['ontology']['annotation']['main']['text'] = array(
-	'creator', 
-	'contributor',
-);
-$GLOBALS['ontology']['annotation']['main']['list'] = array(
-	'versionIRI',
-	'title',
-	'description',
-	'subject',
-	'format',
-	'versionInfo',
-	'date',
-	'comment',
-);
-$GLOBALS['ontology']['annotation']['ignore'] = array(
-	'http://www.w3.org/2002/07/owl#NamedIndividual',
-);
-
 $GLOBALS['ontology']['restriction'] = array();
 $GLOBALS['ontology']['restriction']['operation'] = array(
 	'and' => 'http://www.w3.org/2002/07/owl#intersectionOf',

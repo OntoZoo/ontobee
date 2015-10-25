@@ -28,8 +28,6 @@
  * @since Sep 6, 2015
  * @comment 
  */
- 
-use View\Helper;
 
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
@@ -46,7 +44,7 @@ END;
 	foreach ( $term->usage as $useIRI => $usage ) {
 		$html .=
 <<<END
-<li><a oncontextmenu="return false;" href="$rootURL{$GLOBALS['call_function']( Helper::convertUTFToUnicode( $useIRI ) )}">
+<li><a class="term" oncontextmenu="return false;" href="$rootURL{$GLOBALS['call_function']( Helper::convertUTFToUnicode( $useIRI ) )}">
 {$GLOBALS['call_function']( htmlspecialchars( $usage['label'] ) )}
 </a> {$GLOBALS['call_function']( Helper::getShortTerm( $usage['type'] ) )} : 
 {$GLOBALS['call_function']( Helper::trimBracket( Helper::writeRecursiveManchester( $rootURL, $usage['axiom'], $term->related ) ) )}

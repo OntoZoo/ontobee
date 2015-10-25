@@ -26,8 +26,6 @@
  * @since Oct 16, 2015
  * @comment 
  */
- 
-use View\Helper;
 
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
@@ -38,7 +36,7 @@ if ( !empty( $term->domain ) ) {
 <<<END
 <div class="section-title">Domain</div>
 <div class="section"><ul><li>
-<a href="{$term->domain['iri']}">{$term->domain['label']}</a>
+<a class="term" href="{$term->domain['iri']}">{$term->domain['label']}</a>
 </li></ul></div>
 END;
 }

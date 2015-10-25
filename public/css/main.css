@@ -165,3 +165,28 @@ div#errbox_operation {
 
 .ui-autocomplete-loading { background: white url('/images/ui-anim_basic_16x16.gif') right center no-repeat; }
 
+div#infobox {
+	display: inline;
+	position: absolute;
+	width: 400px;
+	padding: 10px;
+	background: #FFF380;
+	color: #000000;
+	border: 1px solid #1a1a1a;
+	font-size: 12px;
+}
+
+div#infobox h3 {
+	display: inline;
+	text-align: left;
+}
+
+div#infobox p{
+	display: inline;
+	width: 350px;
+    color: green;
+}
+
+div#infobox span{
+    color: red;
+}

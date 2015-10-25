@@ -28,8 +28,6 @@
  * @since Oct 1, 2015
  * @comment 
  */
- 
-use View\Helper;
 
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
@@ -48,7 +46,7 @@ END;
 	foreach ( $term->instance as $instanceIRI => $instanceLabel ) {
 		echo
 <<<END
-<li><a oncontextmenu="return false;" href="{$site}ontology/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( Helper::encodeURL( $instanceIRI ) )}">
+<li><a class="term" oncontextmenu="return false;" href="{$site}ontology/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( Helper::encodeURL( $instanceIRI ) )}">
 {$GLOBALS['call_function']( Helper::convertUTFToUnicode( $instanceLabel ) )}</a></li>
 END;
 	}

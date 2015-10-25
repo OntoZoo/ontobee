@@ -27,8 +27,6 @@
  * @comment 
  */
 
-namespace View;
-
 class Helper {
 
 	public static function tidyHTML( $html, $outputXML = false ) {
@@ -179,7 +177,7 @@ class Helper {
 					$annotationRelated['annotatedTarget'] == $target
 			) {
 				$html .=
-<<<END
+				<<<END
 <span class="value"> [
 END;
 				if ( isset( $annotationRelated['aaPropertyLabel'] ) ) {
@@ -188,7 +186,7 @@ END;
 					$html .= self::getShortTerm( $annotationRelated['aaProperty'] );
 				}
 				$html .=
-<<<END
+				<<<END
 : {$GLOBALS['call_function']( self::convertUTFToUnicode( $annotationRelated['aaPropertyTarget'] ) )}]</span>
 END;
 			}
@@ -202,15 +200,15 @@ END;
 		$tokens = preg_split( '/\n/', $tmp );
 		if ( sizeof( $tokens ) == 1 ) {
 			$text =
-<<<END
+			<<<END
 <li><span class="label">$label:</span> <span class="value more">
-{$GLOBALS['call_function']( self::makeLink( $value ) )}</span></li>
+{$GLOBALS['call_function']( Helper::makeLink( $value ) )}</span></li>
 END;
 		} else {
 			$text =
 			<<<END
 <li><span class="label">$label:</span> <span class="value more">
-{$GLOBALS['call_function']( self::makeLink( array_shift( $tokens ) ) )}
+{$GLOBALS['call_function']( Helper::makeLink( array_shift( $tokens ) ) )}
 <span class="more-skip"> ... </span>
 <span class="more-content" style="display:none">{$GLOBALS['call_function']( self::makeLink( join( ' ', $tokens ) ) )}</span>
 <span class="more-link" style="display:inline-block;white-space:normal;cursor:hand"> Read More </span>
@@ -236,7 +234,7 @@ END;
 		} else {
 			$label =  Helper::getShortTerm( $term );
 		}
-		$html = '<a oncontextmenu="return false;" href="';
+		$html = '<a class="term" oncontextmenu="return false;" href="';
 		$html .= $rootURL . self::encodeURL( $term );
 		$html .= '">';
 		$html .= self::convertUTFToUnicode( $label );

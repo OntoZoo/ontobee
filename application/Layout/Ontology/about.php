@@ -29,15 +29,15 @@
  * @comment 
  */
 
-use View\Helper;
-
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 $html = '';
 
+# Ontology about display
 if ( is_null( $termIRI ) ) {
+	# Full name & IRI
 	$html .=
 <<<END
 <p class="section-title">Ontology: <span class="section-title-value">$ontology->ontology_abbrv</span></p>
@@ -45,12 +45,16 @@ if ( is_null( $termIRI ) ) {
 <ul>	
 <li><span class="label">IRI:</span> <a href="$ontology->ontology_url">$ontology->ontology_url</a></li>
 END;
+	
+	# OBO foundry
 	if ( $ontology->foundry != '' ) {
 		$html .= 
 <<<END
 <li><span class="label">OBO Foundry:</span> $ontology->foundry</li>
 END;
 	}
+	
+	# Download
  	if ( $ontology->download != '' ) {
  		$html .= 
 <<<END
@@ -58,14 +62,8 @@ END;
 $ontology->download</a></li>
 END;
  	}
- 	if ( $ontology->alternative_download != '' ) {
- 	 	$html .= 
-<<<END
-<li><span class="label">Alternative Download:</span> <a href=
-"{$GLOBALS['call_function']( Helper::encodeURL( $ontology->alternative_download ) )}"
->$ontology->alternative_download</a></li>
-END;
- 	}
+ 	
+ 	# Source
  	if ( $ontology->source != '' ) {
 		$html .= 
 <<<END
@@ -74,6 +72,8 @@ END;
 >$ontology->source</a></li>
 END;
 	}
+	
+	# Home
  	if ( $ontology->home != '' ) {
 		$tokens = preg_split( '/\|/', $ontology->home );
 		$html .= 
@@ -90,6 +90,8 @@ END;
 ">{$tokens[0]}</a></li>
 END;
 	}
+	
+	# Documentation
  	if ( $ontology->documentation != '' ) {
 		$tokens = preg_split( '/[|\t\\t]/', $ontology->documentation );
 		$html .=
@@ -106,6 +108,8 @@ END;
 ">{$tokens[0]}</a></li>
 END;
 	}
+	
+	# Contact
  	if ( $ontology->contact != '' ) {
 		$tokens = preg_split( '/[|\t]/', $ontology->contact );
 		switch ( sizeof( $tokens ) ) {
@@ -129,6 +133,8 @@ END;
 				break;
 		}
  	}
+ 	
+ 	# Help
  	if ( $ontology->help != '' ) {
 		$tokens = preg_split( '/[|\t\\t]/', $ontology->help );
 		switch ( sizeof( $tokens ) ) {
@@ -151,6 +157,8 @@ END;
 				break;
 		}
  	}
+ 	
+ 	# Description
  	if ( $ontology->description != '' ) {
 		$html .=
 <<<END
@@ -162,12 +170,16 @@ END;
 </ul>
 </div>
 END;
- 	
+
+# Term about display
 } else {
+	# Type
 	$html .=
 <<<END
 <p class="section-title">$term->type: <span class="section-title-value">$term->label</span></p>
 END;
+	
+	# Deprecate
 	if ( $term->deprecate ) {
 		$html .=
 <<<END
@@ -179,6 +191,8 @@ END;
 <div class="iri">Term IRI: <a href="$term->iri">$term->iri</a></div>
 END;
 	}
+	
+	# Definition
 	foreach ( $GLOBALS['ontology']['definition']['priority'] as $defIRI ) {
 		if ( isset( $term->describe[$defIRI] ) ) {
 			foreach ($term->describe[$defIRI] as $object ) {
@@ -195,10 +209,10 @@ END;
 	}
 }
 
-echo Helper::tidyHTML( $html );
-
 ?>
 
-
+<!-- Ontobee About Display Start -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- Ontobee About Display End -->
 
 

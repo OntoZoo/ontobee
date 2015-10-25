@@ -29,15 +29,8 @@
  * @comment 
  */
  
-use View\Helper;
- 
 if ( !$this ) {
 	exit( header( 'HTTP/1.0 403 Forbidden' ) );
-}
-
-if ( !isset( $submit ) && isset( $json ) ) {
-	echo json_encode( $json );
-	exit();
 }
 
 $site = SITEURL;
@@ -64,12 +57,14 @@ if ( empty( $json ) ) {
 <?php
 if ( !empty( $keyOntology ) && !empty( $json ) ) {
 	foreach ( $json as $index => $match ) {
-		$termIRI = View\Helper::encodeURL( $match['iri'] );
+		$termIRI = Helper::encodeURL( $match['iri'] );
 		if ( $match['ontology'] == $ontology->ontology_abbrv && !$match['deprecate'] ) {
 			echo 
-'<li>' .
-preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology/{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
+<<<END
+<li>{$GLOBALS['call_function']( preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) )}
+<strong>({$match['ontology']})</strong>: <a class="term" href="{$site}ontology/{$match['ontology']}?iri=$termIRI">
+{$match['iri']}</a></li>
+END;
 			unset( $json[$index] );
 		}
 	}
@@ -79,12 +74,14 @@ preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
 <?php 
 if ( !empty( $json ) ) {
 	foreach ( $json as $index => $match ) {
-		$termIRI = View\Helper::encodeURL( $match['iri'] );
+		$termIRI = Helper::encodeURL( $match['iri'] );
 		if ( !$match['deprecate'] ) {
 			echo
-			'<li>' .
-			preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-			"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology/{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
+<<<END
+<li>{$GLOBALS['call_function']( preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) )}
+<strong>({$match['ontology']})</strong>: <a class="term" href="{$site}ontology/{$match['ontology']}?iri=$termIRI">
+{$match['iri']}</a></li>
+END;
 			unset( $json[$index] );
 		}
 	}
@@ -99,7 +96,7 @@ if ( !empty( $json ) ) {
 <div id="div_deprecate" style="display:none">
 END;
 	foreach ( $json as $index => $match ) {
-		$termIRI = View\Helper::encodeURL( $match['iri'] );
+		$termIRI = Helper::encodeURL( $match['iri'] );
 		echo
 		'<li style="text-decoration:line-through">' .
 		preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .

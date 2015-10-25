@@ -26,8 +26,6 @@
  * @since Oct 16, 2015
  * @comment 
  */
- 
-use View\Helper;
 
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
@@ -53,7 +51,7 @@ END;
 				
 				$html .=
 <<<END
-<li>$axiom subPropertyOf <a href="$rootURL{$GLOBALS['call_function']( Helper::encodeURL( $term->iri ) )}">$term->label</a></li>
+<li>$axiom subPropertyOf <a class="term" href="$rootURL{$GLOBALS['call_function']( Helper::encodeURL( $term->iri ) )}">$term->label</a></li>
 END;
 			}
 				

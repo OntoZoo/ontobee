@@ -26,19 +26,17 @@
  * @since Oct 16, 2015
  * @comment 
  */
- 
-use View\Helper;
 
 if ( !$this ) {
 	exit(header('HTTP/1.0 403 Forbidden'));
 }
 
-if ( !empty( $term->domain ) ) {
+if ( !empty( $term->range ) ) {
 	echo
 	<<<END
 <div class="section-title">Range</div>
 <div class="section"><ul><li>
-<a href="{$term->range['iri']}">{$term->range['label']}</a>
+<a class="term" href="{$term->range['iri']}">{$term->range['label']}</a>
 </li></ul></div>
 END;
 }

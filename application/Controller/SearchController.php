@@ -42,11 +42,6 @@ class SearchController extends Controller  {
 		
 		$this->loadModel( 'Ontology' );
 		
-		if ( array_key_exists( 'submit', $params ) ) {
-			$submit = true;
-			unset( $params['submit'] );
-		}
-		
 		list( $ontAbbr, $termIRI ) = $this->parseOntologyParameter( $params );
 		
 		$keyword = null;

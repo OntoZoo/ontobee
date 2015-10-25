@@ -43,14 +43,13 @@ class OntostatController extends Controller {
 		if ( is_null( $ontAbbr ) ) {
 			$ontologies = $this->model->getAllOntology();
 			$stats = array();
-			$termIRI = null;
 			foreach ( $ontologies as $ontology ) {
 				$this->model->loadOntology( $ontology->ontology_abbrv, $termIRI, $ontology->end_point, false );
 				$stats[$ontology->ontology_graph_url] = $this->model->countAllOntologyType();
 			}
 			require VIEWPATH . 'Ontostat/index.php';
 		} else {
-			$this->model->loadOntology( $ontAbbr, null, false );
+			$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
 			$ontology = $this->model->getOntology();
 			$stats = $this->model->countOntologyType();
 			require VIEWPATH . 'Ontostat/ontology.php';
@@ -94,7 +93,7 @@ class OntostatController extends Controller {
 			
 			$title = "Ontobee: $ontAbbr";
 			$this->loadModel( 'Ontology' );
-			$this->model->loadOntology( $ontAbbr, null, false );
+			$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
 			$ontology = $this->model->getOntology();
 			if ( !empty( $ontology ) ) {
 				list( $terms, $letters, $page, $pageCount ) = $this->model->getTermList( $termIRI, $prefix, $letter, $page, $listMaxTerms );

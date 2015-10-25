@@ -249,14 +249,14 @@ END;
 			}
 		}
 		$type = array_unique( $type );
-		if ( in_array( $GLOBALS['ontology']['type']['Instance'], $type ) ) {
-			$type = array( $GLOBALS['ontology']['type']['Instance'] );
+		
+		foreach ( $GLOBALS['ontology']['type'] as $majorType ) {
+			if ( in_array( $majorType, $type ) ) {
+				return array( array_shift( $type ), $query );
+			}
 		}
-		if ( sizeof( $type ) == 1 ) {
-			return array( array_shift( $type ), $query );
-		} else {
-			throw new Exception( "Term has more than one type definition" );
-		}
+		
+		throw new Exception( "Term has incorrect type definition." );
 	}
 	
 	public function selectAllTermType( $graph, $termIRIs ) {
@@ -283,10 +283,12 @@ END;
 					}
 				}
 				$type = array_unique( $type );
-				if ( sizeof( $type ) == 1 ) {
-					$output[$iri] = array_shift( $type );
-				} else {
-					throw new Exception( "Term has more than one type definition" );
+				while ( !empty( $type ) ) {
+					if ( in_array( $type[0], $GLOBALS['ontology']['type'] ) ) {
+						$output[$iri] = array_shift( $type );
+					} else {
+						array_splice( $type, 0, 1 );
+					}
 				}
 			}
 		}
