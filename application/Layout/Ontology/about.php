@@ -174,23 +174,23 @@ END;
 # Term about display
 } else {
 	# Type
-	$html .=
-<<<END
-<p class="section-title">$term->type: <span class="section-title-value">$term->label</span></p>
-END;
-	
 	# Deprecate
 	if ( $term->deprecate ) {
 		$html .=
 <<<END
-<div class="iri">Term IRI: <a href="$term->iri"><strike>$term->iri</strike></a></div>
+<p class="section-title">$term->type: <span class="section-title-value"><strike>$term->label</strike></span></p>
 END;
 	} else {
 		$html .=
 <<<END
-<div class="iri">Term IRI: <a href="$term->iri">$term->iri</a></div>
+<p class="section-title">$term->type: <span class="section-title-value">$term->label</span></p>
 END;
 	}
+	
+	$html .=
+<<<END
+<div class="iri">Term IRI: <a href="$term->iri">$term->iri</a></div>
+END;
 	
 	# Definition
 	foreach ( $GLOBALS['ontology']['definition']['priority'] as $defIRI ) {
