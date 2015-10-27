@@ -99,9 +99,11 @@ class SearchController extends Controller  {
 		
 		$csvFileName =  TMP . "search_result.csv";
 		file_put_contents( $csvFileName, "Query term, Ontology, URI\n" );
+		chmod( $csvFileName, 777 );
 		
 		$tsvFileName =  TMP . "search_result.tsv";
 		file_put_contents( $tsvFileName, "Query term\tOntology\tURI\n" );
+		chmod( $tsvFileName, 777 );
 		
 		require_once PHPLIB . 'PHPExcel.php';
 		# PHPExcel_Cell_AdvancedValueBinder
@@ -141,6 +143,7 @@ class SearchController extends Controller  {
 		
 		$objWriter = \PHPExcel_IOFactory::createWriter( $objPHPExcel, "Excel2007" );
 		$objWriter->save( TMP . 'search_result.xlsx' );
+		chmod( TMP . 'search_result.xlsx', 777 );
 	}
 	
 }
