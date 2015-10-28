@@ -110,7 +110,7 @@ END;
 
 <br>
 
-<p>Download search result file in <a href="<?php echo SITEURL . 'tmp/search_result'; ?>.tsv" target="_blank">tsv (Tab-separated values)</a> or <a href="<?php echo TMP . 'tmp/search_result'; ?>.csv" target="_blank">csv (Comma-separated values)</a> format.<br>
-Download search result file in <a href="<?php echo TMP . 'tmp/search_result'; ?>.xlsx" target="_blank">Excel</a> format.</p>
+<p>Download search result file in <a href="<?php echo TMP . 'search_result'; ?>.tsv" target="_blank">tsv (Tab-separated values)</a> or <a href="<?php echo TMP . 'search_result'; ?>.csv" target="_blank">csv (Comma-separated values)</a> format.<br>
+Download search result file in <a href="<?php echo TMP . 'search_result'; ?>.xlsx" target="_blank">Excel</a> format.</p>
 
 <?php require TEMPLATE . 'footer.default.dwt.php'; ?>
