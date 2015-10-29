@@ -97,11 +97,11 @@ class SearchController extends Controller  {
 		#TODO: Add to session folder
 		$resultFileName = uniqid();
 		
-		$csvFileName =  TMP . "search_result.csv";
+		$csvFileName =  TMPPATH . "search_result.csv";
 		file_put_contents( $csvFileName, "Query term, Ontology, URI\n" );
 		chmod( $csvFileName, 0777 );
 		
-		$tsvFileName =  TMP . "search_result.tsv";
+		$tsvFileName =  TMPPATH . "search_result.tsv";
 		file_put_contents( $tsvFileName, "Query term\tOntology\tURI\n" );
 		chmod( $tsvFileName, 0777 );
 		
@@ -142,8 +142,8 @@ class SearchController extends Controller  {
 		}
 		
 		$objWriter = \PHPExcel_IOFactory::createWriter( $objPHPExcel, "Excel2007" );
-		$objWriter->save( TMP . 'search_result.xlsx' );
-		chmod( TMP . 'search_result.xlsx', 0777 );
+		$objWriter->save( TMPPATH . 'search_result.xlsx' );
+		chmod( TMPPATH . 'search_result.xlsx', 0777 );
 	}
 	
 }

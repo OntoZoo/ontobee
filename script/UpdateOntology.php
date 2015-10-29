@@ -43,7 +43,7 @@ Class UpdateOntology extends Maintenance {
 		$this->setup();
 		$this->openPDOConnection();
 		
-		$this->tmpDir = TMP . 'rdf' . DIRECTORY_SEPARATOR;
+		$this->tmpDir = SYSTMP . 'rdf' . DIRECTORY_SEPARATOR;
 		if ( !file_exists( $this->tmpDir ) ) {
 			mkdir( $this->tmpDir );
 			chmod( $this->tmpDir, 0777 );

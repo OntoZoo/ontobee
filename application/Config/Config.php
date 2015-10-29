@@ -42,10 +42,11 @@ if ( ENVIRONMENT == 'development' ) {
 
 # Define site URL and path constant
 DEFINE( 'SITEURL', 'http://' . $_SERVER['HTTP_HOST'] . '/' );
+DEFINE( 'TMPURL', SITEURL . 'tmp/' );
 DEFINE( 'VIEWPATH', SCRIPTPATH . 'application/View' . DIRECTORY_SEPARATOR );
+DEFINE ( 'TMPPATH', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
 DEFINE( 'TEMPLATE', SCRIPTPATH . 'application/Layout' . DIRECTORY_SEPARATOR );
 DEFINE( 'PHPLIB', SCRIPTPATH . 'library/php' . DIRECTORY_SEPARATOR );
-DEFINE ( 'TMP', sys_get_temp_dir() . DIRECTORY_SEPARATOR );
 
 # Load database configuration
 require APPPATH . 'Config/DB.php';
