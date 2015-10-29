@@ -291,10 +291,9 @@ class OntologyModel {
 		foreach ( $GLOBALS['ontology']['definition']['priority'] as $defIRI ) {
 			if ( isset( $describe[$defIRI] ) ) {
 				foreach ($describe[$defIRI] as $object ) {
-					$term['definition'] = htmlentities( $object['value'], ENT_XML1, 'UTF-8' );
+					$term['definition'] = htmlspecialchars( $object['value'], ENT_COMPAT | ENT_HTML401, 'UTF-8' );
 					break;
 				}
-				break;
 			}
 		}
 		$preferLabel = array();
