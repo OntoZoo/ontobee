@@ -54,6 +54,12 @@ class SearchController extends Controller  {
 		} else if ( !empty ( $params ) ) {
 			$keyword = array_shift( $params );
 		}
+		
+		if ( array_key_exists( 'submit', $params ) ) {
+			$submit = true;
+			unset( $params['submit'] );
+		}
+		
 		if ( !is_null( $keyword ) ) {
 			if ( !is_null( $ontAbbr ) && $ontAbbr != '' ) {
 				$this->model->loadOntology( $ontAbbr, $keyword, null, false );
@@ -69,6 +75,7 @@ class SearchController extends Controller  {
 				$json = $this->model->searchKeyword( $keyword, $ontAbbr, 50 );
 			} else {
 				$json = $this->model->searchKeyword( $keyword, $ontAbbr );
+				
 			}
 			
 			$this->writeExcel( $json );

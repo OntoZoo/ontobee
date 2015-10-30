@@ -36,6 +36,7 @@ if ( !$this ) {
 $site = SITEURL;
 
 $tkeyword = preg_replace( '/\W/', ' ', $keyword );
+$printed = array();
 
 ?>
 
@@ -59,12 +60,16 @@ if ( !empty( $keyOntology ) && !empty( $json ) ) {
 	foreach ( $json as $index => $match ) {
 		$termIRI = Helper::encodeURL( $match['iri'] );
 		if ( $match['ontology'] == $ontology->ontology_abbrv && !$match['deprecate'] ) {
-			echo 
+			$check = "{$match['value']}|{$match['ontology']}|$termIRI";
+			if ( !array_key_exists( $check, $printed ) ) {
+				echo 
 <<<END
 <li>{$GLOBALS['call_function']( preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) )}
 <strong>({$match['ontology']})</strong>: <a class="term" href="{$site}ontology/{$match['ontology']}?iri=$termIRI">
 {$match['iri']}</a></li>
 END;
+				$printed[$check] = null;
+			}
 			unset( $json[$index] );
 		}
 	}
@@ -76,12 +81,16 @@ if ( !empty( $json ) ) {
 	foreach ( $json as $index => $match ) {
 		$termIRI = Helper::encodeURL( $match['iri'] );
 		if ( !$match['deprecate'] ) {
-			echo
+			$check = "{$match['value']}|{$match['ontology']}|$termIRI";
+			if ( !array_key_exists( $check, $printed ) ) {
+				echo
 <<<END
 <li>{$GLOBALS['call_function']( preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) )}
 <strong>({$match['ontology']})</strong>: <a class="term" href="{$site}ontology/{$match['ontology']}?iri=$termIRI">
 {$match['iri']}</a></li>
 END;
+				$printed[$check] = null;
+			}
 			unset( $json[$index] );
 		}
 	}
@@ -97,10 +106,16 @@ if ( !empty( $json ) ) {
 END;
 	foreach ( $json as $index => $match ) {
 		$termIRI = Helper::encodeURL( $match['iri'] );
-		echo
-		'<li style="text-decoration:line-through">' .
-		preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) .
-		"<strong>({$match['ontology']})</strong>: <a href=\"{$site}ontology/{$match['ontology']}?iri=$termIRI\">{$match['iri']}</a></li>";
+		$check = "{$match['value']}|{$match['ontology']}|$termIRI";
+		if ( !array_key_exists( $check, $printed ) ) {
+			echo
+<<<END
+<li style="text-decoration:line-through">{$GLOBALS['call_function']( preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $match['value'] ) )}
+<strong>({$match['ontology']})</strong>: <a class="term" href="{$site}ontology/{$match['ontology']}?iri=$termIRI">
+{$match['iri']}</a></li>
+END;
+			$printed[$check] = null;
+		}
 	}
 }
 ?>
