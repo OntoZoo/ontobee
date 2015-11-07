@@ -28,12 +28,13 @@
  * @since Sep 9, 2015
  * @comment 
  */
- 
+
 if ( !$this ) {
 	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 ?>
+
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <?php 
@@ -93,4 +94,3 @@ var featureList = ["tab", "ajax2", "combolist", "window", "tree", "grid", "dav",
 <a href="<?php echo SITEURL; ?>news" class="topnav">News</a>
 </div>
 <div id="mainbody">
-

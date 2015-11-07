@@ -28,7 +28,7 @@
  * @since Sep 3, 2015
  * @comment 
  */
- 
+
 if ( !$this ) {
 	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
@@ -99,4 +99,3 @@ var featureList = ["tab", "ajax2", "combolist", "window", "tree", "grid", "dav",
 <a href="<?php echo SITEURL; ?>news" class="topnav">News</a>
 </div>
 <div id="mainbody">
-

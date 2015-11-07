@@ -100,7 +100,7 @@ class Application {
 			$controller->index();
 		} else {
 			$controller = new \Controller\ErrorController();
-			$controller->index();
+			$controller->index('Unable to process requested URL!');
 		}
 	}
 	

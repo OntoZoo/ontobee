@@ -34,15 +34,17 @@ if ( !$this ) {
 
 $site = SITEURL;
 
+$html = '';
+
 if ( isset( $ontologies ) ) {
-	echo
+	$html .=
 <<<END
 <h3 class="head3_darkred">Ontobeest:  Extraction and Display of Ontology Statistics </h3>
 <p>Ontobeest is an  Ontobee-based statistics extraction and display tool. Ontobeest extracts statistical information from one or more ontologies from Ontobee and displays the results using a simple but comprehensive table format in the web site. The Ontobeest cover page provides the statistics of all the ontologies listed in Ontobee. Once you click on any specific ontology, you can obtain detailed information about the statistics on the specific ontology. In addition, you can access the same statistics page for an  ontology by clicking &quot;Detailed Statistics&quot; from the cover page of the specific ontology in Ontobee. See the tutorial of Ontobeest in <a href="../tutorial/index.php#ontostat">HERE</a>. </p>
 <p>Click Ontology Prefix to see detail statistics.</p>
 END;
 } else {
-	echo 
+	$html .=
 <<<END
 <h3 class="head3_darkred">Statistics of <a href="{$site}ontology/$ontology->ontology_abbrv">$ontology->ontology_fullname</a></h3>
 <p><strong>Ontology:</strong> $ontology->ontology_abbrv</p>
@@ -51,3 +53,6 @@ END;
 
 ?>
 
+<!-- Start Ontobee Layout: Ontostat Title -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Ontostat Title -->

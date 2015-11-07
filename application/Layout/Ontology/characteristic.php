@@ -22,30 +22,38 @@
 
 /**
  * @file characteristic.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Oct 16, 2015
  * @comment 
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
+$html = '';
+
 if ( !empty( $term->characteristics ) ) {
-	echo
-	<<<END
+	$html .=
+<<<END
 <div class="section-title">Characteristics</div>
 <div class="section"><ul>
 END;
 	
 	foreach ( $term->characteristics as $characteristic ) {
-		echo '<li>' . Helper::getShortTerm( $characteristic ) . '</li>';
+		$html .= '<li>' . Helper::getShortTerm( $characteristic ) . '</li>';
 	}
 
-	echo
+	$html .=
 <<<END
 </ul></div>
 END;
 }
 
 ?>
+
+<!-- Start Ontobee Layout: Characteristic -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Characteristic -->

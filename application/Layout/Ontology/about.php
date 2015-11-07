@@ -35,7 +35,6 @@ if ( !$this ) {
 
 $html = '';
 
-# Ontology about display
 if ( is_null( $termIRI ) ) {
 	# Full name & IRI
 	$html .=
@@ -211,8 +210,6 @@ END;
 
 ?>
 
-<!-- Ontobee About Display Start -->
+<!-- Start Ontobee Layout: About -->
 <?php echo Helper::tidyHTML( $html ); ?>
-<!-- Ontobee About Display End -->
-
-
+<!-- End Ontobee Layout: About -->

@@ -22,26 +22,33 @@
 
 /**
  * @file domain.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Oct 16, 2015
  * @comment 
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
+$html = '';
+
 if ( !empty( $term->domain ) ) {
-	echo
+	
+	$html .=
 <<<END
 <div class="section-title">Domain</div>
 <div class="section"><ul><li>
 <a class="term" href="{$term->domain['iri']}">{$term->domain['label']}</a>
 </li></ul></div>
 END;
+	
 }
 
 ?>
 
-
-
+<!-- Start Ontobee Layout: Domain -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Domain -->

@@ -28,9 +28,9 @@
  * @since Sep 8, 2015
  * @comment 
  */
- 
+
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 $termURL = SITEURL . "ontology/$ontAbbr?iri=";
@@ -58,7 +58,6 @@ if ( isset( $letter ) && !is_null( $letter ) && $letter != '' ) {
 
 $pageURL .= '&page=';
 $letterURL .= '&letter=';
-
 
 $html =
 <<<END

@@ -30,12 +30,15 @@
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 $rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
+
+$html = '';
+
 if ( !empty( $term->usage ) ) {
-	$html =
+	$html .=
 <<<END
 <div class="section-title">Uses in this ontology</div>
 <div class="section">
@@ -52,8 +55,10 @@ END;
 END;
 	}
 	$html .= '</ul></div>';
-	
-	echo Helper::tidyHTML( $html, true );
 }
 
 ?>
+
+<!-- Start Ontobee Layout: Term Use -->
+<?php echo Helper::tidyHTML( $html, true ); ?>
+<!-- End Ontobee Layout: Term Use -->

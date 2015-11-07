@@ -22,52 +22,46 @@
 
 /**
  * @file disjoint.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Oct 17, 2015
  * @comment 
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
-class DisjointAxiom {
-	public static function show( $ontology, $term ) {
-		$html = '';
-		if ( !empty ( $term->axiom['disjoint'] ) ) {
-			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
+$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
+$operations = $GLOBALS['ontology']['restriction']['operation'];
+$types = $GLOBALS['ontology']['restriction']['type'];
 
-			$operations = $GLOBALS['ontology']['restriction']['operation'];
-			$types = $GLOBALS['ontology']['restriction']['type'];
+$html = '';
 
-			$html =
+if ( !empty ( $term->axiom['disjoint'] ) ) {
+	$html .=
 <<<END
 <div class="section-title">Disjoints</div>
 <div class="section"><ul>
 END;
 
-			foreach ( $term->axiom['disjoint'] as $data ) {
-				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
-				$html .=
+	foreach ( $term->axiom['disjoint'] as $data ) {
+		$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
+		$html .=
 <<<END
 <li>{$GLOBALS['call_function']( Helper::trimBracket( $axiom ) )}</li>
 END;
-			}
+	}
 
-			$html .=
+	$html .=
 <<<END
 </ul></div>
 END;
-		}
-
-		return $html;
-	}
 }
 
 ?>
 
-<!-- InverseOf Axiom Display Start -->
-<?php 
-echo Helper::tidyHTML( DisjointAxiom::show( $ontology, $term ) );
-?>
-<!-- InverseOf Axiom Display End -->
+<!-- Start Ontobee Layout: Disjoint Axiom -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Disjoint Axiom -->

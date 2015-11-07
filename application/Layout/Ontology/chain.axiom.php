@@ -22,53 +22,47 @@
 
 /**
  * @file chain.axiom.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Oct 16, 2015
  * @comment 
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
-class ChainAxiom {
-	public static function show( $ontology, $term ) {
-		$html = '';
-		if ( !empty ( $term->axiom['chain'] ) ) {
-			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
-				
-			$operations = $GLOBALS['ontology']['restriction']['operation'];
-			$types = $GLOBALS['ontology']['restriction']['type'];
-				
-			$html =
+$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
+$operations = $GLOBALS['ontology']['restriction']['operation'];
+$types = $GLOBALS['ontology']['restriction']['type'];
+
+$html = '';
+
+if ( !empty ( $term->axiom['chain'] ) ) {	
+	$html .=
 <<<END
 <div class="section-title">Property Chains</div>
 <div class="section"><ul>
 END;
-				
-			foreach ( $term->axiom['chain'] as $data ) {
-				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
-				
-				$html .=
+	
+	foreach ( $term->axiom['chain'] as $data ) {
+		$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
+		
+		$html .=
 <<<END
 <li>$axiom subPropertyOf <a class="term" href="$rootURL{$GLOBALS['call_function']( Helper::encodeURL( $term->iri ) )}">$term->label</a></li>
 END;
-			}
-				
-			$html .=
+	}
+	
+	$html .=
 <<<END
 </ul></div>
 END;
-		}
-
-		return $html;
-	}
 }
 
 ?>
 
-<!-- Chain Axiom Display Start -->
-<?php 
-echo Helper::tidyHTML( ChainAxiom::show( $ontology, $term ) );
-?>
-<!-- Chain Axiom Display End -->
+<!-- Start Ontobee Layout: Chain Axiom -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Chain Axiom -->

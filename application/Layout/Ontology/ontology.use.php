@@ -30,10 +30,12 @@
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 $site = SITEURL;
+
+$html = '';
 
 $others = array();
 foreach( $term->other as $index => $graph ) {
@@ -43,7 +45,7 @@ foreach( $term->other as $index => $graph ) {
 }
 
 if ( !empty( $others ) ) {
-	$html =
+	$html .=
 <<<END
 <div class="section-title">Ontologies that use the $term->type</div>
 <div class="section">
@@ -101,8 +103,10 @@ END;
 <<<END
 </table>
 END;
-	
-	echo Helper::tidyHTML( $html );
 }
 
 ?>
+
+<!-- Start Ontobee Layout: Ontology Use -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Ontology Use -->

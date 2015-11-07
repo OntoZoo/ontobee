@@ -34,12 +34,9 @@ use Controller\Controller;
 Class ErrorController extends Controller {
 
 	public function index( $msg = '' ) {
-		require VIEWPATH . 'Templates/header.default.dwt.php';
+		require TEMPLATE . 'header.default.dwt.php';
 		echo "Error: $msg";
-		require VIEWPATH . 'Templates/footer.default.dwt.php';
-	}
-
-	protected function loadModel() {
+		require TEMPLATE. 'footer.default.dwt.php';
 	}
 }
 

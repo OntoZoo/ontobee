@@ -119,6 +119,6 @@ END;
 
 ?>
 
-<!-- Ontobee Annotation Display Start -->
+<!-- Start Ontobee Layout: Annotation -->
 <?php echo Helper::tidyHTML( $html, true ); ?>
-<!-- Ontobee Annotation Display End -->
+<!-- End Ontobee Layout: Annotation -->

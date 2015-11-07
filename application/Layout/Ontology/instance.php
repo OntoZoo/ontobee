@@ -30,13 +30,15 @@
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 $site = SITEURL;
 
+$html = '';
+
 if ( !empty( $term->instance ) ) {
-	echo
+	$html .=
 <<<END
 <div class="section-title">Instances</div>
 <div class="section">
@@ -44,13 +46,13 @@ if ( !empty( $term->instance ) ) {
 END;
 	
 	foreach ( $term->instance as $instanceIRI => $instanceLabel ) {
-		echo
+		$html .=
 <<<END
 <li><a class="term" oncontextmenu="return false;" href="{$site}ontology/$ontology->ontology_abbrv?iri={$GLOBALS['call_function']( Helper::encodeURL( $instanceIRI ) )}">
 {$GLOBALS['call_function']( Helper::convertUTFToUnicode( $instanceLabel ) )}</a></li>
 END;
 	}
-	echo
+	$html .=
 <<<END
 </ul>
 </div>
@@ -58,3 +60,7 @@ END;
 }
 
 ?>
+
+<!-- Start Ontobee Layout: Instance -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Instance -->

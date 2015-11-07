@@ -28,11 +28,13 @@
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
+$html = '';
+
 if ( !empty( $term->class ) ) {
-	echo
+	$html .=
 <<<END
 <div class="section-title">Instance of</div>
 <div class="section"><ul><li>
@@ -42,3 +44,7 @@ END;
 }
 
 ?>
+
+<!-- Start Ontobee Layout: Type Instance -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Type Instance -->

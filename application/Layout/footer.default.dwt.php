@@ -28,9 +28,9 @@
  * @since Sep 3, 2015
  * @comment 
  */
- 
-if (!$this) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+
+if ( !$this ) {
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 ?>

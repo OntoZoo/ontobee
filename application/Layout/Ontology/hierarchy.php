@@ -30,7 +30,7 @@
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 class Hierarchy {
@@ -45,6 +45,7 @@ class Hierarchy {
 		
 		$html = 
 <<<END
+<div class="hierarchy">
 <div class="section-title">$hierarchyTitle</div>
 <div class="section main">
 END;
@@ -95,10 +96,10 @@ END;
 
 			$html .= self::curTermBottom();
 			
-			$html .= '</ul></li></ul></div></div>';
+			$html .= '</ul></li></ul></div>';
 		}
 		
-		
+		$html .= '</div></div>';
 
 		return $html;
 	}
@@ -334,12 +335,12 @@ END;
 
 }
 
+$html = '';
+
+$html = Hierarchy::show( $hierarchyTitle, $ontology, $term, $term->hierarchy[0] );
+
 ?>
 
-<!-- Ontobee Hierarchy Display Start -->
-<div class="hierarchy">
-<?php
-echo Helper::tidyHTML( Hierarchy::show( $hierarchyTitle, $ontology, $term, $term->hierarchy[0] ) );
-?>
-</div>
-<!-- Ontobee Hierarchy Display End -->
+<!-- Start Ontobee Layout: Hierarchy -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Hierarchy -->

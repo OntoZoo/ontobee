@@ -22,6 +22,7 @@
 
 /**
  * @file SPARQLQuery.php
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Sep 5, 2015
  * @comment 

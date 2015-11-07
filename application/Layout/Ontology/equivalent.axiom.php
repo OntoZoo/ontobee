@@ -30,27 +30,25 @@
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
-class EquivalentAxiom {
-	public static function show( $ontology, $term ) {
-		$html = '';
-		if ( !empty ( $term->axiom['equivalent'] ) ) {
-			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
-			
-			$operations = $GLOBALS['ontology']['restriction']['operation'];
-			$types = $GLOBALS['ontology']['restriction']['type'];
-			
-			$html =
+$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
+$operations = $GLOBALS['ontology']['restriction']['operation'];
+$types = $GLOBALS['ontology']['restriction']['type'];
+
+$html = '';
+
+if ( !empty ( $term->axiom['equivalent'] ) ) {
+	$html .=
 <<<END
 <div class="section-title">Equivalents</div>
 <div class="section"><ul>
 END;
 			
-			foreach ( $term->axiom['equivalent'] as $data ) {
-				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
-				$html .=
+	foreach ( $term->axiom['equivalent'] as $data ) {
+		$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
+		$html .=
 <<<END
 <li>{$GLOBALS['call_function']( Helper::trimBracket( $axiom ) )}</li>
 END;
@@ -60,16 +58,10 @@ END;
 <<<END
 </ul></div>
 END;
-		}
-	
-		return $html;
-	}
 }
 
 ?>
 
-<!-- Equivalent Axiom Display Start -->
-<?php 
-echo Helper::tidyHTML( EquivalentAxiom::show( $ontology, $term ) );
-?>
-<!-- Equivalent Axiom Display End -->
+<!-- Start Ontobee Layout: Equivalent Axiom -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Equivalent Axiom -->

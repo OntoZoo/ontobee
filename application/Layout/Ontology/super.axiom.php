@@ -30,46 +30,38 @@
  */
  
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
-class SubClassOfAxiom {
-	public static function show( $superAxiomTitle, $ontology, $term ) {
-		if ( !empty ( $term->axiom['super'] ) ) {
-			$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
-			
-			$operations = $GLOBALS['ontology']['restriction']['operation'];
-			$types = $GLOBALS['ontology']['restriction']['type'];
-			
-			$html =
+$operations = $GLOBALS['ontology']['restriction']['operation'];
+$types = $GLOBALS['ontology']['restriction']['type'];
+$rootURL = SITEURL . "ontology/$ontology->ontology_abbrv?iri=";
+
+$html = '';
+
+if ( !empty ( $term->axiom['super'] ) ) {
+	$html .=
 <<<END
 <div class="section-title">$superAxiomTitle</div>
 <div class="section"><ul>
 END;
 			
-			foreach ( $term->axiom['super'] as $data ) {
-				$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
-				$html .=
+	foreach ( $term->axiom['super'] as $data ) {
+		$axiom = Helper::writeRecursiveManchester( $rootURL, $data, $term->related );
+		$html .=
 <<<END
 <li>{$GLOBALS['call_function']( Helper::trimBracket( $axiom ) )}</li>
 END;
-			}
-			
-			$html .
+	}
+	
+	$html .
 <<<END
 </ul></div>
 END;
-		} else {
-			$html = '';
-		}
-	
-		return $html;
-	}
 }
 
 ?>
-<!-- SubClassOf Axiom Display Start -->
-<?php 
-echo Helper::tidyHTML( SubClassOfAxiom::show( $superAxiomTitle, $ontology, $term ) );
-?>
-<!-- SubClassOfAxiom Display End -->
+
+<!-- Start Ontobee Layout: Super Axiom -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Super Axiom -->

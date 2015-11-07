@@ -30,10 +30,11 @@
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
 $site = SITEURL;
+$html = '';
 
 if ( preg_match( '/\/([a-zA-Z]+)_(\d+)$/', $term->iri, $match ) ) {
 	foreach ( $ontologyList as $ont ) {
@@ -46,7 +47,7 @@ if ( preg_match( '/\/([a-zA-Z]+)_(\d+)$/', $term->iri, $match ) ) {
 		
 		$termIRI = Helper::encodeURL( $term->iri );
 		$filename = Helper::getShortTerm( $original->download );
-		$html =
+		$html .=
 <<<END
 <div class="section-title"> This $term->type is originally defined in</div>
 <div class="section">
@@ -85,9 +86,11 @@ END;
 <<<END
 </td></tr></table>
 END;
-		
-		echo Helper::tidyHTML( $html );
 	}
 }
 
 ?>
+
+<!-- Start Ontobee Layout: Current Use-->
+<?php echo Helper::tidyHTML( $html, true); ?>
+<!-- End Ontobee Layout: Current Use -->

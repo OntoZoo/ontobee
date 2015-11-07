@@ -22,17 +22,21 @@
 
 /**
  * @file range.php
+ * @author Yongqun Oliver He
+ * @author Zuoshuang Allen Xiang
  * @author Edison Ong
  * @since Oct 16, 2015
  * @comment 
  */
 
 if ( !$this ) {
-	exit(header('HTTP/1.0 403 Forbidden'));
+	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
 
+$html = '';
+
 if ( !empty( $term->range ) ) {
-	echo
+	$html .=
 	<<<END
 <div class="section-title">Range</div>
 <div class="section"><ul><li>
@@ -42,3 +46,7 @@ END;
 }
 
 ?>
+
+<!-- Start Ontobee Layout: Range -->
+<?php echo Helper::tidyHTML( $html ); ?>
+<!-- End Ontobee Layout: Range -->

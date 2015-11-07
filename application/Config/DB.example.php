@@ -30,15 +30,22 @@
  */
 
 # SQL database
+# MySQL is used to store descriptive information of all ontologies and miscellaneous data
 define('DB_DRIVER', 'mysql');
+# Host (IP address)
 define('DB_HOST', '127.0.0.1');
+# The schema/table that store ontologies' information
 define('DB_SCHEMA', 'schema');
+# Username and Password
 define('DB_USERNAME', 'username');
 define('DB_PASSWORD', 'password');
 
 # RDF database
+# Username and Password
 define('RDF_USERNAME', 'username' );
 define('RDF_PASSWORD', 'password' );
+# The command for maintenance script to manipulate RDF database locally
+# In this ontobee main website, we deploy Virtuoso RDF database and use isql commend
 define('RDF_ISQL_COMMAND', '/usr/local/virtuoso/bin/isql' );
 
 ?>
