@@ -89,10 +89,10 @@ class SearchController extends Controller  {
 	
 	public function redirect( $params = array() ) {
 		$id = $params['id'];
-		if ( preg_match('/[a-zA-Z]+_\d{7,}/', $id ) ) {
+		if ( preg_match('/[a-zA-Z]+_\d/', $id ) ) {
 			$redirect = "Location: http://purl.obolibrary.org/obo/$id";
 		} else {
-			if (preg_match('/[a-zA-Z]+:\d{7,}/', $id)) {
+			if (preg_match('/[a-zA-Z]+:\d/', $id)) {
 				$suggestion = 'http://purl.obolibrary.org/obo/' . preg_replace( '/:/', '_', $id );
 			}
 		}
