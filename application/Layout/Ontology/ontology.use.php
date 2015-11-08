@@ -85,7 +85,7 @@ END;
 	 		} else {
 	 			$html .=
 <<<END
-<a href=\"{$GLOBALS['call_function']( Helper::encodeURL( $tokens[0] ) )}\">Project home page</a>
+<a href="{$GLOBALS['call_function']( Helper::encodeURL( $tokens[0] ) )}">Project home page</a>
 END;
 	 		}
 		}
