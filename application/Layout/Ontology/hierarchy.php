@@ -96,10 +96,10 @@ END;
 
 			$html .= self::curTermBottom();
 			
-			$html .= '</ul></li></ul></div>';
+			$html .= '</ul></li></ul></div></div>';
 		}
 		
-		$html .= '</div></div>';
+		$html .= '</div>';
 
 		return $html;
 	}
