@@ -84,7 +84,7 @@ END;
 		
 		$html .= 
 <<<END
-</td></tr></table>
+</td></tr></table></div>
 END;
 	}
 }
