@@ -41,7 +41,7 @@ if ( !$this ) {
 <?php
 if ( isset( $ontologies ) && empty( $ontology ) ) {
 	echo '<select name="ontology" id="ontology"><option value="" selected>Please select an ontology (optional)</option>';
-END;
+	
 	foreach ( $ontologies as $ontology ) {
 		if ( isset( $keyOntology ) && $ontology->ontology_abbrv == $keyOntology->ontology_abbrv ) {
 			echo
