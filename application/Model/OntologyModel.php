@@ -388,6 +388,31 @@ class OntologyModel {
 		}
 	}
 	
+	public function exportOntology( $ontAbbr ) {
+		$sql = "SELECT * FROM ontology WHERE ontology_abbrv = '$ontAbbr'";
+		$query = $this->db->prepare( $sql );
+		$query->execute();
+		$ontology = $query->fetch();
+		
+		$this->rdf = new RDFStore( $ontology->end_point );
+		
+		$count = 0;
+		$connection = false;
+		while ( $count < 10 && !$connection ) {
+			$count += 1;
+			if ( $this->rdf->ping() ) {
+				$connection = true;
+			}
+		}
+		if ( !$connection ) {
+			throw new Exception( "Unable to connect RDFStore endpoint: {$ontology->end_point}" );
+		}
+		
+		list( $results, $query ) = $this->rdf->selectOntology( $ontology->ontology_graph_url );
+		
+		$this->ontology = $results;
+	}
+	
 	public function loadClass( $classIRI ) {
 		if ( !isset( $this->rdf ) ) {
 			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );

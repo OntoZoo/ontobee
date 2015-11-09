@@ -110,6 +110,98 @@ Class IndexController extends Controller {
 			require VIEWPATH . 'Tutorial/index.php';
 		}
 	}
+	
+	public function listTerms( $params = array() ) {
+		$this->loadModel( 'Ontology' );
+		$ontAbbr = $params[0];
+		$termIRI = null;
+		
+		$dir = SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR;
+		$xlsFile = "$ontAbbr.xls";
+		$xlsxFile = "$ontAbbr.xlsx";
+		
+		if ( !file_exists( $dir . $xlsFile ) || ( time() - filemtime( $dir . $xlsFile )  > 60*60*8 ) ) {
+			$this->model->exportOntology( $ontAbbr );
+			$ontology = $this->model->getOntology();
+			if ( empty( $ontology ) ) {
+				throw new Exception ( "Invalid ontology." );
+			}
+			
+			$terms = array();
+			foreach ( $ontology['class'] as $result ) {
+				$terms[$result['s']] = $result;
+			}
+			foreach ( $ontology['type'] as $result ) {
+				$terms[$result['s']] = $result;
+			}
+			
+			print_r($terms);
+			
+
+			/** PHPExcel */
+			require_once PHPLIB . 'PHPExcel.php';
+				
+			/** PHPExcel_Cell_AdvancedValueBinder */
+			require_once PHPLIB . 'PHPExcel/Cell/AdvancedValueBinder.php';
+				
+			/** PHPExcel_IOFactory */
+			require_once PHPLIB . 'PHPExcel/IOFactory.php';
+				
+			// Set value binder
+			\PHPExcel_Cell::setValueBinder( new \PHPExcel_Cell_AdvancedValueBinder() );
+				
+			// Create new PHPExcel object
+			$objPHPExcel = new \PHPExcel();
+				
+			$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(45);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(45);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(45);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(45);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(45);
+			$objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(100);
+				
+				
+			$styleArray = array('font' => array('bold' => true));
+			
+			$objPHPExcel->getActiveSheet()->getStyle('A1')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('B1')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('C1')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('D1')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('E1')->applyFromArray($styleArray);
+			$objPHPExcel->getActiveSheet()->getStyle('F1')->applyFromArray($styleArray);
+			
+				
+			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, 1)->setValue("Term IRI");
+			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(1, 1)->setValue("Term label");
+			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, 1)->setValue("Parent term IRI");
+			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, 1)->setValue("Parent term label");
+			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, 1)->setValue("Alternative term");
+			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, 1)->setValue("Definition");
+			
+			$i=2;
+			foreach($terms as $term_url => $term) {
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $i)->setValue($term_url);
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(1, $i)->setValue($term['l']);
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $i)->setValue($term['pTerm']);
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $i)->setValue($term['pLabel']);
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $i)->setValue($term['alt_names']);
+				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $i)->setValue($term['definition']);
+				$i++;
+			}
+				
+			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel5");
+			$objWriter->save( $dir . $xlsFile );
+			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
+			$objWriter->save( $dir . $xlsxFile );
+		}
+		
+		header( 'Content-Type: application/vnd.ms-excel' );
+		header( 'Content-Description: File Transfer' );
+		header( "Content-Disposition: attachment; filename=\"$xlsFile\"" );
+		header( 'Content-Length: ' . filesize( $dir . $xlsFile ) ); // length
+		
+		readfile( $dir . $xlsFile );
+	}
 }
 
 

@@ -107,6 +107,15 @@ $GLOBALS['ontology']['top_level_term'] = array(
 	'http://www.w3.org/2002/07/owl#topObjectProperty' => 'ObjectProperty',
 );
 
+$GLOBALS['ontology']['signature_term_type'] = array(
+	'http://www.w3.org/2002/07/owl#ObjectProperty',
+	'http://www.w3.org/2002/07/owl#DatatypeProperty',
+	'http://www.w3.org/2002/07/owl#TransitiveProperty',
+	'http://www.w3.org/2002/07/owl#SymmetricProperty',
+	'http://www.w3.org/2002/07/owl#FunctionalProperty',
+	'http://www.w3.org/2002/07/owl#InverseFunctionalProperty',
+);
+
 $GLOBALS['alias']['type'] = array(
 	'http://www.w3.org/2002/07/owl#TransitiveProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',
 	'http://www.w3.org/2002/07/owl#SymmetricProperty' => 'http://www.w3.org/2002/07/owl#ObjectProperty',

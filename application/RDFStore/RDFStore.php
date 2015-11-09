@@ -180,6 +180,70 @@ END;
 		return array( $count, $query );
 	}
 	
+	public function selectOntology( $graph ) {
+		$query =
+<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT * FROM <$graph> WHERE {
+	?s rdf:type owl:Class .
+	?s rdfs:label ?l .
+	FILTER ( isIRI( ?s ) ).
+	OPTIONAL {
+		?s <http://purl.obolibrary.org/obo/IAO_0000118> ?alt_names
+	} .
+	OPTIONAL {
+		?s <http://purl.obolibrary.org/obo/IAO_0000115> ?definition
+	} .
+	OPTIONAL {
+		?s rdfs:subClassOf ?pTerm .
+		FILTER ( isIRI( ?pTerm ) ) .
+		?pTerm rdfs:label ?pLabel
+	} .
+}
+limit 10000
+END;
+		$this->sparql->add( 'class', $query, '', 'application/sparql-results+json');
+		$queries[] = $query;
+		
+		$typeQuery = '<' . join('>, <', $GLOBALS['ontology']['signature_term_type']) . '>';
+		$query =
+<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT * FROM <$graph> WHERE {
+	?s rdf:type ?o .
+	?s rdfs:label ?l .
+	FILTER ( ?o in( $typeQuery ) ).
+	FILTER ( isIRI( ?s ) ).
+	OPTIONAL {
+		?s <http://purl.obolibrary.org/obo/IAO_0000118> ?alt_names
+	} .
+	OPTIONAL {
+		?s <http://purl.obolibrary.org/obo/IAO_0000115> ?definition
+	} .
+	OPTIONAL {
+		?s rdfs:subPropertyOf ?pTerm .
+		FILTER ( isIRI( ?pTerm ) ) .
+		?pTerm rdfs:label ?pLabel
+	} .
+}
+limit 10000
+END;
+		$this->sparql->add( 'type', $query, '', 'application/sparql-results+json');
+		$queries[] = $query;
+		
+		$results = $this->sparql->execute();
+		
+		$output = array();
+		$output['class'] = RDFQueryHelper::parseSPARQLResult( $results['class'] );
+		$output['type'] = RDFQueryHelper::parseSPARQLResult( $results['type'] );
+		
+		return array( $output, $queries );
+	}
+	
 	public function selectOntologyAnnotation( $graph, $ontIRI ) {
 		$query =
 <<<END
@@ -262,7 +326,7 @@ END;
 	public function selectAllTermType( $graph, $termIRIs ) {
 		$termsQuery = '<' . join( '>, <' , $termIRIs ) . '>';
 		$query =
-		<<<END
+<<<END
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 SELECT * FROM <$graph> WHERE {
 	?s rdf:type ?o .
@@ -297,10 +361,10 @@ END;
 	
 	public function selectTermLabel( $graph, $termIRI ) {
 		$query =
-		<<<END
+<<<END
 SELECT * FROM <$graph> WHERE {
-?s <http://www.w3.org/2000/01/rdf-schema#label> ?o .
-FILTER ( ?s = <$termIRI> )
+	?s <http://www.w3.org/2000/01/rdf-schema#label> ?o .
+	FILTER ( ?s = <$termIRI> )
 }
 END;
 		$json = SPARQLQuery::queue( $this->endpoint, $query );
@@ -314,8 +378,8 @@ END;
 		$query =
 <<<END
 SELECT * FROM <$graph> WHERE {
-?s <http://www.w3.org/2000/01/rdf-schema#label> ?o .
-FILTER ( ?s in ( $termsQuery ) )
+	?s <http://www.w3.org/2000/01/rdf-schema#label> ?o .
+	FILTER ( ?s in ( $termsQuery ) )
 }
 END;
 		$json = SPARQLQuery::queue( $this->endpoint, $query );
@@ -401,7 +465,7 @@ END;
 		
 		# Annotation's other information
 		$query =
-		<<<END
+<<<END
 PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
@@ -422,7 +486,7 @@ END;
 		
 		# Use by other terms in current Ontology
 		$query =
-		<<<END
+<<<END
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
@@ -448,7 +512,7 @@ END;
 		
 		# Exist in other Ontology
 		$query =
-		<<<END
+<<<END
 SELECT DISTINCT ?g WHERE {
 	GRAPH ?g {
 		<$classIRI> ?p ?o

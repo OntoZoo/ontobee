@@ -74,17 +74,17 @@ class UpdateOBOOntology extends Maintenance {
 	public function updateSQL( $ontologies ) {
 		$ontAbbrs = array();
 		foreach ( $ontologies as $ontology ) {
-			if ( array_key_exists( 'ontologies', $this->options ) && 
-				!in_array( $ontology['id'], $this->options['ontologies'] ) ) {
+			if ( array_key_exists( 'id', $this->options ) && 
+				!in_array( $ontology['id'], $this->options['id'] ) ) {
 				continue;
 			}
 			if ( array_key_exists( 'ontology_purl', $ontology ) ) {
 				if ( array_key_exists( 'is_obsolete', $ontology ) ) {
 					if ( !$ontology['is_obsolete'] ) {
-						$ontAbbrs[] = $ontology['id'];
+						$ontIDs[] = $ontology['id'];
 					}
 				} else {
-					$ontAbbrs[] = $ontology['id'];
+					$ontIDs[] = $ontology['id'];
 				}
 			} else {
 				continue;
@@ -142,12 +142,12 @@ class UpdateOBOOntology extends Maintenance {
 			$sql = 'INSERT INTO ontology (' . join( ', ', $column ) . ') VALUES (' . join( ', ', $field ) . ') ON DUPLICATE KEY UPDATE ' . join( ', ', $update );
 			$this->db->query( $sql );
 		}
-		return $ontAbbrs;
+		return $ontIDs;
 	}
 	
-	public function updateRDF( $ontAbbrs ) {
-		foreach( $ontAbbrs as $ontAbbr ) {
-			exec( 'php ' . SCRIPTPATH . "script/UpdateOntology.php $ontAbbr", $output );
+	public function updateRDF( $ontIDs ) {
+		foreach( $ontIDs as $ontID ) {
+			exec( 'php ' . SCRIPTPATH . "script/UpdateOntology.php $ontID", $output );
 			foreach( $output as $line ) {
 				print_r( PHP_EOL . $line );
 			}
@@ -178,7 +178,6 @@ if ( PHP_SAPI == 'cli' ) {
 	$update->doUpdate();
 	
 }
-
 
 
 ?>
