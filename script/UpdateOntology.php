@@ -39,7 +39,7 @@ Class UpdateOntology extends Maintenance {
 	public $file;
 	public $options;
 	
-	public function __construct( $ontAbbr, $options = array() ) {
+	public function __construct( $ontID, $options = array() ) {
 		$this->setup();
 		$this->openPDOConnection();
 		
@@ -49,7 +49,7 @@ Class UpdateOntology extends Maintenance {
 			chmod( $this->tmpDir, 0777 );
 		}
 		
-		$sql = "SELECT * FROM ontology WHERE ontology_abbrv = '$ontAbbr'";
+		$sql = "SELECT * FROM ontology WHERE id = '$ontID'";
 		$query = $this->db->prepare( $sql );
 		$query->execute();
 		$this->ontology = $query->fetch();
@@ -222,7 +222,7 @@ if ( PHP_SAPI == 'cli' ) {
 		$args = $argv;
 		unset( $args[0] );
 		$args = array_values( $args );
-		$ontAbbr = $args[0];
+		$ontID = $args[0];
 		unset( $args[0] );
 		$args = array_values( $args );
 		$options = array();
@@ -238,7 +238,7 @@ if ( PHP_SAPI == 'cli' ) {
 	} else {
 		throw new Exception( 'Invalid arguments.' );
 	}
-	$update = new UpdateOntology( $ontAbbr, $options );
+	$update = new UpdateOntology( $ontID, $options );
 	$update->doUpdate();
 }
 

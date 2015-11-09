@@ -132,6 +132,9 @@ class UpdateOBOOntology extends Maintenance {
 						$value = $this->db->quote( $val );
 					}
 					$field[] = $value;
+					if ( $key == 'ontology_abbrv' ) {
+						continue;
+					}
 					$update[] = "$key = $value";
 				}
 			}
