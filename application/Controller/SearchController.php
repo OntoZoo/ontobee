@@ -54,6 +54,7 @@ class SearchController extends Controller  {
 		} else if ( !empty ( $params ) ) {
 			$keyword = array_shift( $params );
 		}
+		$keyword = trim( $keyword );
 		
 		if ( array_key_exists( 'submit', $params ) ) {
 			$submit = true;
