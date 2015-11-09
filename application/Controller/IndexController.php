@@ -114,9 +114,20 @@ Class IndexController extends Controller {
 	public function listTerms( $params = array() ) {
 		$this->loadModel( 'Ontology' );
 		$ontAbbr = $params[0];
+		$format = $params['format'];
 		$termIRI = null;
 		
 		$dir = SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR;
+		
+		switch ( $format ) {
+			case 'xls':
+				$exportFile = "$ontAbbr.xls";
+				break;
+			case 'xlsx':
+				$exportFile = "$ontAbbr.xlsx";
+				break;
+		}
+		
 		$xlsFile = "$ontAbbr.xls";
 		$xlsxFile = "$ontAbbr.xlsx";
 		
@@ -194,10 +205,10 @@ Class IndexController extends Controller {
 		
 		header( 'Content-Type: application/vnd.ms-excel' );
 		header( 'Content-Description: File Transfer' );
-		header( "Content-Disposition: attachment; filename=\"$xlsFile\"" );
-		header( 'Content-Length: ' . filesize( $dir . $xlsFile ) ); // length
+		header( "Content-Disposition: attachment; filename=\"$exportFile\"" );
+		header( 'Content-Length: ' . filesize( $dir . $exportFile ) ); // length
 		
-		readfile( $dir . $xlsFile );
+		readfile( $dir . $exportFile );
 	}
 }
 

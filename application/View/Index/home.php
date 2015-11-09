@@ -75,7 +75,10 @@ foreach ( $ontologies as $key => $ontology ) {
 <td align="center"><strong>$index</strong></td>
 <td><a href="{$site}ontology/$ontology->ontology_abbrv">$ontology->ontology_abbrv</a></td>
 <td>$ontology->ontology_fullname</td>
-<td align="center"><a href="{$site}listTerms/$ontology->ontology_abbrv"><img src="{$site}public/images/Excel_2010_Logo.png" alt="Excel format" width="16" height="16" border="0"></a></td>
+<td align="center">
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xls"><img src="{$site}public/images/Excel_xls_Logo.png" alt="Excel XLS format" width="24" height="24" border="0"></a>
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
+</td>
 </tr>
 END;
 }
