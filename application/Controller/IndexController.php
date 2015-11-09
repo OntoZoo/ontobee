@@ -134,9 +134,6 @@ Class IndexController extends Controller {
 			foreach ( $ontology['type'] as $result ) {
 				$terms[$result['s']] = $result;
 			}
-			
-			print_r($terms);
-			
 
 			/** PHPExcel */
 			require_once PHPLIB . 'PHPExcel.php';
