@@ -111,7 +111,6 @@ class UpdateOBOOntology extends Maintenance {
 				'end_point' => $GLOBALS['endpoint']['default'],
 				
 				'to_list' => ( array_key_exists( 'is_obsolete', $ontology ) && $ontology['is_obsolete'] ) ? 'n' : 'y',
-				'loaded' => 'n',
 				'download' => array_key_exists( 'ontology_purl', $ontology ) ? $ontology['ontology_purl'] : null,
 				'home' => array_key_exists( 'homepage', $ontology ) ? $ontology['homepage'] : null,
 				'documentation' => array_key_exists( 'documentation', $ontology ) ? $ontology['documentation'] : null,
