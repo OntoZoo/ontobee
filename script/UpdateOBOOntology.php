@@ -147,9 +147,7 @@ class UpdateOBOOntology extends Maintenance {
 			file_put_contents( $this->log, PHP_EOL . "Updated {$ontology['id']} SQL" . PHP_EOL, FILE_APPEND );
 			
 			if ( $loadRDF ) {
-				if ( !$this->updateRDF( $ontology['id'] ) ) {
-					break;
-				}
+				$this->updateRDF( $ontology['id'] );
 			}
 		}
 	}
