@@ -99,6 +99,11 @@ END;
 				if ( !preg_match( '/Error/', $output ) ) {
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
+					
+					copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . "$this->fileName.owl" );
+					
+					array_map( 'unlink', glob( '$this->tmpDir$this->fileName*' ) );
+					
 					echo "$this->fileName loaded\n";
 				}
 				else {
