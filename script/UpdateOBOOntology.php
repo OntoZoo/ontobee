@@ -159,12 +159,6 @@ class UpdateOBOOntology extends Maintenance {
 		$msg = join( PHP_EOL, $output );
 		echo $msg;
 		file_put_contents( $this->log, PHP_EOL . $msg, FILE_APPEND );
-		
-		if ( strpos( $msg, "$ontID failed" ) === 0 ) {
-			return true;
-		} else {
-			return false;
-		}
 	}
 }
 

@@ -71,6 +71,7 @@ Class UpdateOntology extends Maintenance {
 			$this->download( $this->ontology->source );
 		}
 		
+		$status = true;
 		if ( !file_exists( $this->file ) ) {
 			echo "Failed to download owl file.\n";
 		} else {
@@ -81,7 +82,7 @@ Class UpdateOntology extends Maintenance {
 			copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . $path['basename'] );
 			
 			if ( $md5 == $this->ontology->md5 && $this->ontology->loaded == 'y' ) {
-				echo "Ontology already up-to-date.\n";
+				echo "Ontology already up-to-date." . PHP_EOL;
 			} else {
 				$sql = "UPDATE ontology SET loaded='n' where id = '{$this->ontology->id}'";
 				$this->db->query( $sql );
@@ -103,15 +104,10 @@ END;
 				if ( !preg_match( '/Error/', $output ) ) {
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
-					
-					
-					
-					
-					
-					echo "$this->fileName loaded\n";
 				}
 				else {
-					echo "$this->fileName failed\n";
+
+					$status = false;
 				}
 				#$this->remove( $this->tmpDir );
 				
@@ -131,6 +127,14 @@ END;
 			}
 			
 			array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
+			
+			if ( !$status ) {
+				mail( 'edong@umich.edu', 'Ontobee Update Failure', $this->fileName );
+				echo "$this->fileName failed" . PHP_EOL;
+				exit( "$this->fileName failed" . PHP_EOL );
+			} else {
+				echo "$this->fileName loaded" . PHP_EOL;
+			}
 		}
 	}
 	
