@@ -100,7 +100,9 @@ END;
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
 					
-					copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . "$this->fileName.owl" );
+					$path = pathinfo( $this->file );
+					
+					copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . $path['basename'] );
 					
 					array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
 					
