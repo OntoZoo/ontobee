@@ -76,6 +76,10 @@ Class UpdateOntology extends Maintenance {
 		} else {
 			$md5 =  md5_file( $this->file );
 			
+			$path = pathinfo( $this->file );
+				
+			copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . $path['basename'] );
+			
 			if ( $md5 == $this->ontology->md5 && $this->ontology->loaded == 'y' ) {
 				echo "Ontology already up-to-date.\n";
 			} else {
@@ -100,11 +104,9 @@ END;
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
 					
-					$path = pathinfo( $this->file );
 					
-					copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . $path['basename'] );
 					
-					array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
+					
 					
 					echo "$this->fileName loaded\n";
 				}
@@ -127,6 +129,8 @@ END;
 				}
 				*/
 			}
+			
+			array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
 		}
 	}
 	
