@@ -35,12 +35,6 @@ if ( !$this ) {
 
 ?>
 
-if ( !$this ) {
-	exit( header( 'HTTP/1.0 403 Forbidden' ) );
-}
-
-?>
-
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
 
 <style type="text/css">
