@@ -74,6 +74,7 @@ Class UpdateOntology extends Maintenance {
 		$status = true;
 		if ( !file_exists( $this->file ) ) {
 			echo "Failed to download owl file.\n";
+			$status = false;
 		} else {
 			$md5 =  md5_file( $this->file );
 			
@@ -104,9 +105,10 @@ END;
 				if ( !preg_match( '/Error/', $output ) ) {
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
-				}
-				else {
-
+					
+					echo "$this->fileName loaded" . PHP_EOL;
+				} else {
+					echo "$this->fileName failed" . PHP_EOL;
 					$status = false;
 				}
 				#$this->remove( $this->tmpDir );
@@ -130,10 +132,7 @@ END;
 			
 			if ( !$status ) {
 				mail( 'edong@umich.edu', 'Ontobee Update Failure', $this->fileName );
-				echo "$this->fileName failed" . PHP_EOL;
 				exit( "$this->fileName failed" . PHP_EOL );
-			} else {
-				echo "$this->fileName loaded" . PHP_EOL;
 			}
 		}
 	}
