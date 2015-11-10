@@ -71,10 +71,11 @@ Class UpdateOntology extends Maintenance {
 			$this->download( $this->ontology->source );
 		}
 		
-		$status = true;
+		$status = false;
+		$msg = '';
 		if ( !file_exists( $this->file ) ) {
-			echo "Failed to download owl file.\n";
 			$status = false;
+			$msg = "Failed to download $this->file owl file.";
 		} else {
 			$md5 =  md5_file( $this->file );
 			
@@ -83,7 +84,8 @@ Class UpdateOntology extends Maintenance {
 			copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . $path['basename'] );
 			
 			if ( $md5 == $this->ontology->md5 && $this->ontology->loaded == 'y' ) {
-				echo "Ontology already up-to-date." . PHP_EOL;
+				$status = true;
+				$msg = "Ontology already up-to-date.";
 			} else {
 				$sql = "UPDATE ontology SET loaded='n' where id = '{$this->ontology->id}'";
 				$this->db->query( $sql );
@@ -105,11 +107,11 @@ END;
 				if ( !preg_match( '/Error/', $output ) ) {
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
-					
-					echo "$this->fileName loaded" . PHP_EOL;
+					$status = true;
+					$msg = "$this->fileName RDF load succeeded.";
 				} else {
-					echo "$this->fileName failed" . PHP_EOL;
 					$status = false;
+					$msg = "$this->fileName RDF load failed.";
 				}
 				#$this->remove( $this->tmpDir );
 				
@@ -127,14 +129,13 @@ END;
 				}
 				*/
 			}
-			
-			array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
-			
-			if ( !$status ) {
-				mail( 'edong@umich.edu', 'Ontobee Update Failure', $this->fileName );
-				exit( "$this->fileName failed" . PHP_EOL );
-			}
 		}
+		array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
+		if ( !status ) {
+			mail( 'edong@umich.edu', date('Y-m-d') . 'Ontobee Update Failure', $msg );
+		}
+		echo $msg;
+		return $status;
 	}
 	
 	private function remove( $dir ) {
