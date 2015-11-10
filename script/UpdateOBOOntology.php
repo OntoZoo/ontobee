@@ -68,7 +68,7 @@ class UpdateOBOOntology extends Maintenance {
 				$data = json_decode( $file, true );
 		}
 		$ontAbbrs = $this->updateSQL( $data['ontologies'] );
-		#$this->updateRDF( $ontAbbrs );
+		$this->updateRDF( $ontAbbrs );
 	}
 	
 	public function updateSQL( $ontologies ) {
