@@ -149,9 +149,10 @@ class UpdateOBOOntology extends Maintenance {
 		foreach( $ontIDs as $ontID ) {
 			exec( 'php ' . SCRIPTPATH . "script/UpdateOntology.php $ontID", $output );
 			foreach( $output as $line ) {
-				print_r( PHP_EOL . $line );
+				echo PHP_EOL . $line;
 			}
 		}
+		echo PHP_EOL;
 	}
 }
 
