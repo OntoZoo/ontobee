@@ -36,6 +36,7 @@ class UpdateOBOOntology extends Maintenance {
 	public $url;
 	public $format;
 	public $options;
+	public $log;
 	
 	public function __construct( $options = array() ) {
 		$this->setup();
@@ -61,6 +62,9 @@ class UpdateOBOOntology extends Maintenance {
 	}
 	
 	public function doUpdate() {
+		$this->log =  TMPPATH . "obo_update.log";
+		file_put_contents( $this->log, date('Y-m-d') . ' Update' );
+		
 		$file = file_get_contents( $this->url );
 		
 		switch ( $this->format ) {
@@ -88,6 +92,7 @@ class UpdateOBOOntology extends Maintenance {
 			}
 			
 			echo PHP_EOL . "Loading {$ontology['id']}";
+			file_put_contents( $this->log, PHP_EOL . "Loading {$ontology['id']}", FILE_APPEND );
 			
 			if ( array_key_exists( 'in_foundry_order', $ontology ) && intval( $ontology['in_foundry_order'] ) == 1 ) {
 				$foundry = 'Foundry';
@@ -140,6 +145,7 @@ class UpdateOBOOntology extends Maintenance {
 			$this->db->query( $sql );
 			
 			echo PHP_EOL . "Updated {$ontology['id']} SQL";
+			file_put_contents( $this->log, PHP_EOL . "Updated {$ontology['id']} SQL", FILE_APPEND );
 			
 			if ( $loadRDF ) {
 				$this->updateRDF( $ontology['id'] );
@@ -151,8 +157,9 @@ class UpdateOBOOntology extends Maintenance {
 		exec( 'php ' . SCRIPTPATH . "script/UpdateOntology.php $ontID", $output );
 		foreach( $output as $line ) {
 			echo PHP_EOL . $line;
+			file_put_contents( $this->log, PHP_EOL . $line, FILE_APPEND );
 		}
-		echo PHP_EOL;
+		echo file_put_contents( $this->log, PHP_EOL, FILE_APPEND );
 	}
 }
 

@@ -37,7 +37,8 @@ abstract class Maintenance {
 		$dir = implode( DIRECTORY_SEPARATOR, array_splice( $tokens, 0, -1 ) );
 		DEFINE( 'SCRIPTPATH',  $dir . DIRECTORY_SEPARATOR );
 		DEFINE( 'APPPATH', SCRIPTPATH . 'application' . DIRECTORY_SEPARATOR );
-		DEFINE ( 'SYSTMP', sys_get_temp_dir() . DIRECTORY_SEPARATOR );
+		DEFINE( 'SYSTMP', sys_get_temp_dir() . DIRECTORY_SEPARATOR );
+		DEFINE ( 'TMPPATH', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
 		require APPPATH . 'Config/DB.php';
 		require APPPATH . 'Config/OntologyConfig.php';
 	}
