@@ -147,12 +147,10 @@ class UpdateOBOOntology extends Maintenance {
 		}
 	}
 	
-	public function updateRDF( $ontIDs ) {
-		foreach( $ontIDs as $ontID ) {
-			exec( 'php ' . SCRIPTPATH . "script/UpdateOntology.php $ontID", $output );
-			foreach( $output as $line ) {
-				echo PHP_EOL . $line;
-			}
+	public function updateRDF( $ontID ) {
+		exec( 'php ' . SCRIPTPATH . "script/UpdateOntology.php $ontID", $output );
+		foreach( $output as $line ) {
+			echo PHP_EOL . $line;
 		}
 		echo PHP_EOL;
 	}
