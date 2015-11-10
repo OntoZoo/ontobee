@@ -102,7 +102,7 @@ END;
 					
 					copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . "$this->fileName.owl" );
 					
-					array_map( 'unlink', glob( '$this->tmpDir$this->fileName*.*' ) );
+					array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
 					
 					echo "$this->fileName loaded\n";
 				}
