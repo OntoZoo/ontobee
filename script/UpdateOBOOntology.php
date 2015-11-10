@@ -67,13 +67,10 @@ class UpdateOBOOntology extends Maintenance {
 			case 'jsonld':
 				$data = json_decode( $file, true );
 		}
-		$ontAbbrs = $this->updateSQL( $data['ontologies'] );
-		$this->updateRDF( $ontAbbrs );
-	}
-	
-	public function updateSQL( $ontologies ) {
-		$ontAbbrs = array();
+		$ontologies = $data['ontologies'];
+		
 		foreach ( $ontologies as $ontology ) {
+			$loadRDF = false;
 			if ( array_key_exists( 'id', $this->options ) && 
 				!in_array( $ontology['id'], $this->options['id'] ) ) {
 				continue;
@@ -81,10 +78,10 @@ class UpdateOBOOntology extends Maintenance {
 			if ( array_key_exists( 'ontology_purl', $ontology ) ) {
 				if ( array_key_exists( 'is_obsolete', $ontology ) ) {
 					if ( !$ontology['is_obsolete'] ) {
-						$ontIDs[] = $ontology['id'];
+						$loadRDF = true;
 					}
 				} else {
-					$ontIDs[] = $ontology['id'];
+					$loadRDF = true;
 				}
 			} else {
 				continue;
@@ -141,8 +138,11 @@ class UpdateOBOOntology extends Maintenance {
 			
 			$sql = 'INSERT INTO ontology (' . join( ', ', $column ) . ') VALUES (' . join( ', ', $field ) . ') ON DUPLICATE KEY UPDATE ' . join( ', ', $update );
 			$this->db->query( $sql );
+			
+			if ( $loadRDF ) {
+				$this->updateRDF( $$ontology['id'] );
+			}
 		}
-		return $ontIDs;
 	}
 	
 	public function updateRDF( $ontIDs ) {
