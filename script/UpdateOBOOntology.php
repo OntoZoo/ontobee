@@ -87,7 +87,7 @@ class UpdateOBOOntology extends Maintenance {
 				continue;
 			}
 			
-			print_r( PHP_EOL . "Loading {$ontology['id']}" );
+			echo PHP_EOL . "Loading {$ontology['id']}";
 			
 			if ( array_key_exists( 'in_foundry_order', $ontology ) && intval( $ontology['in_foundry_order'] ) == 1 ) {
 				$foundry = 'Foundry';
@@ -138,6 +138,8 @@ class UpdateOBOOntology extends Maintenance {
 			
 			$sql = 'INSERT INTO ontology (' . join( ', ', $column ) . ') VALUES (' . join( ', ', $field ) . ') ON DUPLICATE KEY UPDATE ' . join( ', ', $update );
 			$this->db->query( $sql );
+			
+			echo PHP_EOL . "Updated {$ontology['id']} SQL";
 			
 			if ( $loadRDF ) {
 				$this->updateRDF( $$ontology['id'] );
