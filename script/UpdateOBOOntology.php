@@ -148,18 +148,24 @@ class UpdateOBOOntology extends Maintenance {
 			file_put_contents( $this->log, PHP_EOL . "Updated {$ontology['id']} SQL" . PHP_EOL, FILE_APPEND );
 			
 			if ( $loadRDF ) {
-				$this->updateRDF( $ontology['id'] );
+				if ( !$this->updateRDF( $ontology['id'] ) ) {
+					break;
+				}
 			}
 		}
 	}
 	
 	public function updateRDF( $ontID ) {
 		exec( 'php ' . SCRIPTPATH . "script/UpdateOntology.php $ontID", $output );
-		foreach( $output as $line ) {
-			echo PHP_EOL . $line;
-			file_put_contents( $this->log, PHP_EOL . $line, FILE_APPEND );
+		$msg = join( PHP_EOL, $output );
+		echo $msg;
+		file_put_contents( $this->log, PHP_EOL . $msg, FILE_APPEND );
+		
+		if ( strpos( $msg, "$ontID failed" ) === 0 ) {
+			return true;
+		} else {
+			return false;
 		}
-		echo file_put_contents( $this->log, PHP_EOL, FILE_APPEND );
 	}
 }
 
