@@ -119,6 +119,20 @@ class UpdateOBOOntology extends Maintenance {
 				'help' => array_key_exists( 'mailing_list', $ontology ) ? $ontology['mailing_list'] : null,		
 				'source' => $this->getFinalURL( $ontology['ontology_purl'] ),
 				'foundry' => $foundry,
+				
+				'license' => array_key_exists( 'license', $ontology ) ? array(
+					array_key_exists( 'label', $ontology['license'] ) ? $ontology['license']['label'] : '',
+					array_key_exists( 'logo', $ontology['license'] ) ? $ontology['license']['logo'] : '',
+					array_key_exists( 'url', $ontology['license'] ) ? $ontology['license']['url'] : '',
+				) : null,
+				'tracker' => array_key_exists( 'tracker', $ontology ) ? $ontology['tracker'] : null,
+				'publications' => array_key_exists( 'publications', $ontology ) ? array(
+					array_key_exists( 'id', $ontology['publications'] ) ? $ontology['publications']['id'] : '',
+					array_key_exists( 'title', $ontology['publications'] ) ? $ontology['publications']['title'] : '',
+				) : null,
+				'facebook' => array_key_exists( 'facebook', $ontology ) ? $ontology['facebook'] : null,
+				'twitter' => array_key_exists( 'twitter', $ontology ) ? $ontology['twitter'] : null,
+				'depicted_by' => array_key_exists( 'depicted_by', $ontology ) ? $ontology['depicted_by'] : null,
 			);
 			
 			$column = array();
