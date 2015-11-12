@@ -96,10 +96,8 @@ class UpdateOBOOntology extends Maintenance {
 			
 			if ( array_key_exists( 'in_foundry_order', $ontology ) && intval( $ontology['in_foundry_order'] ) == 1 ) {
 				$foundry = 'Foundry';
-			} else if ( array_key_exists( 'in_foundry', $ontology ) && $ontology['in_foundry'] ) {
-				$foundry = 'Library';
 			} else {
-				$foundry = 'No';
+				$foundry = 'Library';
 			}
 			
 			$params = array(
@@ -119,6 +117,7 @@ class UpdateOBOOntology extends Maintenance {
 				'help' => array_key_exists( 'mailing_list', $ontology ) ? $ontology['mailing_list'] : null,		
 				'source' => $this->getFinalURL( $ontology['ontology_purl'] ),
 				'foundry' => $foundry,
+				'domain' => array_key_exists( 'domain', $ontology ) ? $ontology['domain'] : null,
 				
 				'tracker' => array_key_exists( 'tracker', $ontology ) ? $ontology['tracker'] : null,
 				'facebook' => array_key_exists( 'facebook', $ontology ) ? $ontology['facebook'] : null,
