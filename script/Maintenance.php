@@ -41,6 +41,7 @@ abstract class Maintenance {
 		DEFINE ( 'TMPPATH', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
 		require APPPATH . 'Config/DB.php';
 		require APPPATH . 'Config/OntologyConfig.php';
+		require SCRIPTPATH . 'vendor/autoload.php';
 	}
 	
 	protected function openPDOConnection() {
