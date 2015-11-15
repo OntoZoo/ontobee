@@ -51,14 +51,17 @@ if (!$this) {
 </form>
 
 <p>Currently Ontobee has been applied for the following ontologies: </p>
-<table border="0" cellpadding="2" style="border:1px #A0A0A4 solid">
+<table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="border:1px #A0A0A4 solid">
+<thead>
 <tr>
-<td bgcolor="#158AFF" align="center"><strong>No.</strong></td>
-<td bgcolor="#158AFF" align="center"><strong>Ontology Prefix</strong></td>
-<td bgcolor="#158AFF" align="center"><strong>Ontology Full Name</strong></td>
+<th bgcolor="#158AFF" align="center"><strong>Ontology Prefix</strong></th>
+<th bgcolor="#158AFF" align="center"><strong>Ontology Full Name</strong></th>
+<th bgcolor="#158AFF" align="center"><string>OBO</th>
 <td bgcolor="#158AFF" align="center"><strong>List of Terms</strong></td>
 </tr>
+</thead>
 
+<tbody>
 <?php
 $index = 0;
 foreach ( $ontologies as $key => $ontology ) {
@@ -72,9 +75,9 @@ foreach ( $ontologies as $key => $ontology ) {
 	echo
 <<<END
 <tr bgcolor="$bgcolor">
-<td align="center"><strong>$index</strong></td>
 <td><a href="{$site}ontology/$ontology->ontology_abbrv">$ontology->ontology_abbrv</a></td>
 <td>$ontology->ontology_fullname</td>
+<td>$ontology->foundry</td>
 <td align="center">
 <a href="{$site}listTerms/$ontology->ontology_abbrv?format=xls"><img src="{$site}public/images/Excel_xls_Logo.png" alt="Excel XLS format" width="24" height="24" border="0"></a>
 <a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
@@ -83,8 +86,16 @@ foreach ( $ontologies as $key => $ontology ) {
 END;
 }
 ?>
-
+</tbody>
 </table>
+
+<script type="text/javascript">
+$(document).ready(function() 
+	    { 
+	        $("#ontologyList").tablesorter(); 
+	    } 
+	); 
+</script>
 
 <p><strong>Please cite the following reference for Ontobee: </strong></p>
 <p>Xiang Z, Mungall C, Ruttenberg A, He Y. <a href="doc/Ontobee_ICBO-2011_Proceeding.pdf">Ontobee: A Linked Data Server and Browser for Ontology Terms</a>. <em>Proceedings of the 2nd International Conference on Biomedical Ontologies (ICBO)</em>, July 28-30, 2011, Buffalo, NY, USA. Pages 279-281. URL: <a href="http://ceur-ws.org/Vol-833/paper48.pdf">http://ceur-ws.org/Vol-833/paper48.pdf</a>. </p>

@@ -49,6 +49,7 @@ if ( !isset( $title ) ) {
 <link rel="shortcut icon" href="/favicon.ico" />
 <link href="<?php echo SITEURL; ?>public/css/main.css" rel="stylesheet" type="text/css"/>
 <link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/themes/base/jquery.ui.all.css"/>
+<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/tablesorter/themes/blue/style.css"/>
 <script src="<?php echo SITEURL; ?>public/js/jquery/jquery-1.7.1.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.core.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.widget.js"></script>
@@ -56,6 +57,7 @@ if ( !isset( $title ) ) {
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.autocomplete.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/ontobee.autocomplete.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/ontobee.deprecate.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/jquery/tablesorter/jquery.tablesorter.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/ontobee.infobox.js"></script>
 
 <style>
