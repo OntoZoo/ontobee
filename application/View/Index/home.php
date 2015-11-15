@@ -54,10 +54,11 @@ if (!$this) {
 <table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="border:1px #A0A0A4 solid">
 <thead>
 <tr>
-<th bgcolor="#158AFF" align="center"><strong>Ontology Prefix</strong></th>
-<th bgcolor="#158AFF" align="center"><strong>Ontology Full Name</strong></th>
-<th bgcolor="#158AFF" align="center"><string>OBO</th>
-<td bgcolor="#158AFF" align="center"><strong>List of Terms</strong></td>
+<th align="center"><strong>Ontology Prefix</strong></th>
+<th align="center"><strong>Ontology Full Name</strong></th>
+<th align="center"><string>OBO</th>
+<th align="center"><string>Domain</th>
+<td align="center"><strong>List of Terms</strong></td>
 </tr>
 </thead>
 
@@ -67,17 +68,39 @@ $index = 0;
 foreach ( $ontologies as $key => $ontology ) {
 	$index += 1;
 	if ( $index % 2 == 0 ) {
-		$bgcolor = '#BBDDFF';
+		$bgcolor = 'even';
 	} else {
-		$bgcolor = '';
+		$bgcolor = 'odd';
 	}
 	$site = SITEURL;
+	if ( isset( $ontology->foundry ) && !is_null( $ontology->foundry ) && !empty( $ontology->foundry ) ) {
+		$foundry = $ontology->foundry;
+	} else {
+		$foundry = 'No';
+	}
+	if ( isset( $ontology->domain ) && !is_null( $ontology->domain ) && !empty( $ontology->domain ) ) {
+		$domain = $ontology->domain;
+	} else {
+		$domain = 'Not Specified';
+	}
 	echo
 <<<END
-<tr bgcolor="$bgcolor">
+<tr class="$bgcolor">
 <td><a href="{$site}ontology/$ontology->ontology_abbrv">$ontology->ontology_abbrv</a></td>
-<td>$ontology->ontology_fullname</td>
-<td>$ontology->foundry</td>
+<td>$ontology->ontology_fullname
+END;
+	if ( isset( $ontology->license ) && !is_null( $ontology->license ) && !empty( $ontology->license ) ) {
+		$license = preg_split( '/[|]/', $ontology->license );
+		echo 
+<<<END
+<a href="$license[2]"><img height="15px" src="$license[1]" alt="$license[0]"></a>
+END;
+	}
+	echo
+<<<END
+</td>
+<td>$foundry</td>
+<td>$domain</td>
 <td align="center">
 <a href="{$site}listTerms/$ontology->ontology_abbrv?format=xls"><img src="{$site}public/images/Excel_xls_Logo.png" alt="Excel XLS format" width="24" height="24" border="0"></a>
 <a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
