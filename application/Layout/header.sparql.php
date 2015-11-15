@@ -79,7 +79,7 @@ var featureList = ["tab", "ajax2", "combolist", "window", "tree", "grid", "dav",
 <div id="topnav">
 <a href="<?php echo SITEURL; ?>" class="topnav">Home</a>
 <a href="<?php echo SITEURL; ?>introduction" class="topnav">Introduction</a>
-<a href="<?php echo SITEURL; ?>statistic" class="topnav">Statistics</a>
+<a href="<?php echo SITEURL; ?>ontostat" class="topnav">Statistics</a>
 <a href="<?php echo SITEURL; ?>sparql" class="topnav">SPARQL</a>
 <!-- <a href="<?php echo SITEURL; ?>ontobeep" class="topnav">Ontobeep</a> -->
 <a href="<?php echo SITEURL; ?>tutorial" class="topnav">Tutorial</a>
