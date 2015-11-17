@@ -46,18 +46,18 @@ Class OntologyController extends Controller{
 			$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
 			$title = "Ontobee: $ontAbbr";
 			$ontology = $this->model->getOntology();
+			$type = $this->model->askTermType( $termIRI );
 			if ( empty( $ontology ) ) {
 				$error = new ErrorController();
 				$error->index( ErrorController::ONTOLOGY_NOT_FOUND );
-			}
-			$type = $this->model->askTermType( $termIRI );
-			if ( !$type ) {
+			} else if ( !$type ) {
 				$error = new ErrorController();
 				$error->index( ErrorController::TERM_NOT_FOUND );
+			} else {
+				$this->model->loadRDF( $termIRI );
+				$rdf = $this->model->getRDF();
+				require VIEWPATH . 'Ontology/rdf.php';
 			}
-			$this->model->loadRDF( $termIRI );
-			$rdf = $this->model->getRDF();
-			require VIEWPATH . 'Ontology/rdf.php';
 		}
 	}
 	
@@ -69,18 +69,18 @@ Class OntologyController extends Controller{
 		$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
 		$title = "Ontobee: $ontAbbr";
 		$ontology = $this->model->getOntology();
+		$type = $this->model->askTermType( $termIRI );
 		if ( empty( $ontology ) ) {
 			$error = new ErrorController();
 			$error->index( ErrorController::ONTOLOGY_NOT_FOUND );
-		}
-		$type = $this->model->askTermType( $termIRI );
-		if ( !$type ) {
+		} else if ( !$type ) {
 			$error = new ErrorController();
 			$error->index( ErrorController::TERM_NOT_FOUND );
+		} else {
+			$this->model->loadRDF( $termIRI );
+			$rdf = $this->model->getRDF();
+			require VIEWPATH . 'Ontology/rdf.php';
 		}
-		$this->model->loadRDF( $termIRI );
-		$rdf = $this->model->getRDF();
-		require VIEWPATH . 'Ontology/rdf.php';
 	}
 	
 	public function view( $params ) {
