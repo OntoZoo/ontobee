@@ -32,11 +32,13 @@ namespace Controller;
 use Controller\Controller;
 
 Class ErrorController extends Controller {
+	
+	const INVALID_URL = 0;
+	const ONTOLOGY_NOT_FOUND = 1;
+	const TERM_NOT_FOUND = 2;
 
-	public function index( $msg = '' ) {
-		require TEMPLATE . 'header.default.dwt.php';
-		echo "Error: $msg";
-		require TEMPLATE. 'footer.default.dwt.php';
+	public function index( $code = 0 ) {
+		require VIEWPATH . 'Error/404.php';
 	}
 }
 

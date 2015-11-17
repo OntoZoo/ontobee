@@ -320,7 +320,7 @@ END;
 			}
 		}
 		
-		throw new Exception( "Term has incorrect type definition." );
+		return null;
 	}
 	
 	public function selectAllTermType( $graph, $termIRIs ) {

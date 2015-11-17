@@ -31,6 +31,7 @@ namespace Controller;
 
 use Controller\Controller;
 
+use Controller\ErrorController;
 use Model\OntologyModel;
 
 Class OntologyController extends Controller{	
@@ -46,7 +47,13 @@ Class OntologyController extends Controller{
 			$title = "Ontobee: $ontAbbr";
 			$ontology = $this->model->getOntology();
 			if ( empty( $ontology ) ) {
-				throw new Exception ( "Invalid ontology." );
+				$error = new ErrorController();
+				$error->index( ErrorController::ONTOLOGY_NOT_FOUND );
+			}
+			$type = $this->model->askTermType( $termIRI );
+			if ( !$type ) {
+				$error = new ErrorController();
+				$error->index( ErrorController::TERM_NOT_FOUND );
 			}
 			$this->model->loadRDF( $termIRI );
 			$rdf = $this->model->getRDF();
@@ -63,7 +70,13 @@ Class OntologyController extends Controller{
 		$title = "Ontobee: $ontAbbr";
 		$ontology = $this->model->getOntology();
 		if ( empty( $ontology ) ) {
-			throw new Exception ( "Invalid ontology." );
+			$error = new ErrorController();
+			$error->index( ErrorController::ONTOLOGY_NOT_FOUND );
+		}
+		$type = $this->model->askTermType( $termIRI );
+		if ( !$type ) {
+			$error = new ErrorController();
+			$error->index( ErrorController::TERM_NOT_FOUND );
 		}
 		$this->model->loadRDF( $termIRI );
 		$rdf = $this->model->getRDF();
