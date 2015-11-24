@@ -71,6 +71,10 @@ Class UpdateOntology extends Maintenance {
 			$this->download( $this->ontology->source );
 		}
 		
+		if ( !file_exists( $this->file ) && $this->ontology->alternative_download != '' ) {
+			$this->download( $this->ontology->alternative_download );
+		}
+		
 		$status = false;
 		$msg = '';
 		if ( !file_exists( $this->file ) ) {
