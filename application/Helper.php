@@ -290,7 +290,7 @@ END;
 					}
 				}
 			} else if ( sizeof( $value ) > 1 ){
-				$type = '|';
+				$type = 'o';
 				$manchester .= '(';
 				foreach ( $value as $index => $node ) {
 					if ( $index != 0 ) {
