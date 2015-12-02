@@ -66,9 +66,9 @@ switch ( $code ) {
       <li><strong>Note</strong>:   You are welcome to join the group, and it is open to everyone:-)</li>
     </ul>
   </li>
-  <li>Submit a bug report or request a new feature at: <a href="https://sourceforge.net/p/ontobee/feature-requests/">https://sourceforge.net/p/ontobee/feature-requests/</a></li>
-  <li>For OBO Foundry related questions, contact:&nbsp;<a href="http://code.google.com/p/obo-foundry-operations-committee/">http://code.google.com/p/obo-foundry-operations-committee/</a></li>
-  <li>Email Oliver He at: <img border="0" align="absbottom" src="http://www.hegroup.org/inc/showe.php?d=umich.edu&amp;n=yongqunh"></li>
+  <li>Submit a bug report or request a new feature at Github: <a href="https://github.com/OntoZoo/ontobee">https://github.com/OntoZoo/ontobee</a></li>
+  <li>For OBO Foundry related questions, contact:&nbsp;<a href="https://github.com/OBOFoundry/Operations-Committee">https://github.com/OBOFoundry/Operations-Committee</a></li>
+  <li>Email Oliver He at: <img border="0" align="absbottom" src="http://www.hegroup.org/inc/showe.php?d=umich.edu&amp;n=yongqunh"> or Edison Ong at: <a href="mailto:e4ong1031@gmail.com?Subject=Ontobee%20Issue" target="_top">e4ong1031@gmail.com</a></li>
 </ul>
 <p>Thank you. </p>
 <p>&nbsp;</p>
