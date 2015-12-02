@@ -57,6 +57,7 @@ $GLOBALS['ontology']['namespace'] = array(
 	'owl' => 'http://www.w3.org/2002/07/owl#',
 	'oboInOwl' => 'http://www.geneontology.org/formats/oboInOwl#',
 	'dc' => 'http://purl.org/dc/elements/1.1/',
+	'foaf' => 'http://xmlns.com/foaf/0.1/',
 );
 
 $GLOBALS['ontology']['label']['priority'] = array(
