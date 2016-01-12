@@ -143,7 +143,7 @@ $("#ontologyList").bind("sortStart",function() {
     var i = 0;
     $("#ontologyList").find("tr:gt(0)").each(function(){
         i++;
-        $(this).find("td:eq(0)").text(i);
+        $(this).find("td:eq(0)").html("<strong>" + i + "<strong>");
         if ( i % 2 == 0 ) {
         	$(this).removeClass("odd even").addClass("even");
         } else {
