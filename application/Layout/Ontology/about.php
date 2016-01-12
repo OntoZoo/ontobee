@@ -62,6 +62,7 @@ $ontology->download</a></li>
 END;
  	}
  	
+ 	/*
  	# Source
  	if ( $ontology->source != '' ) {
 		$html .= 
@@ -71,6 +72,7 @@ END;
 >$ontology->source</a></li>
 END;
 	}
+	*/
 	
 	# Home
  	if ( $ontology->home != '' ) {

@@ -31,6 +31,7 @@ namespace Controller;
 
 use Controller\Controller;
 
+use Controller\ErrorController;
 use Model\OntologyModel;
 
 Class OntologyController extends Controller{	
@@ -45,12 +46,18 @@ Class OntologyController extends Controller{
 			$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
 			$title = "Ontobee: $ontAbbr";
 			$ontology = $this->model->getOntology();
+			$type = $this->model->askTermType( $termIRI );
 			if ( empty( $ontology ) ) {
-				throw new Exception ( "Invalid ontology." );
+				$error = new ErrorController();
+				$error->index( ErrorController::ONTOLOGY_NOT_FOUND );
+			} else if ( !$type ) {
+				$error = new ErrorController();
+				$error->index( ErrorController::TERM_NOT_FOUND );
+			} else {
+				$this->model->loadRDF( $termIRI );
+				$rdf = $this->model->getRDF();
+				require VIEWPATH . 'Ontology/rdf.php';
 			}
-			$this->model->loadRDF( $termIRI );
-			$rdf = $this->model->getRDF();
-			require VIEWPATH . 'Ontology/rdf.php';
 		}
 	}
 	
@@ -62,12 +69,18 @@ Class OntologyController extends Controller{
 		$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
 		$title = "Ontobee: $ontAbbr";
 		$ontology = $this->model->getOntology();
+		$type = $this->model->askTermType( $termIRI );
 		if ( empty( $ontology ) ) {
-			throw new Exception ( "Invalid ontology." );
+			$error = new ErrorController();
+			$error->index( ErrorController::ONTOLOGY_NOT_FOUND );
+		} else if ( !$type ) {
+			$error = new ErrorController();
+			$error->index( ErrorController::TERM_NOT_FOUND );
+		} else {
+			$this->model->loadRDF( $termIRI );
+			$rdf = $this->model->getRDF();
+			require VIEWPATH . 'Ontology/rdf.php';
 		}
-		$this->model->loadRDF( $termIRI );
-		$rdf = $this->model->getRDF();
-		require VIEWPATH . 'Ontology/rdf.php';
 	}
 	
 	public function view( $params ) {

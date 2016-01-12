@@ -43,6 +43,9 @@ if (!$this) {
 (<em><strong>Note</strong></em>: The list usually does not include news about new ontology inclusion. It may not include  those technical issues discussed in  <a href="https://groups.google.com/forum/#!forum/ontobee-discuss">Google Ontobee-discuss</a>, <a href="https://sourceforge.net/p/ontobee/feature-requests/">SourceForge feature requests</a>, or   <a href="https://github.com/ontoden/ontobee/issues">Github issues</a>.) </p>
 <br/>
 <ul>
+  <li><strong>11/8/2015</strong>: Oliver and Edison announced to the update of the Ontobee program in the OBO-discuss and Ontobee-discuss email lists.</li>
+  <li><strong>11/7/2015</strong>: Edison updated the Ontobee program to a new version.</li>
+  <li><strong>10/19/2015</strong>: Oliver and Edison announced to the OBO-discuss and Ontobee-discuss email lists about a new beta version of Ontobee under testing.</li>
   <li><strong>8/4/2015</strong>: Edison  solved a major issue on searching for synonyms that are defined by synonym-related annotation properties in OboInOWL: has_exact_synonym, has_related_synonym, has_narrow_synonym, and has_broad_synonym. See the related <a href="https://github.com/ontoden/ontobee/issues/35">github issue (#35) </a>page for more detail. </li>
   <li><strong>8/4/2015</strong>: Edison Ong  (a bioinformatics graduate student in Oliver He lab) solved an issue related to finding terms when character length is 3 or less. See the related <a href="https://github.com/ontoden/ontobee/issues/37">github issue (#37)</a> page for more detail. We have also explained this issue in a simplified way in answering a question in <a href="faqs.php">FAQs</a>. </li>
   <li><strong>1/31/2015</strong>: The last day of Bin Zhao working in He lab as a programmer and bioinformatician. Bin has contributed a lot to the Ontobee project. </li>

@@ -196,9 +196,10 @@ END;
 	}
 	
 	public static function writeMoreContent( $label, $value ) {
-		$tmp = preg_replace( '/[\n\r]/', ' ', $value );
-		$tmp = wordwrap( $tmp, 200, "\n" );
-		$tokens = preg_split( '/\n/', $tmp );
+		#$tmp = preg_replace( '/[\n\r]/', ' ', $value );
+		#$tmp = wordwrap( $tmp, 200, "\n" );
+		#$tokens = preg_split( '/\n/', $tmp );
+		$tokens = array( $value );
 		if ( sizeof( $tokens ) == 1 ) {
 			$text =
 			<<<END
@@ -290,7 +291,7 @@ END;
 					}
 				}
 			} else if ( sizeof( $value ) > 1 ){
-				$type = '|';
+				$type = 'o';
 				$manchester .= '(';
 				foreach ( $value as $index => $node ) {
 					if ( $index != 0 ) {

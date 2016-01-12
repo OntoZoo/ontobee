@@ -426,10 +426,10 @@ class OntologyModel {
 	
 		list( $describeResult, $query ) = $this->rdf->describeClass( $this->ontology->ontology_graph_url, $classIRI );
 		$this->addQueries( $query );
-	
+		
 		$describes = $describeResult['describe'];
 		$class->describe = $describeResult['describe'];
-	
+		
 		$preferLabel = array();
 		foreach( $GLOBALS['ontology']['label']['priority'] as $labelIRI ) {
 			if ( array_key_exists( $labelIRI, $class->describe ) ) {
@@ -494,6 +494,7 @@ class OntologyModel {
 	
 		$annotations = array();
 		$deprecate = false;
+		
 		foreach ( array_unique( array_keys( $class->describe ) ) as $property ) {
 			if ( $related[$property]->iri == $GLOBALS['ontology']['namespace']['owl'] . 'deprecated' ) {
 				$deprecate = true;
@@ -501,19 +502,28 @@ class OntologyModel {
 			}
 			if ( $related[$property]->type == $GLOBALS['ontology']['type']['AnnotationProperty'] ) {
 				$values = array();
-				foreach ( $class->describe[$property] as $token ) {
-					if ( array_key_exists( 'value', $token ) ) {
-						if ( array_key_exists( $token['value'], $related ) ) {
-							if ( !is_null( $related[$token['value']]->label ) ) {
-								$values[] = $related[$token['value']]->label;
-							} else {
-								$values[] = $related[$token['value']]->id;
-							}
-						} else {
+				if ( $related[$property]->iri == $GLOBALS['ontology']['namespace']['foaf'] . 'depicted_by' ) {
+					foreach ( $class->describe[$property] as $token ) {
+						if ( array_key_exists( 'value', $token ) ) {
 							$values[] = $token['value'];
 						}
 					}
+				} else {
+					foreach ( $class->describe[$property] as $token ) {
+						if ( array_key_exists( 'value', $token ) ) {
+							if ( array_key_exists( $token['value'], $related ) ) {
+								if ( !is_null( $related[$token['value']]->label ) ) {
+									$values[] = $related[$token['value']]->label;
+								} else {
+									$values[] = $related[$token['value']]->id;
+								}
+							} else {
+								$values[] = $token['value'];
+							}
+						}
+					}
 				}
+				
 				if ( empty( $values ) ) {
 					continue;
 				}
@@ -529,7 +539,7 @@ class OntologyModel {
 		}
 		$class->annotation = $annotations;
 		$class->deprecate = $deprecate;
-	
+		
 		list( $instanceResult, $query ) = $this->rdf->selectInstance( $this->ontology->ontology_graph_url, $classIRI );
 		$this->addQueries( $query );
 		$instances = array();
