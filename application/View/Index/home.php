@@ -51,6 +51,7 @@ if (!$this) {
 </form>
 
 <p>Currently Ontobee has been applied for the following ontologies: </p>
+<div id="ontologyTable">
 <table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="">
 <thead>
 <tr>
@@ -115,6 +116,7 @@ END;
 ?>
 </tbody>
 </table>
+</div>
 
 <script type="text/javascript">
 $(document).ready(function() 
@@ -132,12 +134,24 @@ $(document).ready(function()
 	    } 
 	);
 //Auto-reorder number
-$("#ontologyList").bind("sortEnd",function() { 
-    var i = 1;
+$("#ontologyList").bind("sortStart",function() {
+	var clone = $("#ontologyList").clone(true);
+	clone[0].setAttribute("id", "ontologyListOverlay");
+	$("#ontologyList").hide();
+	$("#ontologyTable").append(clone[0]);
+}).bind("sortEnd",function() { 
+    var i = 0;
     $("#ontologyList").find("tr:gt(0)").each(function(){
-        $(this).find("td:eq(0)").text(i);
         i++;
+        $(this).find("td:eq(0)").text(i);
+        if ( i % 2 == 0 ) {
+        	$(this).removeClass("odd even").addClass("even");
+        } else {
+        	$(this).removeClass("odd even").addClass("odd");
+        }
     });
+    $("#ontologyListOverlay").remove();
+	$("#ontologyList").show();
 });
 </script>
 
