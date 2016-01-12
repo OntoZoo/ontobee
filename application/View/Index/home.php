@@ -51,9 +51,10 @@ if (!$this) {
 </form>
 
 <p>Currently Ontobee has been applied for the following ontologies: </p>
-<table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="border:1px #A0A0A4 solid">
+<table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="width:90%; align:center; border:1px #A0A0A4 solid">
 <thead>
 <tr>
+<th width="50px" align="center"><strong>No.</strong></th>
 <th align="center"><strong>Ontology Prefix</strong></th>
 <th align="center"><strong>Ontology Full Name</strong></th>
 <th align="center"><string>OBO</th>
@@ -86,9 +87,11 @@ foreach ( $ontologies as $key => $ontology ) {
 	echo
 <<<END
 <tr class="$bgcolor">
+<td align="center"><strong>$index</strong></td>
 <td><a href="{$site}ontology/$ontology->ontology_abbrv">$ontology->ontology_abbrv</a></td>
 <td>$ontology->ontology_fullname
 END;
+	/*
 	if ( isset( $ontology->license ) && !is_null( $ontology->license ) && !empty( $ontology->license ) ) {
 		$license = preg_split( '/[|]/', $ontology->license );
 		echo 
@@ -96,6 +99,7 @@ END;
 <a href="$license[2]"><img height="15px" src="$license[1]" alt="$license[0]"></a>
 END;
 	}
+	*/
 	echo
 <<<END
 </td>
@@ -117,7 +121,16 @@ $(document).ready(function()
 	    { 
 	        $("#ontologyList").tablesorter(); 
 	    } 
-	); 
+	);
+// Auto-reorder number
+var table = $("#ontologyList");
+table.bind("sortEnd",function() { 
+    var i = 1;
+    table.find("tr:gt(0)").each(function(){
+        $(this).find("td:eq(0)").text(i);
+        i++;
+    });
+});
 </script>
 
 <p><strong>Please cite the following reference for Ontobee: </strong></p>
