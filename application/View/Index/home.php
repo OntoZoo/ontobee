@@ -51,15 +51,15 @@ if (!$this) {
 </form>
 
 <p>Currently Ontobee has been applied for the following ontologies: </p>
-<table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="width:90%; align:center; border:1px #A0A0A4 solid">
+<table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="">
 <thead>
 <tr>
-<th width="50px" align="center"><strong>No.</strong></th>
-<th align="center"><strong>Ontology Prefix</strong></th>
-<th align="center"><strong>Ontology Full Name</strong></th>
-<th align="center"><string>OBO</th>
-<th align="center"><string>Domain</th>
-<td align="center"><strong>List of Terms</strong></td>
+<th width="3%"><strong>No.</strong></th>
+<th width="17%"><strong>Ontology Prefix</strong></th>
+<th width="40%"><strong>Ontology Full Name</strong></th>
+<th width="8%"><string>OBO</th>
+<th width="20%"><string>Domain</th>
+<th width="12%"><strong>List of Terms</strong></th>
 </tr>
 </thead>
 
@@ -82,7 +82,7 @@ foreach ( $ontologies as $key => $ontology ) {
 	if ( isset( $ontology->domain ) && !is_null( $ontology->domain ) && !empty( $ontology->domain ) ) {
 		$domain = $ontology->domain;
 	} else {
-		$domain = 'Not Specified';
+		$domain = '-';
 	}
 	echo
 <<<END
@@ -119,14 +119,22 @@ END;
 <script type="text/javascript">
 $(document).ready(function() 
 	    { 
-	        $("#ontologyList").tablesorter(); 
+	        $("#ontologyList").tablesorter({
+	            headers: {
+	                0: {
+	                    sorter: false
+	                },
+	                5: {
+	                    sorter: false
+	            	}
+	            }
+	    	});
 	    } 
 	);
-// Auto-reorder number
-var table = $("#ontologyList");
-table.bind("sortEnd",function() { 
+//Auto-reorder number
+$("#ontologyList").bind("sortEnd",function() { 
     var i = 1;
-    table.find("tr:gt(0)").each(function(){
+    $("#ontologyList").find("tr:gt(0)").each(function(){
         $(this).find("td:eq(0)").text(i);
         i++;
     });

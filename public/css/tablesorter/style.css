@@ -1,17 +1,21 @@
 /* tables */
 table.tablesorter {
-    font-family:arial;
+    font-family: Arial, Helvetica, sans-serif;
     background-color: #CDCDCD;
-    margin:10px 0pt 15px;
-    font-size: 8pt;
+    /*margin:10px 0pt 15px;*/
+    font-size: 13pt;
     width: 100%;
     text-align: left;
+    border:1px #A0A0A4 solid;
+    vertical-align: center;
 }
 table.tablesorter thead tr th, table.tablesorter tfoot tr th {
-    background-color: #159EFF;
+    background-color: #158AFF;
     border: 1px solid #FFF;
-    font-size: 8pt;
+    font-size: 10pt;
+    font-weight: bold;
     padding: 4px;
+    text-align: center;
 }
 table.tablesorter thead tr .header {
     background-image: url(bg.gif);
@@ -29,9 +33,9 @@ table.tablesorter tbody td {
     color: #3D3D3D;
     padding: 4px;
     background-color: #FFF;
-    vertical-align: top;
+    vertical-align: center;
 }
-table.tablesorter tbody tr.odd td {
+table.tablesorter tbody tr.even td {
     background-color:#BBDDFF;
 }
 table.tablesorter thead tr .headerSortUp {
