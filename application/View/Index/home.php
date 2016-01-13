@@ -124,9 +124,9 @@ END;
 <td align="center">$foundry</td>
 <td>$domain</td>
 <td align="center">
-<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xls"><img src="{$site}public/images/Excel_xls_Logo.png" alt="Excel XLS format" width="24" height="24" border="0"></a>
-<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
-<a href="{$site}listTerms/$ontology->ontology_abbrv?format=tsv"><img src="{$site}public/images/Text_tsv_Logo.png" alt="Tab Separated format" width="24" height="24" border="0"></a>
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xls" title="Excel XLS File"><img src="{$site}public/images/Excel_xls_Logo.png" alt="Excel XLS format" width="24" height="24" border="0"></a>
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx" title="Excel XLSX File"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=tsv" title="Tab Separated Text File"><img src="{$site}public/images/Text_tsv_Logo.png" alt="Tab Separated format" width="24" height="24" border="0"></a>
 </td>
 </tr>
 END;
