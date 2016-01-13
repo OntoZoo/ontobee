@@ -119,17 +119,9 @@ Class IndexController extends Controller {
 		
 		$dir = SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR;
 		
-		switch ( $format ) {
-			case 'xls':
-				$exportFile = "$ontAbbr.xls";
-				break;
-			case 'xlsx':
-				$exportFile = "$ontAbbr.xlsx";
-				break;
-		}
-		
 		$xlsFile = "$ontAbbr.xls";
 		$xlsxFile = "$ontAbbr.xlsx";
+		$tsvFile =  "$ontAbbr.tsv";
 		
 		if ( !file_exists( $dir . $xlsFile ) || ( time() - filemtime( $dir . $xlsFile )  > 60*60*8 ) ) {
 			$this->model->exportOntology( $ontAbbr );
@@ -186,6 +178,9 @@ Class IndexController extends Controller {
 			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, 1)->setValue("Alternative term");
 			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, 1)->setValue("Definition");
 			
+			$tsvFilePath = $dir . $tsvFile;
+			file_put_contents( $tsvFilePath, "Term IRI\tTerm label\tParent term IRI\tParent term label\tAlternative term\tDefinition" . PHP_EOL );
+			
 			$i=2;
 			foreach($terms as $term_url => $term) {
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $i)->setValue($term_url);
@@ -195,15 +190,33 @@ Class IndexController extends Controller {
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $i)->setValue($term['alt_names']);
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $i)->setValue($term['definition']);
 				$i++;
+				
+				file_put_contents( $tsvFilePath, "$term_url\t{$term['l']}\t{$term['pTerm']}\t{$term['pLabel']}\t{$term['alt_names']}\t{$term['definition']}" . PHP_EOL, FILE_APPEND );
 			}
 				
 			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel5");
 			$objWriter->save( $dir . $xlsFile );
 			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
 			$objWriter->save( $dir . $xlsxFile );
+			
+			
 		}
 		
-		header( 'Content-Type: application/vnd.ms-excel' );
+		switch ( $format ) {
+			case 'xls':
+				$exportFile = "$ontAbbr.xls";
+				header( 'Content-Type: application/vnd.ms-excel' );
+				break;
+			case 'xlsx':
+				$exportFile = "$ontAbbr.xlsx";
+				header( 'Content-Type: application/vnd.ms-excel' );
+				break;
+			case 'tsv':
+				$exportFile = "$ontAbbr.tsv";
+				header('Content-type: text/tab-separated-values');
+				break;
+		}
+		
 		header( 'Content-Description: File Transfer' );
 		header( "Content-Disposition: attachment; filename=\"$exportFile\"" );
 		header( 'Content-Length: ' . filesize( $dir . $exportFile ) ); // length
