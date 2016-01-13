@@ -66,6 +66,23 @@ if (!$this) {
 
 <tbody>
 <?php
+usort( $ontologies, function( $a, $b ) {
+	if ( empty( $a->foundry ) ) {
+		$num1 = INF;
+	} else {
+		$num1 = ord( strtolower( substr( $a->foundry, 0, 1 ) ) );
+	}
+	if ( empty( $b->foundry ) ) {
+		$num2 = INF;
+	} else {
+		$num2 = ord( strtolower( substr( $b->foundry, 0, 1 ) ) );
+	}
+	if ( $num1 != $num2 ) {
+		return strcmp( $num1, $num2 );
+	} else {
+		return strcmp( $a->ontology_abbrv, $b->ontology_abbrv );
+	}
+} );
 $index = 0;
 foreach ( $ontologies as $key => $ontology ) {
 	$index += 1;
@@ -76,9 +93,9 @@ foreach ( $ontologies as $key => $ontology ) {
 	}
 	$site = SITEURL;
 	if ( isset( $ontology->foundry ) && !is_null( $ontology->foundry ) && !empty( $ontology->foundry ) ) {
-		$foundry = $ontology->foundry;
+		$foundry = $ontology->foundry[0];
 	} else {
-		$foundry = 'No';
+		$foundry = 'N';
 	}
 	if ( isset( $ontology->domain ) && !is_null( $ontology->domain ) && !empty( $ontology->domain ) ) {
 		$domain = $ontology->domain;
@@ -104,7 +121,7 @@ END;
 	echo
 <<<END
 </td>
-<td>$foundry</td>
+<td align="center">$foundry</td>
 <td>$domain</td>
 <td align="center">
 <a href="{$site}listTerms/$ontology->ontology_abbrv?format=xls"><img src="{$site}public/images/Excel_xls_Logo.png" alt="Excel XLS format" width="24" height="24" border="0"></a>
@@ -117,6 +134,8 @@ END;
 </tbody>
 </table>
 </div>
+
+<p align="left">Note: <strong>F</strong>:Foundry, <strong>L</strong>:Library, <strong>N</strong>:Not Specified</p>
 
 <script type="text/javascript">
 $(document).ready(function() 
