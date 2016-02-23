@@ -59,7 +59,7 @@ if (!$this) {
 <th width="17%"><strong>Ontology Prefix</strong></th>
 <th width="40%"><strong>Ontology Full Name</strong></th>
 <th width="8%"><string>OBO</th>
-<th width="20%"><string>Domain</th>
+<th width="15%"><string>Domain</th>
 <th width="12%"><strong>List of Terms</strong></th>
 </tr>
 </thead>
@@ -136,7 +136,7 @@ END;
 </table>
 </div>
 
-<p align="left">Note: <strong>F</strong>:<u>F</u>oundry, <strong>L</strong>:<u>L</u>ibrary, <strong>N</strong>:<u>N</u>ot Specified/<u>N</u>o</p>
+<p align="left">Note: <strong>F</strong>: <u>F</u>oundry, <strong>L</strong>: <u>L</u>ibrary, <strong>N</strong>: <u>N</u>ot Specified/<u>N</u>o</p>
 
 <script type="text/javascript">
 $(document).ready(function() 
