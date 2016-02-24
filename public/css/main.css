@@ -190,3 +190,7 @@ div#infobox p{
 div#infobox span{
     color: red;
 }
+
+li.search-list {
+	padding-bottom: 5px;
+}

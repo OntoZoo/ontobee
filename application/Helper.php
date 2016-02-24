@@ -92,6 +92,18 @@ class Helper {
 		return( preg_replace( '/#/', '%23', $URL ) );
 
 	}
+	
+	public static function getIRIPrefix( $iri ) {
+		$prefix = null;
+		if ( preg_match( '/\/([A-Za-z\.\-_]+)#[a-zA-Z_0-9]+/', $iri, $match ) ) {
+			$prefix = $match[1];
+		} else if ( preg_match( '/\/([A-Z][A-Za-z]+)_[-a-zA-Z_0-9]+/', $iri, $match ) ) {
+			$prefix = $match[1];
+		} else if ( preg_match( '/\/([a-z]+)_[0-9]+/', $iri, $match ) ) {
+			$prefix = $match[1];
+		}
+		return $prefix;
+	}
 
 	#TODO: Reformat function
 	public static function convertUTFToUnicode( $input, $array = False ) {

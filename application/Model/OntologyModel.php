@@ -34,6 +34,7 @@ namespace Model;
 use stdClass;
 use Exception;
 
+use Helper;
 use Hook;
 use RDFStore\RDFStore;
 use RDFStore\RDFQueryHelper;
@@ -171,23 +172,9 @@ class OntologyModel {
 			$prefixArray = array();
 			$classNoPrefixCount = 0;
 			foreach ( $terms as $iri => $labels ){
-				if ( preg_match( '/\/([A-Za-z\.\-_]+)#[a-zA-Z_0-9]+/', $iri, $match ) ) {
-					$prefix = $match[1];
+				$prefix = Helper::getIRIPrefix( $iri );
+				if ( !is_null( $prefix ) ) {
 					if( array_key_exists( $prefix, $prefixArray ) ){
-						$prefixArray[$prefix] += 1;
-					} else {
-						$prefixArray[$prefix] = 1;
-					}
-				} else if ( preg_match( '/\/([A-Z][A-Za-z]+)_[-a-zA-Z_0-9]+/', $iri, $match ) ) {
-					$prefix = $match[1];
-					if( array_key_exists( $prefix, $prefixArray ) ){
-						$prefixArray[$prefix] += 1;
-					} else {
-						$prefixArray[$prefix] = 1;
-					}
-				} else if ( preg_match( '/\/([a-z]+)_[0-9]+/', $iri, $match ) ) {
-					$prefix = $match[1];
-					if ( array_key_exists( $prefix, $prefixArray ) ){
 						$prefixArray[$prefix] += 1;
 					} else {
 						$prefixArray[$prefix] = 1;
