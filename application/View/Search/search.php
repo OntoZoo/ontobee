@@ -56,6 +56,126 @@ if ( empty( $json ) ) {
 <ol>
 
 <?php
+$validResult = array();
+$depreResult = array();
+foreach ( $json as $index => $match ) {
+	if ( !$match['deprecate'] ) {
+		if ( !array_key_exists( $match['iri'], $validResult ) ) {
+			$validResult[$match['iri']] = array();
+		}
+		if ( !array_key_exists( $match['value'], $validResult[$match['iri']]) ) {
+			$validResult[$match['iri']][$match['value']] = array();
+		}
+		$validResult[$match['iri']][$match['value']][] = $match['ontology'];
+	} else {
+		if ( !array_key_exists( $match['iri'], $depreResult ) ) {
+			$depreResult[$match['iri']] = array();
+		}
+		if ( !array_key_exists( $match['value'], $depreResult[$match['iri']]) ) {
+			$depreResult[$match['iri']][$match['value']] = array();
+		}
+		$depreResult[$match['iri']][$match['value']][] = $match['ontology'];
+	}
+}
+
+foreach ( $validResult as $resultIRI => $resultValue ) {
+	$termIRI = Helper::encodeURL( $resultIRI );
+	$prefix = Helper::getIRIPrefix( $resultIRI );
+	echo
+<<<END
+<li class="search-list">
+<a class="term" href="$termIRI">$resultIRI</a> <strong>($prefix)</strong>:
+<ul>
+END;
+	foreach ( $resultValue as $resultLabel => $availableOntologies ){
+		$availableOntologies = array_unique( $availableOntologies );
+		if ( ( $index = array_search( $prefix, $availableOntologies ) ) !== false ) {
+		    unset($availableOntologies[$index]);
+		}
+		echo
+<<<END
+<li>
+{$GLOBALS['call_function']( preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $resultLabel ) )}
+END;
+		if ( !empty( $availableOntologies ) ) {
+			echo " <i> also in</i>: ";
+		}
+		foreach ( $availableOntologies as $index => $availableOntology ) {
+			echo
+<<<END
+<a class="term" href="{$site}ontology/$availableOntology?iri=$termIRI">$availableOntology</a>
+END;
+			if ( $index < sizeof( $availableOntologies ) - 1 ) {
+				echo ", ";
+			}
+		}
+		echo
+<<<END
+</li>
+END;
+	}
+	echo
+<<<END
+</ul>
+</li>
+END;
+}
+if ( !empty( $depreResult ) ) {
+	echo
+<<<END
+<div class="term" style="margin-top:10px"><a href="javascript:switch_deprecate();" id="href_switch_deprecate">Show Deprecated Terms</a></div>
+<div id="div_deprecate" style="display:none">
+END;
+	foreach ( $depreResult as $resultIRI => $resultValue ) {
+		$termIRI = Helper::encodeURL( $resultIRI );
+		$prefix = Helper::getIRIPrefix( $resultIRI );
+		echo
+<<<END
+<li style="text-decoration:line-through">
+<a class="term" href="$termIRI">$resultIRI</a> <strong>($prefix)</strong>:
+<ul>
+END;
+		foreach ( $resultValue as $resultLabel => $availableOntologies ){
+			$availableOntologies = array_unique( $availableOntologies );
+			if ( ( $index = array_search( $prefix, $availableOntologies ) ) !== false ) {
+				unset($availableOntologies[$index]);
+			}
+			echo
+<<<END
+<li>
+{$GLOBALS['call_function']( preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $resultLabel ) )}
+END;
+			if ( !empty( $availableOntologies ) ) {
+				echo " <i> also in</i>: ";
+			}
+			foreach ( $availableOntologies as $index => $availableOntology ) {
+				echo
+<<<END
+<a class="term" href="{$site}ontology/$availableOntology?iri=$termIRI">$availableOntology</a>
+END;
+				if ( $index < sizeof( $availableOntologies ) - 1 ) {
+					echo ", ";
+				}
+			}
+			echo
+<<<END
+</li>
+END;
+		}
+		echo
+<<<END
+</ul>
+</li>
+END;
+	}
+	echo
+<<<END
+</div>
+END;
+}
+
+
+
 if ( !empty( $keyOntology ) && !empty( $json ) ) {
 	foreach ( $json as $index => $match ) {
 		$termIRI = Helper::encodeURL( $match['iri'] );
@@ -77,7 +197,7 @@ END;
 ?>
 
 <?php 
-if ( !empty( $json ) ) {
+/*if ( !empty( $json ) ) {
 	foreach ( $json as $index => $match ) {
 		$termIRI = Helper::encodeURL( $match['iri'] );
 		if ( !$match['deprecate'] ) {
@@ -94,11 +214,11 @@ END;
 			unset( $json[$index] );
 		}
 	}
-}
+}*/
 ?>
 
 <?php 
-if ( !empty( $json ) ) {
+/*if ( !empty( $json ) ) {
 	echo 
 <<<END
 <div style="margin-top:10px"><a href="javascript:switch_deprecate();" id="href_switch_deprecate">Show Deprecated Terms</a></div>
@@ -117,7 +237,7 @@ END;
 			$printed[$check] = null;
 		}
 	}
-}
+}*/
 ?>
 
 </ol>
