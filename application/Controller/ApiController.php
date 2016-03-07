@@ -59,7 +59,15 @@ class ApiController extends Controller  {
 		} else {
 			throw new Exception( "Excess parameters." );
 		}
-		$json = array_unique( $json );
+		$resultQueue = array();
+		foreach ( $json as $index => $result ) {
+			$resultString = join( '-', $result );
+			if ( in_array( $resultString, $resultQueue ) ) {
+				unset( $json[$index] );
+			} else {
+				$resultQueue[] = $resultString;
+			}
+		}
 		echo json_encode( $json );
 	}
 	
