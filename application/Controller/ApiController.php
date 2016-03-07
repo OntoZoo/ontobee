@@ -38,7 +38,8 @@ use Model\OntologyModel;
 class ApiController extends Controller  {
 	public function search( $params = array() ) {
 		$GLOBALS['show_query'] = false;
-
+		error_reporting(0);
+		
 		$this->loadModel( 'Ontology' );
 
 		list( $ontAbbr, $termIRI ) = $this->parseOntologyParameter( $params );
@@ -58,7 +59,7 @@ class ApiController extends Controller  {
 		} else {
 			throw new Exception( "Excess parameters." );
 		}
-		
+		$json = array_unique( $json );
 		echo json_encode( $json );
 	}
 	
