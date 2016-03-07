@@ -53,22 +53,24 @@ switch ( $code ) {
 <h1>Ontology Not Found</h1>
 <p>We are sorry that your request did not return any expected result.  Here is a list of possible reasons: </p>
 <ul>
-  <li> Your requested term has been deprecated </li>
-  <li> The ontology that contains the term has not been updated </li>
-  <li> Whoops! Our program has an   unhandled and unexpected error in processing your request. </li>
+  <li> Your requested ontology is not listed in OBO Foundry </li>
+  <li> Your requested ontology has not been updated from OBO Foundry </li>
+  <li> Your requested ontology is not submitted to Ontobee ontology list </li>
+  <li> Whoops! Our program has an unhandled and unexpected error in processing your request. </li>
 </ul>
 <p>If you think that you reached this page in error, or you have any request or concern, you may contact us by: </p>
 <ul>
-  <li> Raise the issue  in the <a href="https://groups.google.com/forum/#!forum/ontobee-discuss">Ontobee-discuss</a> Google Group (<strong>Note</strong>:    Recommended if you want  fastest reply):
+  <li>Submit a bug report or request a new feature at Github: <a href="https://github.com/OntoZoo/ontobee/issues">https://github.com/OntoZoo/ontobee/issues</a> <strong>(Recommended)</strong></li>
+ 		
+  <li> Raise the issue  in the <a href="https://groups.google.com/forum/#!forum/ontobee-discuss">Ontobee-discuss</a> Google Group:
     <ul>
       <li>Leave a message at <a href="https://groups.google.com/forum/#%21forum/ontobee-discuss">https://groups.google.com/forum/#!forum/ontobee-discuss</a>, or </li>
       <li>Directly  send an email to: <a href="mailto:ontobee-discuss@googlegroups.com" target="welcomeMsg" rel="nofollow">ontobee-discuss@googlegroups.com</a>&nbsp;</li>
       <li><strong>Note</strong>:   You are welcome to join the group, and it is open to everyone:-)</li>
     </ul>
   </li>
-  <li>Submit a bug report or request a new feature at Github: <a href="https://github.com/OntoZoo/ontobee">https://github.com/OntoZoo/ontobee</a></li>
-  <li>For OBO Foundry related questions, contact:&nbsp;<a href="https://github.com/OBOFoundry/Operations-Committee">https://github.com/OBOFoundry/Operations-Committee</a></li>
-  <li>Email Oliver He at: <img border="0" align="absbottom" src="http://www.hegroup.org/inc/showe.php?d=umich.edu&amp;n=yongqunh"> or Edison Ong at: <a href="mailto:e4ong1031@gmail.com?Subject=Ontobee%20Issue" target="_top">e4ong1031@gmail.com</a></li>
+  
+  <li>For OBO Foundry related questions, contact:&nbsp;<a href="http://obofoundry.org/docs/OperationsCommittee.html">http://obofoundry.org/docs/OperationsCommittee.html</a></li>
 </ul>
 <p>Thank you. </p>
 <p>&nbsp;</p>
@@ -82,22 +84,23 @@ END;
 <h1>Term Not Found</h1>
 <p>We are sorry that your request did not return any expected result.  Here is a list of possible reasons: </p>
 <ul>
-  <li> Your requested term has been deprecated </li>
+  <li> Your requested term has been removed from the ontology </li>
   <li> The ontology that contains the term has not been updated </li>
-  <li> Whoops! Our program has an   unhandled and unexpected error in processing your request. </li>
+  <li> Whoops! Our program has an unhandled and unexpected error in processing your request. </li>
 </ul>
 <p>If you think that you reached this page in error, or you have any request or concern, you may contact us by: </p>
 <ul>
-  <li> Raise the issue  in the <a href="https://groups.google.com/forum/#!forum/ontobee-discuss">Ontobee-discuss</a> Google Group (<strong>Note</strong>:    Recommended if you want  fastest reply):
+  <li>Submit a bug report or request a new feature at Github: <a href="https://github.com/OntoZoo/ontobee/issues">https://github.com/OntoZoo/ontobee/issues</a> <strong>(Recommended)</strong></li>
+ 		
+  <li> Raise the issue  in the <a href="https://groups.google.com/forum/#!forum/ontobee-discuss">Ontobee-discuss</a> Google Group:
     <ul>
       <li>Leave a message at <a href="https://groups.google.com/forum/#%21forum/ontobee-discuss">https://groups.google.com/forum/#!forum/ontobee-discuss</a>, or </li>
       <li>Directly  send an email to: <a href="mailto:ontobee-discuss@googlegroups.com" target="welcomeMsg" rel="nofollow">ontobee-discuss@googlegroups.com</a>&nbsp;</li>
       <li><strong>Note</strong>:   You are welcome to join the group, and it is open to everyone:-)</li>
     </ul>
   </li>
-  <li>Submit a bug report or request a new feature at: <a href="https://sourceforge.net/p/ontobee/feature-requests/">https://sourceforge.net/p/ontobee/feature-requests/</a></li>
-  <li>For OBO Foundry related questions, contact:&nbsp;<a href="http://code.google.com/p/obo-foundry-operations-committee/">http://code.google.com/p/obo-foundry-operations-committee/</a></li>
-  <li>Email Oliver He at: <img border="0" align="absbottom" src="http://www.hegroup.org/inc/showe.php?d=umich.edu&amp;n=yongqunh"></li>
+  
+  <li>For OBO Foundry related questions, contact:&nbsp;<a href="http://obofoundry.org/docs/OperationsCommittee.html">http://obofoundry.org/docs/OperationsCommittee.html</a></li>
 </ul>
 <p>Thank you. </p>
 <p>&nbsp;</p>
