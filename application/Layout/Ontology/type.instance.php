@@ -33,13 +33,38 @@ if ( !$this ) {
 
 $html = '';
 
+
+
 if ( !empty( $term->class ) ) {
 	$html .=
 <<<END
 <div class="section-title">Instance of</div>
-<div class="section"><ul><li>
-<a href="{$term->class['iri']}">{$term->class['label']}</a>
-</li></ul></div>
+<div class="section"><ul>
+END;
+	$instanceClass = $term->class;
+	foreach( $instanceClass as $index => $class ) {
+		if ( is_null( $class['iri'] ) ) {
+			$html .=
+<<<END
+<li>
+{$class['label']}
+</li>
+END;
+			unset( $instanceClass[$index] );
+		}
+	}
+	foreach( $instanceClass as $index => $class ) {
+		$html .=
+<<<END
+<li>
+<a href="{$class['iri']}">{$class['label']}</a>
+</li>
+END;
+	}
+	$html .=
+<<<END
+</ul>
+</div>
 END;
 }
 

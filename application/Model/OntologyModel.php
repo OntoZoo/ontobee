@@ -747,7 +747,7 @@ class OntologyModel {
 		}
 		$typeIRIs = array_unique( $typeIRIs );
 		unset( $typeIRIs[array_search( $GLOBALS['ontology']['type']['Instance'], $typeIRIs )] );
-	
+		
 		$instance->annotation_annotation = $describeResult['annotation_annotation'];
 	
 		$nodes = array();
@@ -813,13 +813,21 @@ class OntologyModel {
 		$instance->annotation = $annotations;
 		$instance->deprecate = $deprecate;
 		
+		$instance->class = array();
 		foreach ( $typeIRIs as $classIRI ) {
-			$instance->class = array(
-				'iri' => $classIRI,
-				'label' => $related[$classIRI]->label
-			);
+			if ( array_key_exists( $classIRI, $GLOBALS['ontology']['top_level_term'] ) ) {
+				$instance->class[] = array(
+						'iri' => null,
+						'label' => OntologyModelHelper::getShortTerm( $classIRI )
+				);
+			} else {
+				$instance->class[] = array(
+					'iri' => $classIRI,
+					'label' => $related[$classIRI]->label
+				);
+			}
 		} 
-	
+		
 		$this->term = $instance;
 	}
 	
