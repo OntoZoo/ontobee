@@ -55,7 +55,7 @@ if (!$this) {
 <table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="">
 <thead>
 <tr>
-<th width="3%"><strong>No.</strong></th>
+<th width="5%"><strong>No.</strong></th>
 <th width="17%"><strong>Ontology Prefix</strong></th>
 <th width="40%"><strong>Ontology Full Name</strong></th>
 <th width="8%"><string>OBO</th>
@@ -104,8 +104,8 @@ foreach ( $ontologies as $key => $ontology ) {
 	}
 	echo
 <<<END
-<tr class="$bgcolor">
-<td align="center"><strong>$index</strong></td>
+<tr class="$bgcolor" align="center">
+<td><strong>$index</strong></td>
 <td><a href="{$site}ontology/$ontology->ontology_abbrv">$ontology->ontology_abbrv</a></td>
 <td>$ontology->ontology_fullname
 END;
@@ -121,9 +121,9 @@ END;
 	echo
 <<<END
 </td>
-<td align="center">$foundry</td>
+<td>$foundry</td>
 <td>$domain</td>
-<td align="center">
+<td>
 <a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx" title="Excel XLSX File"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
 <a href="{$site}listTerms/$ontology->ontology_abbrv?format=tsv" title="Tab Separated Text File"><img src="{$site}public/images/Text_tsv_Logo.png" alt="Tab Separated format" width="24" height="24" border="0"></a>
 </td>
