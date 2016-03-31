@@ -112,6 +112,8 @@ Class IndexController extends Controller {
 	}
 	
 	public function listTerms( $params = array() ) {
+		$GLOBALS['show_query'] = false;
+		
 		$this->loadModel( 'Ontology' );
 		$ontAbbr = $params[0];
 		$format = $params['format'];
@@ -124,6 +126,10 @@ Class IndexController extends Controller {
 		$tsvFile =  "$ontAbbr.tsv";
 		
 		if ( !file_exists( $dir . $xlsFile ) || ( time() - filemtime( $dir . $xlsFile )  > 60*60*8 ) ) {
+			set_time_limit(60);
+			$errorLevel = error_reporting();
+			error_reporting( $errorLevel & ~E_NOTICE );
+			
 			$this->model->exportOntology( $ontAbbr );
 			$ontology = $this->model->getOntology();
 			if ( empty( $ontology ) ) {
@@ -137,7 +143,7 @@ Class IndexController extends Controller {
 			foreach ( $ontology['type'] as $result ) {
 				$terms[$result['s']] = $result;
 			}
-
+			
 			/** PHPExcel */
 			require_once PHPLIB . 'PHPExcel.php';
 				
@@ -193,12 +199,13 @@ Class IndexController extends Controller {
 				
 				file_put_contents( $tsvFilePath, "$term_url\t{$term['l']}\t{$term['pTerm']}\t{$term['pLabel']}\t{$term['alt_names']}\t{$term['definition']}" . PHP_EOL, FILE_APPEND );
 			}
-				
+			
 			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel5");
 			$objWriter->save( $dir . $xlsFile );
 			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
 			$objWriter->save( $dir . $xlsxFile );
 			
+			error_reporting( $errorLevel );
 			
 		}
 		

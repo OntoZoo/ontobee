@@ -186,6 +186,31 @@ END;
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT COUNT(*) FROM <$graph> WHERE {
+	?s rdf:type owl:Class .
+	?s rdfs:label ?l .
+	FILTER ( isIRI( ?s ) ).
+	OPTIONAL {
+		?s <http://purl.obolibrary.org/obo/IAO_0000118> ?alt_names
+	} .
+	OPTIONAL {
+		?s <http://purl.obolibrary.org/obo/IAO_0000115> ?definition
+	} .
+	OPTIONAL {
+		?s rdfs:subClassOf ?pTerm .
+		FILTER ( isIRI( ?pTerm ) ) .
+		?pTerm rdfs:label ?pLabel
+	} .
+}
+END;
+		$json = SPARQLQuery::queue( $this->endpoint, $query );
+		$limit = RDFQueryHelper::parseCountResult( $json );
+		
+		$query =
+<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
 SELECT * FROM <$graph> WHERE {
 	?s rdf:type owl:Class .
 	?s rdfs:label ?l .
@@ -202,7 +227,7 @@ SELECT * FROM <$graph> WHERE {
 		?pTerm rdfs:label ?pLabel
 	} .
 }
-limit 10000
+limit $limit
 END;
 		$this->sparql->add( 'class', $query, '', 'application/sparql-results+json');
 		$queries[] = $query;
