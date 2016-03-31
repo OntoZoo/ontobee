@@ -121,11 +121,10 @@ Class IndexController extends Controller {
 		
 		$dir = SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR;
 		
-		$xlsFile = "$ontAbbr.xls";
 		$xlsxFile = "$ontAbbr.xlsx";
 		$tsvFile =  "$ontAbbr.tsv";
 		
-		if ( !file_exists( $dir . $xlsFile ) || ( time() - filemtime( $dir . $xlsFile )  > 60*60*8 ) ) {
+		if ( !file_exists( $dir . $xlsxFile ) || ( time() - filemtime( $dir . $xlsxFile )  > 60*60*8 ) ) {
 			set_time_limit(60);
 			$errorLevel = error_reporting();
 			error_reporting( $errorLevel & ~E_NOTICE );
@@ -200,8 +199,6 @@ Class IndexController extends Controller {
 				file_put_contents( $tsvFilePath, "$term_url\t{$term['l']}\t{$term['pTerm']}\t{$term['pLabel']}\t{$term['alt_names']}\t{$term['definition']}" . PHP_EOL, FILE_APPEND );
 			}
 			
-			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel5");
-			$objWriter->save( $dir . $xlsFile );
 			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
 			$objWriter->save( $dir . $xlsxFile );
 			
@@ -210,10 +207,6 @@ Class IndexController extends Controller {
 		}
 		
 		switch ( $format ) {
-			case 'xls':
-				$exportFile = "$ontAbbr.xls";
-				header( 'Content-Type: application/vnd.ms-excel' );
-				break;
 			case 'xlsx':
 				$exportFile = "$ontAbbr.xlsx";
 				header( 'Content-Type: application/vnd.ms-excel' );
