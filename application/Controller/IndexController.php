@@ -192,8 +192,12 @@ Class IndexController extends Controller {
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(1, $i)->setValue($term['l']);
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(2, $i)->setValue($term['pTerm']);
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(3, $i)->setValue($term['pLabel']);
-				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $i)->setValue($term['alt_names']);
-				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $i)->setValue($term['definition']);
+				if ( array_key_exists( 'alt_names', $term ) ) {
+					$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $i)->setValue($term['alt_names']);
+				}
+				if ( array_key_exists( 'definition', $term ) ) {
+					$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $i)->setValue($term['definition']);
+				}
 				$i++;
 				
 				file_put_contents( $tsvFilePath, "$term_url\t{$term['l']}\t{$term['pTerm']}\t{$term['pLabel']}\t{$term['alt_names']}\t{$term['definition']}" . PHP_EOL, FILE_APPEND );
