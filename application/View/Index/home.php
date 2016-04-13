@@ -51,40 +51,128 @@ if (!$this) {
 </form>
 
 <p>Currently Ontobee has been applied for the following ontologies: </p>
-<table border="0" cellpadding="2" style="border:1px #A0A0A4 solid">
+<div id="ontologyTable">
+<table id="ontologyList" class="tablesorter" border="0" cellpadding="2" style="">
+<thead>
 <tr>
-<td bgcolor="#158AFF" align="center"><strong>No.</strong></td>
-<td bgcolor="#158AFF" align="center"><strong>Ontology Prefix</strong></td>
-<td bgcolor="#158AFF" align="center"><strong>Ontology Full Name</strong></td>
-<td bgcolor="#158AFF" align="center"><strong>List of Terms</strong></td>
+<th width="5%"><strong>No.</strong></th>
+<th width="17%"><strong>Ontology Prefix</strong></th>
+<th width="40%"><strong>Ontology Full Name</strong></th>
+<th width="8%"><string>OBO</th>
+<th width="15%"><string>Domain</th>
+<th width="12%"><strong>List of Terms</strong></th>
 </tr>
+</thead>
 
+<tbody>
 <?php
+usort( $ontologies, function( $a, $b ) {
+	if ( empty( $a->foundry ) ) {
+		$num1 = INF;
+	} else {
+		$num1 = ord( strtolower( substr( $a->foundry, 0, 1 ) ) );
+	}
+	if ( empty( $b->foundry ) ) {
+		$num2 = INF;
+	} else {
+		$num2 = ord( strtolower( substr( $b->foundry, 0, 1 ) ) );
+	}
+	if ( $num1 != $num2 ) {
+		return strcmp( $num1, $num2 );
+	} else {
+		return strcmp( $a->ontology_abbrv, $b->ontology_abbrv );
+	}
+} );
 $index = 0;
 foreach ( $ontologies as $key => $ontology ) {
 	$index += 1;
 	if ( $index % 2 == 0 ) {
-		$bgcolor = '#BBDDFF';
+		$bgcolor = 'even';
 	} else {
-		$bgcolor = '';
+		$bgcolor = 'odd';
 	}
 	$site = SITEURL;
+	if ( isset( $ontology->foundry ) && !is_null( $ontology->foundry ) && !empty( $ontology->foundry ) ) {
+		$foundry = $ontology->foundry[0];
+	} else {
+		$foundry = 'N';
+	}
+	if ( isset( $ontology->domain ) && !is_null( $ontology->domain ) && !empty( $ontology->domain ) ) {
+		$domain = $ontology->domain;
+	} else {
+		$domain = '-';
+	}
 	echo
 <<<END
-<tr bgcolor="$bgcolor">
-<td align="center"><strong>$index</strong></td>
+<tr class="$bgcolor" align="center">
+<td><strong>$index</strong></td>
 <td><a href="{$site}ontology/$ontology->ontology_abbrv">$ontology->ontology_abbrv</a></td>
-<td>$ontology->ontology_fullname</td>
-<td align="center">
-<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xls"><img src="{$site}public/images/Excel_xls_Logo.png" alt="Excel XLS format" width="24" height="24" border="0"></a>
-<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
+<td>$ontology->ontology_fullname
+END;
+	/*
+	if ( isset( $ontology->license ) && !is_null( $ontology->license ) && !empty( $ontology->license ) ) {
+		$license = preg_split( '/[|]/', $ontology->license );
+		echo 
+<<<END
+<a href="$license[2]"><img height="15px" src="$license[1]" alt="$license[0]"></a>
+END;
+	}
+	*/
+	echo
+<<<END
+</td>
+<td>$foundry</td>
+<td>$domain</td>
+<td>
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx" title="Excel XLSX File"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=tsv" title="Tab Separated Text File"><img src="{$site}public/images/Text_tsv_Logo.png" alt="Tab Separated format" width="24" height="24" border="0"></a>
 </td>
 </tr>
 END;
 }
 ?>
-
+</tbody>
 </table>
+</div>
+
+<p align="left">Note: <strong>F</strong>: <u>F</u>oundry, <strong>L</strong>: <u>L</u>ibrary, <strong>N</strong>: <u>N</u>ot Specified/<u>N</u>o</p>
+
+<script type="text/javascript">
+$(document).ready(function() 
+	    { 
+	        $("#ontologyList").tablesorter({
+	            headers: {
+	                0: {
+	                    sorter: false
+	                },
+	                5: {
+	                    sorter: false
+	            	}
+	            }
+	    	});
+	    } 
+	);
+//Auto-reorder number
+$("#ontologyList").bind("sortStart",function() {
+	var clone = $("#ontologyList").clone(true);
+	clone[0].setAttribute("id", "ontologyListOverlay");
+	$("#ontologyList").hide();
+	$("#ontologyTable").append(clone[0]);
+}).bind("sortEnd",function() { 
+    var i = 0;
+    $("#ontologyList").find("tr:gt(0)").each(function(){
+        i++;
+        $(this).find("td:eq(0)").html("<strong>" + i + "<strong>");
+        if ( i % 2 == 0 ) {
+        	$(this).removeClass("odd even").addClass("even");
+        } else {
+        	$(this).removeClass("odd even").addClass("odd");
+        }
+    });
+    $("#ontologyListOverlay").remove();
+	$("#ontologyList").show();
+});
+</script>
 
 <p><strong>Please cite the following reference for Ontobee: </strong></p>
 <p>Xiang Z, Mungall C, Ruttenberg A, He Y. <a href="doc/Ontobee_ICBO-2011_Proceeding.pdf">Ontobee: A Linked Data Server and Browser for Ontology Terms</a>. <em>Proceedings of the 2nd International Conference on Biomedical Ontologies (ICBO)</em>, July 28-30, 2011, Buffalo, NY, USA. Pages 279-281. URL: <a href="http://ceur-ws.org/Vol-833/paper48.pdf">http://ceur-ws.org/Vol-833/paper48.pdf</a>. </p>

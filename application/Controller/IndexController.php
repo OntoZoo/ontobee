@@ -112,6 +112,8 @@ Class IndexController extends Controller {
 	}
 	
 	public function listTerms( $params = array() ) {
+		$GLOBALS['show_query'] = false;
+		
 		$this->loadModel( 'Ontology' );
 		$ontAbbr = $params[0];
 		$format = $params['format'];
@@ -119,19 +121,14 @@ Class IndexController extends Controller {
 		
 		$dir = SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR;
 		
-		switch ( $format ) {
-			case 'xls':
-				$exportFile = "$ontAbbr.xls";
-				break;
-			case 'xlsx':
-				$exportFile = "$ontAbbr.xlsx";
-				break;
-		}
-		
-		$xlsFile = "$ontAbbr.xls";
 		$xlsxFile = "$ontAbbr.xlsx";
+		$tsvFile =  "$ontAbbr.tsv";
 		
-		if ( !file_exists( $dir . $xlsFile ) || ( time() - filemtime( $dir . $xlsFile )  > 60*60*8 ) ) {
+		if ( !file_exists( $dir . $xlsxFile ) || ( time() - filemtime( $dir . $xlsxFile )  > 60*60*8 ) ) {
+			set_time_limit(60);
+			$errorLevel = error_reporting();
+			error_reporting( $errorLevel & ~E_NOTICE );
+			
 			$this->model->exportOntology( $ontAbbr );
 			$ontology = $this->model->getOntology();
 			if ( empty( $ontology ) ) {
@@ -145,7 +142,7 @@ Class IndexController extends Controller {
 			foreach ( $ontology['type'] as $result ) {
 				$terms[$result['s']] = $result;
 			}
-
+			
 			/** PHPExcel */
 			require_once PHPLIB . 'PHPExcel.php';
 				
@@ -186,6 +183,9 @@ Class IndexController extends Controller {
 			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, 1)->setValue("Alternative term");
 			$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, 1)->setValue("Definition");
 			
+			$tsvFilePath = $dir . $tsvFile;
+			file_put_contents( $tsvFilePath, "Term IRI\tTerm label\tParent term IRI\tParent term label\tAlternative term\tDefinition" . PHP_EOL );
+			
 			$i=2;
 			foreach($terms as $term_url => $term) {
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(0, $i)->setValue($term_url);
@@ -195,15 +195,28 @@ Class IndexController extends Controller {
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(4, $i)->setValue($term['alt_names']);
 				$objPHPExcel->getActiveSheet()->getCellByColumnAndRow(5, $i)->setValue($term['definition']);
 				$i++;
-			}
 				
-			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel5");
-			$objWriter->save( $dir . $xlsFile );
+				file_put_contents( $tsvFilePath, "$term_url\t{$term['l']}\t{$term['pTerm']}\t{$term['pLabel']}\t{$term['alt_names']}\t{$term['definition']}" . PHP_EOL, FILE_APPEND );
+			}
+			
 			$objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, "Excel2007");
 			$objWriter->save( $dir . $xlsxFile );
+			
+			error_reporting( $errorLevel );
+			
 		}
 		
-		header( 'Content-Type: application/vnd.ms-excel' );
+		switch ( $format ) {
+			case 'xlsx':
+				$exportFile = "$ontAbbr.xlsx";
+				header( 'Content-Type: application/vnd.ms-excel' );
+				break;
+			case 'tsv':
+				$exportFile = "$ontAbbr.tsv";
+				header('Content-type: text/tab-separated-values');
+				break;
+		}
+		
 		header( 'Content-Description: File Transfer' );
 		header( "Content-Disposition: attachment; filename=\"$exportFile\"" );
 		header( 'Content-Length: ' . filesize( $dir . $exportFile ) ); // length
