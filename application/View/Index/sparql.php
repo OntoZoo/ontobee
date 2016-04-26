@@ -68,7 +68,7 @@ window.onload=QueryExec;
 
 <div class="main_col_page" id="page_query">
 <h2>Ontobee SPARQL Query</h2>
-<p><strong>Notes:</strong> To obtain some tutorial on how to perform Ontobee SPARQL query, please see: <a href="http://www.ontobee.org/tutorial/tutorial_sparql.php">http://www.ontobee.org/tutorial/tutorial_sparql.php</a>. This Ontobee SPARQL tutorial page also includes detailed explanation on how the examples listed below work out. To programmatically query our SPARQL endpoint, please visit URL <a href="http://sparql.hegroup.org/sparql/">http://sparql.hegroup.org/sparql/</a>. </p>
+<p><strong>Notes:</strong> To obtain some tutorial on how to perform Ontobee SPARQL query, please see: <a href="http://www.ontobee.org/tutorial/sparql">http://www.ontobee.org/tutorial/sparql</a>. This Ontobee SPARQL tutorial page also includes detailed explanation on how the examples listed below work out. To programmatically query our SPARQL endpoint, please visit URL <a href="http://sparql.hegroup.org/sparql/">http://sparql.hegroup.org/sparql/</a>. </p>
 <p>&nbsp;</p>
 
 <form>
