@@ -58,11 +58,18 @@ if (!$this) {
 <th width="5%"><strong>No.</strong></th>
 <th width="17%"><strong>Ontology Prefix</strong></th>
 <th width="40%"><strong>Ontology Full Name</strong></th>
-<th width="8%"><string>OBO</th>
-<th width="15%"><string>Domain</th>
+<th width="12%"><strong>OBO <img id="obo-open" height="80%" src="<?php echo SITEURL; ?>public/images/question_frame.png"></strong></th>
+<!--  temporary remove domain display <th width="15%"><string>Domain</th> -->
 <th width="12%"><strong>List of Terms</strong></th>
 </tr>
 </thead>
+
+<div id="obo-legend" title="OBO Legend" style="display:hidden">
+  <p align="left">
+  <strong>F</strong>: <u>F</u>oundry</br>
+  <strong>L</strong>: <u>L</u>ibrary</br>
+  <strong>N</strong>: <u>N</u>ot Specified/<u>N</u>o</p>
+</div>
 
 <tbody>
 <?php
@@ -97,11 +104,15 @@ foreach ( $ontologies as $key => $ontology ) {
 	} else {
 		$foundry = 'N';
 	}
+	/*
+	 * Temporary remove domain display
+	 * 
 	if ( isset( $ontology->domain ) && !is_null( $ontology->domain ) && !empty( $ontology->domain ) ) {
 		$domain = $ontology->domain;
 	} else {
 		$domain = '-';
 	}
+	*/
 	echo
 <<<END
 <tr class="$bgcolor" align="center">
@@ -118,6 +129,10 @@ END;
 END;
 	}
 	*/
+	
+	/*
+	 * Temporary remove domain display
+	 *
 	echo
 <<<END
 </td>
@@ -129,13 +144,22 @@ END;
 </td>
 </tr>
 END;
+	*/
+	echo
+<<<END
+</td>
+<td>$foundry</td>
+<td>
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=xlsx" title="Excel XLSX File"><img src="{$site}public/images/Excel_xlsx_Logo.png" alt="Excel XLSX format" width="24" height="24" border="0"></a>
+<a href="{$site}listTerms/$ontology->ontology_abbrv?format=tsv" title="Tab Separated Text File"><img src="{$site}public/images/Text_tsv_Logo.png" alt="Tab Separated format" width="24" height="24" border="0"></a>
+</td>
+</tr>
+END;
 }
 ?>
 </tbody>
 </table>
 </div>
-
-<p align="left">Note: <strong>F</strong>: <u>F</u>oundry, <strong>L</strong>: <u>L</u>ibrary, <strong>N</strong>: <u>N</u>ot Specified/<u>N</u>o</p>
 
 <script type="text/javascript">
 $(document).ready(function() 
@@ -171,6 +195,23 @@ $("#ontologyList").bind("sortStart",function() {
     });
     $("#ontologyListOverlay").remove();
 	$("#ontologyList").show();
+});
+//Pop-up OBO legend
+$(function() {
+    $( "#obo-legend" ).dialog({
+    	modal: true,
+    	autoOpen: false,
+    	closeOnEscape: false,
+    	open: function(event, ui) {
+            $(".ui-dialog-titlebar-close", ui.dialog | ui).hide();
+        }
+    });
+
+    $( "#obo-open" ).hoverIntent( function() {
+        $( "#obo-legend" ).dialog( "open" );
+    }, function() {
+        $( "#obo-legend" ).dialog( "close" );
+    });
 });
 </script>
 

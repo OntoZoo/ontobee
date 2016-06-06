@@ -48,17 +48,27 @@ if ( !isset( $title ) ) {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
 <link rel="shortcut icon" href="/favicon.ico" />
 <link href="<?php echo SITEURL; ?>public/css/main.css" rel="stylesheet" type="text/css"/>
+<!--
 <link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/themes/base/jquery.ui.all.css"/>
+ -->
+<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.theme.css"/>
+<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.css"/>
+<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.structure.css"/>
 <link rel="stylesheet" href="<?php echo SITEURL; ?>public/css/tablesorter/style.css"/>
+<!--
 <script src="<?php echo SITEURL; ?>public/js/jquery/jquery-1.7.1.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.core.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.widget.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.position.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.autocomplete.js"></script>
+ -->
+<script src="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/external/jquery/jquery.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/ontobee.autocomplete.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/ontobee.deprecate.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/jquery/tablesorter/jquery.tablesorter.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/ontobee.infobox.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/jquery/hoverIntent.min.js"></script>
 
 <style>
 .ui-autocomplete-loading { background: white url('<?php echo SITEURL; ?>public/images/ui-anim_basic_16x16.gif') right center no-repeat; }
