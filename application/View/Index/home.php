@@ -64,7 +64,7 @@ if (!$this) {
 </tr>
 </thead>
 
-<div id="obo-legend" title="OBO Legend" style="display:hidden">
+<div id="obo-legend" title="OBO Legend" style="display:none">
   <p align="left">
   <strong>F</strong>: <u>F</u>oundry</br>
   <strong>L</strong>: <u>L</u>ibrary</br>
