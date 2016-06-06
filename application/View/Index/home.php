@@ -56,11 +56,11 @@ if (!$this) {
 <thead>
 <tr>
 <th width="5%"><strong>No.</strong></th>
-<th width="17%"><strong>Ontology Prefix</strong></th>
-<th width="40%"><strong>Ontology Full Name</strong></th>
+<th width="20%"><strong>Ontology Prefix</strong></th>
+<th width="45%"><strong>Ontology Full Name</strong></th>
 <th width="12%"><strong>OBO <img id="obo-open" height="80%" src="<?php echo SITEURL; ?>public/images/question_frame.png"></strong></th>
 <!--  temporary remove domain display <th width="15%"><string>Domain</th> -->
-<th width="12%"><strong>List of Terms</strong></th>
+<th width="18%"><strong>List of Terms</strong></th>
 </tr>
 </thead>
 
