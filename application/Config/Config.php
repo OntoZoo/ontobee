@@ -33,6 +33,9 @@
 # Set maximum memory
 ini_set( 'memory_limit', '4096M' );
 
+# Set Timezone
+date_default_timezone_set('America/New_York');
+
 # Error and SPARQL reporting if under development
 DEFINE( 'ENVIRONMENT', 'development' );
 if ( ENVIRONMENT == 'development' ) {
