@@ -24,28 +24,28 @@
  * @file DB.example.php
  * @author Edison Ong
  * @since Sep 6, 2015
- * @comment Define database configuration in this file.
+ * @comment DEFINE database configuration in this file.
  *          Example set up for DB.php.
  *          After editing the correct configuration, please change the file name to DB.php
  */
 
 # SQL database
 # MySQL is used to store descriptive information of all ontologies and miscellaneous data
-define('DB_DRIVER', 'mysql');
+DEFINE('DB_DRIVER', 'mysql');
 # Host (IP address)
-define('DB_HOST', '127.0.0.1');
+DEFINE('DB_HOST', '127.0.0.1');
 # The schema/table that store ontologies' information
-define('DB_SCHEMA', 'schema');
+DEFINE('DB_SCHEMA', 'schema');
 # Username and Password
-define('DB_USERNAME', 'username');
-define('DB_PASSWORD', 'password');
+DEFINE('DB_USERNAME', 'username');
+DEFINE('DB_PASSWORD', 'password');
 
 # RDF database
 # Username and Password
-define('RDF_USERNAME', 'username' );
-define('RDF_PASSWORD', 'password' );
+DEFINE('RDF_USERNAME', 'username' );
+DEFINE('RDF_PASSWORD', 'password' );
 # The command for maintenance script to manipulate RDF database locally
 # In this ontobee main website, we deploy Virtuoso RDF database and use isql commend
-define('RDF_ISQL_COMMAND', '/usr/local/virtuoso/bin/isql' );
+DEFINE('RDF_ISQL_COMMAND', '/usr/local/virtuoso/bin/isql' );
 
 ?>
