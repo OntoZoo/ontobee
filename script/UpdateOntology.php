@@ -43,34 +43,46 @@ Class UpdateOntology extends Maintenance {
 		$this->setup();
 		$this->openPDOConnection();
 		
+		$this->logger->info( "Setting up $ontID upload process" );
+		
+		$this->logger->debug( 'Creating temporary RDF directory' );
 		$this->tmpDir = SYSTMP . 'rdf' . DIRECTORY_SEPARATOR;
 		if ( !file_exists( $this->tmpDir ) ) {
 			mkdir( $this->tmpDir );
 			chmod( $this->tmpDir, 0777 );
 		}
+		$this->logger->debug( 'Complete');
 		
+		$this->logger->debug( "Querying $ontID from MySQL ontology table" );
 		$sql = "SELECT * FROM ontology WHERE id = '$ontID'";
 		$query = $this->db->prepare( $sql );
 		$query->execute();
 		$this->ontology = $query->fetch();
 		$this->fileName = $this->ontology->ontology_abbrv;
 		$this->options = $options;
+		$this->logger->debug( 'Complete' );
 	}
 	
 	public function doUpdate() {
 		
+		$this->logger->info( "Starting $this->fileName upload process" );
+		
+		$this->logger->debug( "Trying to download $this->fileName from ontology URL" );
 		if ( $this->ontology->ontology_url != '' ) {
 			$this->download( $this->ontology->ontology_url );
 		}
 		
 		if ( !file_exists( $this->file ) && $this->ontology->download != '' ) {
+			$this->logger->debug( "Trying to download $this->fileName from given download link" );
 			$this->download( $this->ontology->download );
 		}
 		
 		if ( !file_exists( $this->file ) && $this->ontology->source != '' ) {
+			$this->logger->debug( "Trying to download $this->fileName from given source link" );
 			$this->download( $this->ontology->source );
 		}
 		
+		$this->logger->debug( "Trying to download $this->fileName from given alternative download link" );
 		if ( !file_exists( $this->file ) && $this->ontology->alternative_download != '' ) {
 			$this->download( $this->ontology->alternative_download );
 		}
@@ -79,21 +91,31 @@ Class UpdateOntology extends Maintenance {
 		$msg = '';
 		if ( !file_exists( $this->file ) ) {
 			$status = false;
-			$msg = "Failed to download $this->file owl file.";
+			$this->logger->error( "Fail to download $this->file owl file" );
 		} else {
-			$md5 =  md5_file( $this->file );
+			$this->logger->debug( 'Download complete' );
 			
+			$this->logger->info( 'Encoding ontology' );
+			$md5 =  md5_file( $this->file );
 			$path = pathinfo( $this->file );
-				
+			
+			$this->logger->info( 'Copying ontology to ontology installed location' );
 			copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . $path['basename'] );
 			
+			$this->logger->info( "Checking $this->fileName version" );
 			if ( $md5 == $this->ontology->md5 && $this->ontology->loaded == 'y' ) {
 				$status = true;
-				$msg = "Ontology already up-to-date.";
+				$this->logger->info( 'Ontology already up-to-date' );
 			} else {
+				$this->logger->info( 'Newer version is found' );
+				
+				$this->logger->debug( "Preparing $this->fileName update" );
+				
+				$this->logger->debug( 'Setting MySQL ontology table to loaded=\'n\'' );
 				$sql = "UPDATE ontology SET loaded='n' where id = '{$this->ontology->id}'";
 				$this->db->query( $sql );
 				
+				$this->logger->debug( 'Starting isql RDF update' );
 				$usr = RDF_USERNAME;
 				$pwd = RDF_PASSWORD;
 				$isql = RDF_ISQL_COMMAND;
@@ -103,19 +125,26 @@ $isql 1111 $usr $pwd verbose=on banner=off prompt=off echo=ON errors=stdout exec
 sparql clear graph <{$this->ontology->ontology_graph_url}>;
 DB.DBA.RDF_LOAD_RDFXML_MT (file_to_string_output ('$this->file'), '', '{$this->ontology->ontology_graph_url}');"
 END;
+				
+				$this->logger->info( 'Executing isql shell command' );
 				exec( $cmd, $output);
 				$output = join( "\n", $output );
+				
+				$this->logger->info( " Command output:\n$output " );
 				$sql = "UPDATE ontology SET log=" . $this->db->quote( $output ) . " where id = '{$this->ontology->id}'";
 				$this->db->query( $sql );
 				
 				if ( !preg_match( '/Error/', $output ) ) {
+					$this->logger->debug( "$this->fileName RDF load complete" );
+					
+					$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\'' );
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
+					
 					$status = true;
-					$msg = "$this->fileName RDF load succeeded.";
 				} else {
+					$this->logger->debug( "$this->fileName RDF load fail" );
 					$status = false;
-					$msg = "$this->fileName RDF load failed.";
 				}
 				#$this->remove( $this->tmpDir );
 				
@@ -134,11 +163,35 @@ END;
 				*/
 			}
 		}
+		
+		$this->logger->info( 'Removing temporary file' );
 		array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
-		if ( !status ) {
-			mail( 'edong@umich.edu', date('Y-m-d') . 'Ontobee Update Failure', $msg );
+		if ( !$status ) {
+			$mail = $this->getMailer();
+			echo $this->mailList;
+			foreach ( $this->mailList as $recipient ) {
+				$mail->addAddress( $recipient );
+			}
+			$mail->setFrom('helabdev@gmail.com');
+			$time = date("Y-m-d H:i:s", time());
+			$mail->Subject = "Ontobee Error: $time ";
+			$content = file_get_contents( $this->logMail );
+			$mail->Body =
+<<<END
+Ontobee Error(s) occur when running UpdateOntology.php.
+
+==================================================
+$content
+==================================================
+END;
+			if( !$mail->send() ) {
+				$this->logger->warn( 'Message could not be sent.' );
+				$this->logger->debug( 'Mailer Error: ' . $mail->ErrorInfo );
+			} else {
+				$this->logger->info( 'Message has been sent' );
+			}
 		}
-		echo $msg;
+		
 		return $status;
 	}
 	

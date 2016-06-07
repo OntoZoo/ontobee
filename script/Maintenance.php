@@ -31,17 +31,84 @@ ini_set( 'memory_limit', '4096M' );
 
 abstract class Maintenance {
 	protected $db;
+	protected $logger;
+	protected $logFile;
+	protected $logMail;
+	protected $mailList;
 	
 	public function setup() {
+		# Set Timezone
+		date_default_timezone_set('America/New_York');
+		
 		$tokens = explode( DIRECTORY_SEPARATOR, __DIR__ );
 		$dir = implode( DIRECTORY_SEPARATOR, array_splice( $tokens, 0, -1 ) );
+		
 		DEFINE( 'SCRIPTPATH',  $dir . DIRECTORY_SEPARATOR );
 		DEFINE( 'APPPATH', SCRIPTPATH . 'application' . DIRECTORY_SEPARATOR );
 		DEFINE( 'SYSTMP', sys_get_temp_dir() . DIRECTORY_SEPARATOR );
-		DEFINE ( 'TMPPATH', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
+		DEFINE( 'TMPPATH', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
+		DEFINE( 'LOGPATH', SCRIPTPATH . 'log' . DIRECTORY_SEPARATOR );
+		
 		require APPPATH . 'Config/DB.php';
 		require APPPATH . 'Config/OntologyConfig.php';
+		require APPPATH . 'Config/MailConfig.php';
+		
 		require SCRIPTPATH . 'vendor/autoload.php';
+		
+		$this->setLogger();
+		$this->mailList = $GLOBALS['mail_list'];
+	}
+	
+	private function setLogger() {
+		$this->logger = Logger::getLogger( 'maintenance' );
+		
+		$layout = new LoggerLayoutPattern();
+		$layout->setConversionPattern("%d{m/d/y H:i:s} [%c] %p - %m%n");
+		$layout->activateOptions();
+		
+		$tmpFile = tmpfile();
+		$tmpMeta = stream_get_meta_data( $tmpFile );
+		$this->logMail = $tmpMeta['uri'];
+		$appMail = new LoggerAppenderFile( 'maintenanceMail' );
+		$appMail->setFile( $this->logMail );
+		$appMail->setAppend( true );
+		$appMail->setThreshold( 'debug' );
+		$appMail->setLayout( $layout );
+		$appMail->activateOptions();
+		$this->logger->addAppender( $appMail );
+		
+		
+		$logFile = LOGPATH . 'maintenance.log';
+		if ( file_exists( $logFile ) ) {
+			if ( date( 'Y', filectime( $logFile ) ) != date( 'Y', time() ) ||
+					date( 'M', filectime( $logFile ) ) != date( 'M', time() ) ) {
+				unlink( $logFile );
+			}
+		}
+		touch( $logFile );
+		$this->logFile = $logFile;
+		$appFile = new LoggerAppenderFile( 'maintenanceFile' );
+		$appFile->setFile( $this->logFile );
+		$appFile->setAppend( true );
+		$appFile->setThreshold( 'all' );
+		$appFile->setLayout( $layout );
+		$appFile->activateOptions();
+		$this->logger->addAppender( $appFile );
+	}
+	
+	protected function getMailer() {
+		$mail = new PHPMailer;
+		
+		$mail->isSMTP();
+		$mail->SMTPDebug = 1;
+		$mail->SMTPAuth = true;
+		$mail->SMTPSecure = 'tls';
+		$mail->Host = MAIL_HOST;
+		$mail->Port = 587;
+		$mail->Username = MAIL_USERNAME;
+		$mail->Password = MAIL_PASSWORD;
+		
+		return $mail;
 	}
 	
 	protected function openPDOConnection() {
