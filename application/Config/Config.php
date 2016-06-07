@@ -34,7 +34,7 @@
 ini_set( 'memory_limit', '4096M' );
 
 # Error and SPARQL reporting if under development
-DEFINE( 'ENVIRONMENT', 'production' );
+DEFINE( 'ENVIRONMENT', 'development' );
 if ( ENVIRONMENT == 'development' ) {
 	error_reporting(E_ALL);
 	ini_set("display_errors", 1);
@@ -50,6 +50,9 @@ DEFINE( 'PHPLIB', SCRIPTPATH . 'library/php' . DIRECTORY_SEPARATOR );
 
 # Load database configuration
 require APPPATH . 'Config/DB.php';
+
+# Load mail configuration
+require APPPATH . 'Config/MailConfig.php';
 
 # Load ontology configuration
 require APPPATH . 'Config/OntologyConfig.php';
