@@ -8,3 +8,4 @@ ontology/
 
 application/Config/DB.php
 application/Config/HookConfig.php
+application/Config/MailConfig.php
