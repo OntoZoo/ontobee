@@ -48,12 +48,14 @@ if ( !isset( $title ) ) {
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
 <link rel="shortcut icon" href="/favicon.ico" />
 <link href="<?php echo SITEURL; ?>public/css/main.css" rel="stylesheet" type="text/css"/>
-<!--
-<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/themes/base/jquery.ui.all.css"/>
- -->
+
 <link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.theme.css"/>
 <link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.css"/>
 <link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.structure.css"/>
+<!--
+<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/themes/base/jquery.ui.all.css"/>
+ -->
+<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/themes/base/jquery.ui.theme.css"/>
 <link rel="stylesheet" href="<?php echo SITEURL; ?>public/css/tablesorter/style.css"/>
 <!--
 <script src="<?php echo SITEURL; ?>public/js/jquery/jquery-1.7.1.js"></script>
