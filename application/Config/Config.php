@@ -33,8 +33,11 @@
 # Set maximum memory
 ini_set( 'memory_limit', '4096M' );
 
+# Set Timezone
+date_default_timezone_set('America/New_York');
+
 # Error and SPARQL reporting if under development
-DEFINE( 'ENVIRONMENT', 'production' );
+DEFINE( 'ENVIRONMENT', 'development' );
 if ( ENVIRONMENT == 'development' ) {
 	error_reporting(E_ALL);
 	ini_set("display_errors", 1);
@@ -47,9 +50,13 @@ DEFINE( 'VIEWPATH', SCRIPTPATH . 'application/View' . DIRECTORY_SEPARATOR );
 DEFINE ( 'TMPPATH', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
 DEFINE( 'TEMPLATE', SCRIPTPATH . 'application/Layout' . DIRECTORY_SEPARATOR );
 DEFINE( 'PHPLIB', SCRIPTPATH . 'library/php' . DIRECTORY_SEPARATOR );
+DEFINE( 'LOGPATH', SCRIPTPATH . 'log' . DIRECTORY_SEPARATOR );
 
 # Load database configuration
 require APPPATH . 'Config/DB.php';
+
+# Load mail configuration
+require APPPATH . 'Config/MailConfig.php';
 
 # Load ontology configuration
 require APPPATH . 'Config/OntologyConfig.php';

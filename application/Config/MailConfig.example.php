@@ -21,55 +21,16 @@
  */
 
 /**
- * @file type.instance.php
+ * @file MailConfig.example.php
  * @author Edison Ong
- * @since Oct 17, 2015
+ * @since Jun 7, 2016
  * @comment 
  */
-
-if ( !$this ) {
-	exit( header( 'HTTP/1.0 403 Forbidden' ) );
-}
-
-$html = '';
+ 
+DEFINE('MAIL_HOST', 'smtp1.example.com');
+DEFINE('MAIL_USERNAME', 'user@example.com');
+DEFINE('MAIL_PASSWORD', 'password');
 
 
-
-if ( !empty( $term->class ) ) {
-	$html .=
-<<<END
-<div class="section-title">Instance of</div>
-<div class="section"><ul>
-END;
-	$instanceClass = $term->class;
-	foreach( $instanceClass as $index => $class ) {
-		if ( is_null( $class['iri'] ) ) {
-			$html .=
-<<<END
-<li>
-{$class['label']}
-</li>
-END;
-			unset( $instanceClass[$index] );
-		}
-	}
-	foreach( $instanceClass as $index => $class ) {
-		$html .=
-<<<END
-<li>
-<a href="{$class['iri']}">{$class['label']}</a>
-</li>
-END;
-	}
-	$html .=
-<<<END
-</ul>
-</div>
-END;
-}
 
 ?>
-
-<!-- Start Ontobee Layout: Type Instance -->
-<?php echo Helper::tidyHTML( $html ); ?>
-<!-- End Ontobee Layout: Type Instance -->

@@ -27,50 +27,85 @@
  * @comment 
  */
 
-if ( PHP_SAPI == 'cli' ) {
-	require( 'Maintenance.php' );
+if ( !defined( 'MAINCLASS' ) ) {
+	DEFINE( 'MAINCLASS', __FILE__ );
 }
 
+require_once( 'Maintenance.php' );
+
 Class UpdateOntology extends Maintenance {
+	private $ontID;
+	
 	private $tmpDir;
 	private $ontology;
 	
-	public $fileName;
-	public $file;
-	public $options;
+	private $fileName;
+	private $file;
 	
-	public function __construct( $ontID, $options = array() ) {
-		$this->setup();
-		$this->openPDOConnection();
+	public function __construct() {
+		parent::__construct();
 		
+		$this->addArg( 'ontID', 'Ontology ID to be updated' );
+		
+		$this->connectDB();
+	}
+	
+	public function setOntID( $ontID ) {
+		$this->ontID = $ontID;
+	}
+	
+	public function execute() {
+		$this->setup();
+		$this->update();
+	}
+	
+	protected function setup() {
+		$this->logger->info( "Setting up update process" );
+		
+		if ( !isset( $this->ontID ) ) {
+			$this->ontID = $this->getArgByName( 'ontID' );
+		}
+		
+		$this->logger->debug( 'Creating temporary RDF directory' );
 		$this->tmpDir = SYSTMP . 'rdf' . DIRECTORY_SEPARATOR;
 		if ( !file_exists( $this->tmpDir ) ) {
 			mkdir( $this->tmpDir );
 			chmod( $this->tmpDir, 0777 );
 		}
+		$this->logger->debug( 'Complete');
 		
-		$sql = "SELECT * FROM ontology WHERE id = '$ontID'";
+		$this->logger->debug( "Querying $this->ontID from MySQL ontology table" );
+		$sql = "SELECT * FROM ontology WHERE id = '$this->ontID'";
 		$query = $this->db->prepare( $sql );
 		$query->execute();
 		$this->ontology = $query->fetch();
 		$this->fileName = $this->ontology->ontology_abbrv;
-		$this->options = $options;
+		$this->logger->debug( 'Complete' );
+		
+		$this->logger->info( 'Setup complete' );
 	}
 	
-	public function doUpdate() {
+	public function update() {
+		$this->logger->info( "Starting $this->fileName update process" );
 		
+		$this->logger->info( "Downloading $this->fileName" );
+		
+		$this->logger->debug( "Trying to download $this->fileName from ontology URL" );
 		if ( $this->ontology->ontology_url != '' ) {
 			$this->download( $this->ontology->ontology_url );
 		}
 		
 		if ( !file_exists( $this->file ) && $this->ontology->download != '' ) {
+			$this->logger->debug( "Trying to download $this->fileName from given download link" );
 			$this->download( $this->ontology->download );
 		}
 		
 		if ( !file_exists( $this->file ) && $this->ontology->source != '' ) {
+			$this->logger->debug( "Trying to download $this->fileName from given source link" );
 			$this->download( $this->ontology->source );
 		}
 		
+		$this->logger->debug( "Trying to download $this->fileName from given alternative download link" );
 		if ( !file_exists( $this->file ) && $this->ontology->alternative_download != '' ) {
 			$this->download( $this->ontology->alternative_download );
 		}
@@ -79,21 +114,33 @@ Class UpdateOntology extends Maintenance {
 		$msg = '';
 		if ( !file_exists( $this->file ) ) {
 			$status = false;
-			$msg = "Failed to download $this->file owl file.";
+			$this->logger->error( "Fail to download $this->file owl file" );
 		} else {
-			$md5 =  md5_file( $this->file );
+			$this->logger->info( 'Download complete' );
 			
+			$this->logger->info( "Processing $this->fileName" );
+			
+			$this->logger->debug( 'Encoding ontology' );
+			$md5 =  md5_file( $this->file );
 			$path = pathinfo( $this->file );
-				
+			
+			$this->logger->debug( "Copying $this->fileName to Ontobee ontology location" );
 			copy( $this->file, SCRIPTPATH . 'ontology' . DIRECTORY_SEPARATOR . $path['basename'] );
 			
+			$this->logger->info( 'Process complete' );
+			
+			$this->logger->info( "Checking $this->fileName version" );
 			if ( $md5 == $this->ontology->md5 && $this->ontology->loaded == 'y' ) {
 				$status = true;
-				$msg = "Ontology already up-to-date.";
+				$this->logger->info( 'Ontology already up-to-date' );
 			} else {
+				$this->logger->info( 'Newer version is found' );
+				
+				$this->logger->debug( 'Setting MySQL ontology table to loaded=\'n\'' );
 				$sql = "UPDATE ontology SET loaded='n' where id = '{$this->ontology->id}'";
 				$this->db->query( $sql );
 				
+				$this->logger->info( 'Starting Virtuoso RDF upload' );
 				$usr = RDF_USERNAME;
 				$pwd = RDF_PASSWORD;
 				$isql = RDF_ISQL_COMMAND;
@@ -103,19 +150,51 @@ $isql 1111 $usr $pwd verbose=on banner=off prompt=off echo=ON errors=stdout exec
 sparql clear graph <{$this->ontology->ontology_graph_url}>;
 DB.DBA.RDF_LOAD_RDFXML_MT (file_to_string_output ('$this->file'), '', '{$this->ontology->ontology_graph_url}');"
 END;
+				
+				$this->logger->debug( 'Executing isql shell command' );
 				exec( $cmd, $output);
 				$output = join( "\n", $output );
+				
+				$this->logger->debug( " Command output:\n$output " );
 				$sql = "UPDATE ontology SET log=" . $this->db->quote( $output ) . " where id = '{$this->ontology->id}'";
 				$this->db->query( $sql );
 				
 				if ( !preg_match( '/Error/', $output ) ) {
+					$this->logger->info( 'Virtuoso RDF upload complete' );
+					
+					$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\' and update md5' );
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
+					
 					$status = true;
-					$msg = "$this->fileName RDF load succeeded.";
-				} else {
+				} else if ( preg_match( '/Error S2801/', $output ) ) {
+					$this->logger->debug( "Unable to connect Virtuoso RDF" );
+					$this->logger->warn( 'Virtuoso RDF upload fail' );
+					$this->sendReport( 'Ontobee UpdateOntology Warning',
+							"$this->fileName update failed.\nPrevious version will be used.");
+					
+					$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\'' );
+					$sql = "UPDATE ontology SET loaded='y' where id = '{$this->ontology->id}'";
+					$this->db->query( $sql );
+					
 					$status = false;
-					$msg = "$this->fileName RDF load failed.";
+				} else if ( preg_match( '/Error 28000/', $output ) ) {
+					$this->logger->debug( "Unable to login Virtuoso RDF" );
+					$this->logger->warn( 'Virtuoso RDF upload fail' );
+					$this->sendReport( 'Ontobee UpdateOntology Warning',
+							"$this->fileName update failed.\nPrevious version will be used." );
+						
+					$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\'' );
+					$sql = "UPDATE ontology SET loaded='y' where id = '{$this->ontology->id}'";
+					$this->db->query( $sql );
+					
+					$status = false;
+				} else {
+					$this->logger->error( 'Virtuoso RDF upload fail' );
+					$this->sendReport( 'Ontobee UpdateOntology Error',
+							"$this->fileName upload failed.\nThis ontology will be removed from Ontobee list." );
+					
+					$status = false;
 				}
 				#$this->remove( $this->tmpDir );
 				
@@ -134,11 +213,16 @@ END;
 				*/
 			}
 		}
+		
+		$this->logger->info( 'Removing temporary file' );
 		array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
-		if ( !status ) {
-			mail( 'edong@umich.edu', date('Y-m-d') . 'Ontobee Update Failure', $msg );
+		
+		if ( $status ) {
+			$this->logger->info( 'Update process complete' );
+		} else {
+			$this->logger->info( 'Update process fail' );
 		}
-		echo $msg;
+		
 		return $status;
 	}
 	
@@ -236,29 +320,10 @@ END;
 	
 }
 
-if ( PHP_SAPI == 'cli' ) {
-	if ( sizeof( $argv ) > 1 ) {
-		$args = $argv;
-		unset( $args[0] );
-		$args = array_values( $args );
-		$ontID = $args[0];
-		unset( $args[0] );
-		$args = array_values( $args );
-		$options = array();
-		if ( sizeof( $args ) > 0 ) {
-			if ( sizeof( $args ) % 2 == 0 ) {
-				for ( $i = 0; $i < sizeof( $args ) / 2; $i++ ) {
-					$options[$args[$i]] = $args[$i+1];
-				}
-			} else {
-				throw new Exception( 'Invalid arguments.' );
-			}
-		}
-	} else {
-		throw new Exception( 'Invalid arguments.' );
-	}
-	$update = new UpdateOntology( $ontID, $options );
-	$update->doUpdate();
+if ( MAINCLASS == __FILE__ ) {
+	$update = new UpdateOntology();
+	$update->loadParameter();
+	$update->execute();
 }
 
 ?>

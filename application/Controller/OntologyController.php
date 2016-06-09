@@ -29,6 +29,7 @@
  
 namespace Controller;
 
+use \Exception;
 use Controller\Controller;
 
 use Controller\ErrorController;

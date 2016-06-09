@@ -341,7 +341,7 @@ END;
 		
 		foreach ( $GLOBALS['ontology']['type'] as $majorType ) {
 			if ( in_array( $majorType, $type ) ) {
-				return array( array_shift( $type ), $query );
+				return array( $type[array_search($majorType, $type)], $query );
 			}
 		}
 		
