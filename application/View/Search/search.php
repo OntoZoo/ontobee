@@ -89,8 +89,14 @@ foreach ( $validResult as $resultIRI => $resultValue ) {
 END;
 	foreach ( $resultValue as $resultLabel => $availableOntologies ){
 		$availableOntologies = array_unique( $availableOntologies );
+		sort( $availableOntologies );
 		if ( ( $index = array_search( $prefix, $availableOntologies ) ) !== false ) {
-		    unset($availableOntologies[$index]);
+			/* In case purl link is not redirecting back to ontobee
+			 * We still need to display the ontobee link
+		     */
+			$tmpToken = $availableOntologies[$index];
+			unset( $availableOntologies[$index] );
+			array_unshift( $availableOntologies, $tmpToken );
 		}
 		echo
 <<<END
@@ -98,7 +104,7 @@ END;
 {$GLOBALS['call_function']( preg_replace( "/($tkeyword)/i", '<strong>$1</strong>', $resultLabel ) )}
 END;
 		if ( !empty( $availableOntologies ) ) {
-			echo " <i> also in</i>: ";
+			echo " <i> in Ontobee</i>: ";
 		}
 		foreach ( $availableOntologies as $index => $availableOntology ) {
 			echo
