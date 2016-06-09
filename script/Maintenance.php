@@ -27,76 +27,141 @@
  * @comment 
  */
 
-ini_set( 'memory_limit', '4096M' );
+# Define Path Constant
+$tokens = explode( DIRECTORY_SEPARATOR, __DIR__ );
+$dir = implode( DIRECTORY_SEPARATOR, array_splice( $tokens, 0, -1 ) );
+DEFINE( 'SCRIPTPATH',  $dir . DIRECTORY_SEPARATOR );
+DEFINE( 'APPPATH', SCRIPTPATH . 'application' . DIRECTORY_SEPARATOR );
+DEFINE( 'SYSTMP', sys_get_temp_dir() . DIRECTORY_SEPARATOR );
+DEFINE( 'TMPPATH', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
+DEFINE( 'LOGPATH', SCRIPTPATH . 'log' . DIRECTORY_SEPARATOR );
+
+# Require dependencies
+require_once APPPATH . 'Config/DB.php';
+require_once APPPATH . 'Config/OntologyConfig.php';
+require_once APPPATH . 'Config/MailConfig.php';
+require_once SCRIPTPATH . 'vendor/autoload.php';
 
 abstract class Maintenance {
+	protected $argList;
+	protected $argName;
+	protected $args;
+	
+	protected $optionList;
+	protected $optionAbbrv;
+	protected $options;
+	
 	protected $db;
 	protected $logger;
 	protected $logFile;
 	protected $logMail;
-	protected $mailList;
 	
-	public function setup() {
+	private $mailList;
+	
+	public function __construct() {
+		# Increase Memory
+		ini_set( 'memory_limit', '4096M' );
+		
 		# Set Timezone
 		date_default_timezone_set('America/New_York');
 		
-		$tokens = explode( DIRECTORY_SEPARATOR, __DIR__ );
-		$dir = implode( DIRECTORY_SEPARATOR, array_splice( $tokens, 0, -1 ) );
+		# Initialize options
+		$this->addOption( 'help', 'Display this help message', 'h', false );
 		
-		DEFINE( 'SCRIPTPATH',  $dir . DIRECTORY_SEPARATOR );
-		DEFINE( 'APPPATH', SCRIPTPATH . 'application' . DIRECTORY_SEPARATOR );
-		DEFINE( 'SYSTMP', sys_get_temp_dir() . DIRECTORY_SEPARATOR );
-		DEFINE( 'TMPPATH', SCRIPTPATH . 'tmp' . DIRECTORY_SEPARATOR );
-		DEFINE( 'LOGPATH', SCRIPTPATH . 'log' . DIRECTORY_SEPARATOR );
-		
-		require APPPATH . 'Config/DB.php';
-		require APPPATH . 'Config/OntologyConfig.php';
-		require APPPATH . 'Config/MailConfig.php';
-		
-		require SCRIPTPATH . 'vendor/autoload.php';
-		
+		# Set Logger
 		$this->setLogger();
+		
+		# Set Mail List
 		$this->mailList = $GLOBALS['mail_list'];
 	}
 	
-	private function setLogger() {
-		$this->logger = Logger::getLogger( 'maintenance' );
-		
-		$layout = new LoggerLayoutPattern();
-		$layout->setConversionPattern("%d{m/d/y H:i:s} [%c] %p - %m%n");
-		$layout->activateOptions();
-		
-		$tmpFile = tmpfile();
-		$tmpMeta = stream_get_meta_data( $tmpFile );
-		$this->logMail = $tmpMeta['uri'];
-		$appMail = new LoggerAppenderFile( 'maintenanceMail' );
-		$appMail->setFile( $this->logMail );
-		$appMail->setAppend( true );
-		$appMail->setThreshold( 'debug' );
-		$appMail->setLayout( $layout );
-		$appMail->activateOptions();
-		$this->logger->addAppender( $appMail );
-		
-		
-		$logFile = LOGPATH . 'maintenance.log';
-		if ( file_exists( $logFile ) ) {
-			if ( date( 'Y', filectime( $logFile ) ) != date( 'Y', time() ) ||
-					date( 'M', filectime( $logFile ) ) != date( 'M', time() ) ) {
-				unlink( $logFile );
-			}
-		}
-		touch( $logFile );
-		$this->logFile = $logFile;
-		$appFile = new LoggerAppenderFile( 'maintenanceFile' );
-		$appFile->setFile( $this->logFile );
-		$appFile->setAppend( true );
-		$appFile->setThreshold( 'all' );
-		$appFile->setLayout( $layout );
-		$appFile->activateOptions();
-		$this->logger->addAppender( $appFile );
+	public function __destruct() {
+		if ( file_exists( $this->logMail ) ) {
+			unlink( $this->logMail );
+		};
 	}
 	
-	protected function getMailer() {
+	public function loadParameter() {
+		global $argv;
+		$pars = $argv;
+		array_shift($pars);
+		if ( sizeof( $pars ) >= 1 ) {
+			if ( substr( $pars[0], 0, 2 ) == '--' ) {
+				$name = substr( $pars[0], 2 );
+				if ( array_key_exists( $name, $this->optionList ) ) {
+					$this->options[$name] = $pars[1];
+				}
+				
+				array_shift($pars);
+				array_shift($pars);
+			} else if ( substr( $pars[0], 0, 1 ) == '-' ) {
+				$abbrv = substr( $pars[0], 1 );
+				$name = $this->optionAbbrv[$abbrv];
+				if ( array_key_exists( $name, $this->optionList ) ) {
+					$this->options[$name] = $pars[1];
+				}
+				
+				array_shift($pars);
+				array_shift($pars);
+			} else {
+				$this->args[] = $pars[0];
+				array_shift($pars);
+			}
+		} else {
+			# TODO: Show help
+		}
+		$this->checkArgAndOption();
+	}
+	
+	abstract public function execute();
+	
+	
+	abstract protected function setup();
+	
+	
+	protected function addArg( $name, $desc, $require = true ) {
+		$this->argList[] = array(
+				'name' => $name,
+				'desc' => $desc,
+				'require' => $require
+		);
+		$this->argName[] = $name;
+	}
+	
+	protected function getArgByID( $id ) {
+		return $this->args[$id];
+	}
+	
+	protected function getArgByName( $name ) {
+		$id = array_search( $name, $this->argName );
+		return $this->args[$id];
+	}
+	
+	protected function addOption( $name, $desc, $abbrv = false, $require = false ) {
+		$this->optionList[$name] = array(
+				'desc' => $desc,
+				'require' => $require,
+				'abbrv' => $abbrv
+		);
+	
+		if ( $abbrv ) {
+			$this->optionAbbrv[$abbrv] = $name;
+		}
+	}
+	
+	protected function hasOption( $name ) {
+		return isset( $this->options[$name] );
+	}
+	
+	protected function getOption( $name ) {
+		return $this->options[$name];
+	}
+	
+	protected function checkArgAndOption() {
+		# TODO
+	}
+	
+	protected function sendReport( $title = 'Ontobee Maintenance Error', $errorMsg = '' ) {
 		$mail = new PHPMailer;
 		
 		$mail->isSMTP();
@@ -108,10 +173,41 @@ abstract class Maintenance {
 		$mail->Username = MAIL_USERNAME;
 		$mail->Password = MAIL_PASSWORD;
 		
-		return $mail;
+		foreach ( $this->mailList as $recipient ) {
+			$mail->addAddress( $recipient );
+		}
+		$mail->setFrom( MAIL_USERNAME );
+		$time = date("Y-m-d H:i:s", time());
+		$mail->Subject = $title;
+		$content = file_get_contents( $this->logMail );
+		$mail->Body =
+<<<END
+Ontobee Maintenance Script Report
+
+==================================================
+Report Time
+==================================================
+$time
+
+==================================================
+Report Message
+==================================================
+$errorMsg
+	
+==================================================
+Report Log
+==================================================
+$content
+END;
+		if( !$mail->send() ) {
+			$this->logger->warn( 'Report could not be sent.' );
+			$this->logger->debug( 'Mailer Error: ' . $mail->ErrorInfo );
+		} else {
+			$this->logger->info( 'Report has been sent' );
+		}
 	}
 	
-	protected function openPDOConnection() {
+	protected function connectDB() {
 		$options = array(
 			\PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
 			\PDO::ATTR_ERRMODE => \PDO::ERRMODE_WARNING,
@@ -132,6 +228,46 @@ abstract class Maintenance {
 		curl_close ( $request );
 	
 		return $url;
+	}
+	
+	private function setLogger() {
+		$this->logger = Logger::getLogger( 'maintenance' );
+	
+		$layout = new LoggerLayoutPattern();
+		$layout->setConversionPattern("%d{m/d/y H:i:s} [%c] %C %p - %m%n");
+		$layout->activateOptions();
+	
+		/*
+			$tmpFile = tmpfile();
+			$tmpMeta = stream_get_meta_data( $tmpFile );
+			$this->logMail = $tmpMeta['uri'];
+		*/
+		$this->logMail = TMPPATH . 'maintenance.mail';
+		$appMail = new LoggerAppenderFile( 'maintenanceMail' );
+		$appMail->setFile( $this->logMail );
+		$appMail->setAppend( true );
+		$appMail->setThreshold( 'debug' );
+		$appMail->setLayout( $layout );
+		$appMail->activateOptions();
+		$this->logger->addAppender( $appMail );
+	
+	
+		$logFile = LOGPATH . 'maintenance.log';
+		if ( file_exists( $logFile ) ) {
+			if ( date( 'Y', filectime( $logFile ) ) != date( 'Y', time() ) ||
+					date( 'M', filectime( $logFile ) ) != date( 'M', time() ) ) {
+						unlink( $logFile );
+					}
+		}
+		touch( $logFile );
+		$this->logFile = $logFile;
+		$appFile = new LoggerAppenderFile( 'maintenanceFile' );
+		$appFile->setFile( $this->logFile );
+		$appFile->setAppend( true );
+		$appFile->setThreshold( 'all' );
+		$appFile->setLayout( $layout );
+		$appFile->activateOptions();
+		$this->logger->addAppender( $appFile );
 	}
 }
 

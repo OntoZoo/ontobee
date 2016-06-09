@@ -26,59 +26,97 @@
  * @since Oct 18, 2015
  * @comment 
  */
- 
-if ( PHP_SAPI == 'cli' ) {
-	require( 'Maintenance.php' );
+
+if ( !defined( 'MAINCLASS' ) ) {
+	DEFINE( 'MAINCLASS', __FILE__ );
 }
 
+
+require_once( 'Maintenance.php' );
+require_once( 'UpdateOntology.php' );
 
 class UpdateOBOOntology extends Maintenance {
 	public $url;
 	public $format;
-	public $options;
 	public $log;
 	
-	public function __construct( $options = array() ) {
-		$this->setup();
-		$this->openPDOConnection();
+	private $updateList;
+	private $updateOntology;
+	
+	public function __construct() {
+		parent::__construct();
 		
-		if ( array_key_exists( 'format', $options ) ) {
+		$this->addOption( 'ontologies', 'Ontologies to be updated', 'o', false );
+		$this->addOption( 'format', 'OBO Foundry meta-data format', 'f', false );
+		
+		$this->connectDB();
+	}
+	
+	protected function setup() {
+		$this->logger->info( 'Setting up OBO Foundry update process' );
+		
+		if ( $this->hasOption( 'ontologies' ) ) {
+			$tokens = explode( ';', $this->getOption( 'ontologies' ) );
+			$this->updateList = $tokens;
+		} else {
+			$this->updateList = array();
+		}
+		
+		if ( $this->hasOption( 'format' ) ) {
 			$format = $options['format'];
 		} else {
 			$format = 'jsonld';
 		}
-		$this->options = $options;
 		
 		$url = $GLOBALS['obo_registry'] . '.' . $format;
+		
+		$this->logger->info( 'Checking OBO Registry connection' );
 		
 		$headers = @get_headers( $url );
 		if( $headers[0] != 'HTTP/1.1 404 Not Found' ) {
 			$this->url = $url;
 			$this->format = $format;
+			$this->logger->info( 'Connection success' );
 		}
 		else {
-			throw new Exception( 'Invalid URL. Please check OBOFoundry registry link in configuration file.' );
+			$this->logger->error( 'Connection Fail' );
+			$msg = 'Invalid URL. Please check OBOFoundry registry link in configuration file.';
+			throw new Exception( $msg );
+			$this->logger->info( $msg );
 		}
+		
+		$this->updateOntology = new UpdateOntology();
+		
+		$this->logger->info( 'Setup complete' );
 	}
 	
-	public function doUpdate() {
-		$this->log =  TMPPATH . "obo_update.log";
-		file_put_contents( $this->log, date('Y-m-d') . ' Update' );
+	public function execute() {
+		print_r($this->options);
+		$this->setup();
+		$this->update();
+	}
+	
+	public function update() {
+		$this->logger->info( 'Starting OBO Foundry update process' );
+		
+		$this->logger->debug( 'Parsing registry data' );
 		
 		$file = file_get_contents( $this->url );
-		
 		switch ( $this->format ) {
 			case 'jsonld':
 				$data = json_decode( $file, true );
 		}
 		$ontologies = $data['ontologies'];
+		$this->logger->debug( 'Parsing complete' );
 		
 		foreach ( $ontologies as $ontology ) {
 			$loadRDF = false;
-			if ( array_key_exists( 'id', $this->options ) && 
-				!in_array( $ontology['id'], $this->options['id'] ) ) {
+			if ( !in_array( $ontology['id'], $this->updateList ) ) {
 				continue;
 			}
+			
+			$this->logger->info( "Processing {$ontology['id']}" );
+			
 			if ( array_key_exists( 'ontology_purl', $ontology ) ) {
 				if ( array_key_exists( 'is_obsolete', $ontology ) ) {
 					if ( !$ontology['is_obsolete'] ) {
@@ -88,18 +126,19 @@ class UpdateOBOOntology extends Maintenance {
 					$loadRDF = true;
 				}
 			} else {
+				$this->logger->info( "{$ontology['id']} is obsolete" );
 				continue;
 			}
 			
-			echo PHP_EOL . "Loading {$ontology['id']}";
-			file_put_contents( $this->log, PHP_EOL . "Loading {$ontology['id']}", FILE_APPEND );
-			
 			if ( array_key_exists( 'in_foundry_order', $ontology ) && intval( $ontology['in_foundry_order'] ) == 1 ) {
+				$this->logger->info( "{$ontology['id']} is OBO Foundry ontology" );
 				$foundry = 'Foundry';
 			} else {
+				$this->logger->info( "{$ontology['id']} is OBO Library ontology" );
 				$foundry = 'Library';
 			}
 			
+			$this->logger->info( 'Parsing meta-data' );
 			$params = array(
 				'id' => $ontology['id'],
 				'ontology_abbrv' => strtoupper( $ontology['id'] ),
@@ -124,7 +163,6 @@ class UpdateOBOOntology extends Maintenance {
 				'twitter' => array_key_exists( 'twitter', $ontology ) ? $ontology['twitter'] : null,
 				'depicted_by' => array_key_exists( 'depicted_by', $ontology ) ? $ontology['depicted_by'] : null,
 			);
-			
 			$params['license'] = null;
 			if ( array_key_exists( 'license', $ontology ) ) {
 				$params['license'] = array(
@@ -133,7 +171,6 @@ class UpdateOBOOntology extends Maintenance {
 						array_key_exists( 'url', $ontology['license'] ) ? $ontology['license']['url'] : '',
 				);
 			}
-				
 			$params['publication'] = null;
 			if ( array_key_exists( 'publications', $ontology ) ) {
 				$params['publication'] = array();
@@ -143,7 +180,9 @@ class UpdateOBOOntology extends Maintenance {
 					}
 				}
 			}
+			$this->logger->info( 'Parsing complete' );
 			
+			$this->logger->info( 'Updating MySQL table' );
 			$column = array();
 			$field = array();
 			$update = array();
@@ -162,49 +201,22 @@ class UpdateOBOOntology extends Maintenance {
 					$update[] = "$key = $value";
 				}
 			}
-			
 			$sql = 'INSERT INTO ontology (' . join( ', ', $column ) . ') VALUES (' . join( ', ', $field ) . ') ON DUPLICATE KEY UPDATE ' . join( ', ', $update );
 			$this->db->query( $sql );
-			
-			echo PHP_EOL . "Updated {$ontology['id']} SQL";
-			file_put_contents( $this->log, PHP_EOL . "Updated {$ontology['id']} SQL", FILE_APPEND );
+			$this->logger->info( 'MySQL update complete' );
 			
 			if ( $loadRDF ) {
-				$this->updateRDF( $ontology['id'] );
+				$this->updateOntology->setOntID( $ontology['id'] );
+				$this->updateOntology->execute();
 			}
 		}
-	}
-	
-	public function updateRDF( $ontID ) {
-		exec( 'php ' . SCRIPTPATH . "script/UpdateOntology.php $ontID", $output );
-		$msg = join( PHP_EOL, $output );
-		echo $msg;
-		file_put_contents( $this->log, PHP_EOL . $msg, FILE_APPEND );
 	}
 }
 
-if ( PHP_SAPI == 'cli' ) {
-	if ( sizeof( $argv ) > 1 ) {
-		$args = $argv;
-		unset( $args[0] );
-		$args = array_values( $args );
-		$options = array();
-		if ( sizeof( $args ) > 0 ) {
-			if ( sizeof( $args ) % 2 == 0 ) {
-				for ( $i = 0; $i < sizeof( $args ) / 2; $i++ ) {
-					$tokens = preg_split( '/[;]+/', $args[$i+1] );
-					$options[$args[$i]] = $tokens;
-				}
-			} else {
-				throw new Exception( 'Invalid arguments.' );
-			}
-		}
-		$update = new UpdateOBOOntology( $options );
-	} else {
-		$update = new UpdateOBOOntology();
-	}
-	$update->doUpdate();
-	
+if ( MAINCLASS == __FILE__ ) {
+	$update = new UpdateOBOOntology();
+	$update->loadParameter();
+	$update->execute();
 }
 
 
