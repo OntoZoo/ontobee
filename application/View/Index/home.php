@@ -169,7 +169,7 @@ $(document).ready(function()
 	                0: {
 	                    sorter: false
 	                },
-	                5: {
+	                4: {
 	                    sorter: false
 	            	}
 	            }
