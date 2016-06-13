@@ -37,7 +37,7 @@ ini_set( 'memory_limit', '4096M' );
 date_default_timezone_set('America/New_York');
 
 # Error and SPARQL reporting if under development
-DEFINE( 'ENVIRONMENT', 'development' );
+DEFINE( 'ENVIRONMENT', 'production' );
 if ( ENVIRONMENT == 'development' ) {
 	error_reporting(E_ALL);
 	ini_set("display_errors", 1);
