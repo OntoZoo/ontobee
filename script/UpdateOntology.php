@@ -115,6 +115,8 @@ Class UpdateOntology extends Maintenance {
 		if ( !file_exists( $this->file ) ) {
 			$status = false;
 			$this->logger->error( "Fail to download $this->file owl file" );
+			$this->sendReport( 'Ontobee UpdateOntology Warning',
+					"$this->fileName update failed.\nPrevious version will be used." );
 		} else {
 			$this->logger->info( 'Download complete' );
 			
