@@ -27,7 +27,11 @@
  * @comment 
  */
 
-# Define Path Constant
+if ( !defined( 'MAINCLASS' ) ) {
+	DEFINE( 'MAINCLASS', __FILE__ );
+}
+
+# Define path constant
 $tokens = explode( DIRECTORY_SEPARATOR, __DIR__ );
 $dir = implode( DIRECTORY_SEPARATOR, array_splice( $tokens, 0, -1 ) );
 DEFINE( 'SCRIPTPATH',  $dir . DIRECTORY_SEPARATOR );
@@ -57,6 +61,10 @@ abstract class Maintenance {
 	protected $logMail;
 	
 	private $mailList;
+	
+	# Define Error status constant
+	const ERROR = 0;
+	const WARN = 1;
 	
 	public function __construct() {
 		# Increase Memory
@@ -115,9 +123,7 @@ abstract class Maintenance {
 	
 	abstract public function execute();
 	
-	
 	abstract protected function setup();
-	
 	
 	protected function addArg( $name, $desc, $require = true ) {
 		$this->argList[] = array(
@@ -161,50 +167,13 @@ abstract class Maintenance {
 		# TODO
 	}
 	
-	protected function sendReport( $title = 'Ontobee Maintenance Error', $errorMsg = '' ) {
-		$mail = new PHPMailer;
-		
-		$mail->isSMTP();
-		$mail->SMTPDebug = 1;
-		$mail->SMTPAuth = true;
-		$mail->SMTPSecure = 'tls';
-		$mail->Host = MAIL_HOST;
-		$mail->Port = 587;
-		$mail->Username = MAIL_USERNAME;
-		$mail->Password = MAIL_PASSWORD;
-		
-		foreach ( $this->mailList as $recipient ) {
-			$mail->addAddress( $recipient );
-		}
-		$mail->setFrom( MAIL_USERNAME );
-		$time = date("Y-m-d H:i:s", time());
-		$mail->Subject = $title;
-		$content = file_get_contents( $this->logMail );
-		$mail->Body =
-<<<END
-Ontobee Maintenance Script Report
-
-==================================================
-Report Time
-==================================================
-$time
-
-==================================================
-Report Message
-==================================================
-$errorMsg
+	protected function error( $msg = '' ) {
+		$this->sendReport( self::ERROR, $msg );
+		die;
+	}
 	
-==================================================
-Report Log
-==================================================
-$content
-END;
-		if( !$mail->send() ) {
-			$this->logger->warn( 'Report could not be sent.' );
-			$this->logger->debug( 'Mailer Error: ' . $mail->ErrorInfo );
-		} else {
-			$this->logger->info( 'Report has been sent' );
-		}
+	protected function warn( $msg = '' ) {
+		$this->sendReport( self::WARN, $msg );
 	}
 	
 	protected function connectDB() {
@@ -268,6 +237,61 @@ END;
 		$appFile->setLayout( $layout );
 		$appFile->activateOptions();
 		$this->logger->addAppender( $appFile );
+	}
+	
+	private function sendReport( $status, $errorMsg ) {
+		$mail = new PHPMailer;
+	
+		$mail->isSMTP();
+		$mail->SMTPDebug = 1;
+		$mail->SMTPAuth = true;
+		$mail->SMTPSecure = 'tls';
+		$mail->Host = MAIL_HOST;
+		$mail->Port = 587;
+		$mail->Username = MAIL_USERNAME;
+		$mail->Password = MAIL_PASSWORD;
+	
+		foreach ( $this->mailList as $recipient ) {
+			$mail->addAddress( $recipient );
+		}
+		$mail->setFrom( MAIL_USERNAME );
+		$time = date("Y-m-d H:i:s", time());
+	
+		if ( $status == self::ERROR ) {
+			$title = 'Ontobee Server: ' . basename( MAINCLASS, '.php' ) . ' Execution Error';
+		} else if ( $status == self::WARN ) {
+			$title = 'Ontobee Server: ' . basename( MAINCLASS, '.php' ) . ' Execution Warning';
+		}
+		$mail->Subject = $title;
+		
+		$log = file_get_contents( $this->logMail );
+		
+		$mail->Body =
+<<<END
+Ontobee Maintenance Script Report
+
+==================================================
+Report Time
+==================================================
+$time
+
+==================================================
+Report Message
+==================================================
+$errorMsg
+
+==================================================
+Report Log
+==================================================
+$log
+END;
+		
+		if( !$mail->send() ) {
+			$this->logger->warn( 'Report could not be sent.' );
+			$this->logger->debug( 'Mailer Error: ' . $mail->ErrorInfo );
+		} else {
+			$this->logger->info( 'Report has been sent' );
+		}
 	}
 }
 

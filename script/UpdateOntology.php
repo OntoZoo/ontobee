@@ -105,18 +105,28 @@ Class UpdateOntology extends Maintenance {
 			$this->download( $this->ontology->source );
 		}
 		
-		$this->logger->debug( "Trying to download $this->fileName from given alternative download link" );
 		if ( !file_exists( $this->file ) && $this->ontology->alternative_download != '' ) {
+			$this->logger->debug( "Trying to download $this->fileName from given alternative download link" );
 			$this->download( $this->ontology->alternative_download );
 		}
 		
-		$status = false;
-		$msg = '';
 		if ( !file_exists( $this->file ) ) {
-			$status = false;
-			$this->logger->error( "Fail to download $this->file owl file" );
-			$this->sendReport( 'Ontobee UpdateOntology Warning',
-					"$this->fileName update failed.\nPrevious version will be used." );
+			$this->logger->warn( "Fail to download $this->file owl file" );
+			if ( $this->ontology->loaded == 'y' ) {
+				$msg =
+<<<END
+$this->fileName download failed.
+Previous version will be used.
+END;
+			} else {
+				$msg =
+<<<END
+$this->fileName download failed.
+No Previous version was found.
+This ontology will be hidden from home page.
+END;
+			}
+			$status = $this->warn( $msg );
 		} else {
 			$this->logger->info( 'Download complete' );
 			
@@ -132,8 +142,8 @@ Class UpdateOntology extends Maintenance {
 			$this->logger->info( 'Process complete' );
 			
 			$this->logger->info( "Checking $this->fileName version" );
+			
 			if ( $md5 == $this->ontology->md5 && $this->ontology->loaded == 'y' ) {
-				$status = true;
 				$this->logger->info( 'Ontology already up-to-date' );
 			} else {
 				$this->logger->info( 'Newer version is found' );
@@ -167,36 +177,60 @@ END;
 					$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\' and update md5' );
 					$sql = "UPDATE ontology SET loaded='y', md5='$md5', last_update=now() where id = '{$this->ontology->id}'";
 					$this->db->query( $sql );
-					
-					$status = true;
 				} else if ( preg_match( '/Error S2801/', $output ) ) {
 					$this->logger->debug( "Unable to connect Virtuoso RDF" );
-					$this->logger->warn( 'Virtuoso RDF upload fail' );
-					$this->sendReport( 'Ontobee UpdateOntology Warning',
-							"$this->fileName update failed.\nPrevious version will be used.");
+					$this->logger->error( 'Virtuoso RDF upload fail' );
 					
-					$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\'' );
-					$sql = "UPDATE ontology SET loaded='y' where id = '{$this->ontology->id}'";
-					$this->db->query( $sql );
-					
-					$status = false;
+					if ( $this->ontology->loaded == 'y' ) {
+						$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\'' );
+						$sql = "UPDATE ontology SET loaded='y' where id = '{$this->ontology->id}'";
+						$this->db->query( $sql );
+						$this->logger->info( 'Previous version will be used' );
+						$msg =
+<<<END
+$this->fileName update failed.
+Previous version will be used.
+END;
+					} else {
+						$msg =
+<<<END
+$this->fileName update failed.
+No Previous version was found.
+This ontology will be hidden from home page.
+END;
+					}
+					$this->error( $msg );
 				} else if ( preg_match( '/Error 28000/', $output ) ) {
 					$this->logger->debug( "Unable to login Virtuoso RDF" );
-					$this->logger->warn( 'Virtuoso RDF upload fail' );
-					$this->sendReport( 'Ontobee UpdateOntology Warning',
-							"$this->fileName update failed.\nPrevious version will be used." );
-						
-					$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\'' );
-					$sql = "UPDATE ontology SET loaded='y' where id = '{$this->ontology->id}'";
-					$this->db->query( $sql );
+					$this->logger->error( 'Virtuoso RDF upload fail' );
 					
-					$status = false;
+					if ( $this->ontology->loaded == 'y' ) {
+						$this->logger->debug( 'Setting MySQL ontology table to loaded=\'y\'' );
+						$sql = "UPDATE ontology SET loaded='y' where id = '{$this->ontology->id}'";
+						$this->db->query( $sql );
+						$this->logger->info( 'Previous version will be used' );
+						$msg =
+<<<END
+$this->fileName update failed.
+Previous version will be used.
+END;
+					} else {
+						$msg =
+<<<END
+$this->fileName update failed.
+No Previous version was found.
+This ontology will be hidden from home page.
+END;
+					}
+					$this->error( $msg );
 				} else {
 					$this->logger->error( 'Virtuoso RDF upload fail' );
-					$this->sendReport( 'Ontobee UpdateOntology Error',
-							"$this->fileName upload failed.\nThis ontology will be removed from Ontobee list." );
-					
-					$status = false;
+					$msg =
+<<<END
+$this->fileName update failed.
+This ontology will be hidden from home page.
+END;
+					$this->error( $msg );
 				}
 				#$this->remove( $this->tmpDir );
 				
@@ -219,13 +253,7 @@ END;
 		$this->logger->info( 'Removing temporary file' );
 		array_map( 'unlink', glob( "$this->tmpDir$this->fileName*.*" ) );
 		
-		if ( $status ) {
-			$this->logger->info( 'Update process complete' );
-		} else {
-			$this->logger->info( 'Update process fail' );
-		}
-		
-		return $status;
+		$this->logger->info( 'Update process complete' );
 	}
 	
 	private function remove( $dir ) {

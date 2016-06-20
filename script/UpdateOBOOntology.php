@@ -31,7 +31,6 @@ if ( !defined( 'MAINCLASS' ) ) {
 	DEFINE( 'MAINCLASS', __FILE__ );
 }
 
-
 require_once( 'Maintenance.php' );
 require_once( 'UpdateOntology.php' );
 
@@ -56,7 +55,7 @@ class UpdateOBOOntology extends Maintenance {
 		$this->logger->info( 'Setting up OBO Foundry update process' );
 		
 		if ( $this->hasOption( 'ontologies' ) ) {
-			$tokens = explode( ';', $this->getOption( 'ontologies' ) );
+			$tokens = preg_split( '/[-|,.;]/', $this->getOption( 'ontologies' ) );
 			$this->updateList = $tokens;
 		} else {
 			$this->updateList = array();
@@ -91,7 +90,6 @@ class UpdateOBOOntology extends Maintenance {
 	}
 	
 	public function execute() {
-		print_r($this->options);
 		$this->setup();
 		$this->update();
 	}
