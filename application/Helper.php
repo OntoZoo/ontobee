@@ -235,8 +235,6 @@ END;
 	public static function trimBracket( $text ) {
 		if ( preg_match( '/^\s*\(/', $text ) ) {
 			$text = substr( $text, 1 );
-		}
-		if ( preg_match( '/\)$/', $text ) ) {
 			$text = substr( $text, 0, -1 );
 		}
 		return $text;
