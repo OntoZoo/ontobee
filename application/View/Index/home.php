@@ -73,6 +73,9 @@ if (!$this) {
 
 <tbody>
 <?php
+/* Removed default ontology table display order
+ * Initially, foundry ontologies will display first
+ * As Oliver requested on 9/10/2016, all ontologies will be displayed by alphabetical order
 usort( $ontologies, function( $a, $b ) {
 	if ( empty( $a->foundry ) ) {
 		$num1 = INF;
@@ -90,6 +93,7 @@ usort( $ontologies, function( $a, $b ) {
 		return strcmp( $a->ontology_abbrv, $b->ontology_abbrv );
 	}
 } );
+*/
 $index = 0;
 foreach ( $ontologies as $key => $ontology ) {
 	$index += 1;
@@ -172,7 +176,8 @@ $(document).ready(function()
 	                4: {
 	                    sorter: false
 	            	}
-	            }
+	            },
+	            //sortList: [[1,0]],
 	    	});
 	    } 
 	);
