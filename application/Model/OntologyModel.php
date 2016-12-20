@@ -964,7 +964,7 @@ class OntologyModel {
 				if ( in_array( $type, array(
 						'Class',
 					) ) ) {
-					list( $subTermResult, $query ) = $this->rdf->selectSubClass(
+					list( $subTermResult, $query ) = $this->rdf->selectDirectSubClass(
 						$this->ontology->ontology_graph_url,
 						$termIRI
 					);
@@ -1127,21 +1127,21 @@ class OntologyModelHelper {
 				}
 			} else {
 				if ( preg_match( '/\/([A-Za-z\.\-_]+)#[a-zA-Z_0-9]+/', $termIRI, $match ) ) {
-					if ( $prefix == $match[1] ) {
+					if ( $prefix == strtoupper( $match[1] ) ) {
 						$letters[$first] = null;
 						if ( $first == $letter || $letter == '*' ) {
 							$terms[$termIRI] = $termLabel;
 						}
 					}
 				} else if ( preg_match( '/\/([A-Z][A-Za-z]+)_[-a-zA-Z_0-9]+/', $termIRI, $match ) ) {
-					if ( $prefix == $match[1] ) {
+					if ( $prefix == strtoupper( $match[1] ) ) {
 						$letters[$first] = null;
 						if ( $first == $letter || $letter == '*' ) {
 							$terms[$termIRI] = $termLabel;
 						}
 					}
 				} else if ( preg_match( '/\/([a-z]+)_[0-9]+/', $termIRI, $match ) ) {
-					if ( $prefix == $match[1] ) {
+					if ( $prefix == strtoupper( $match[1] ) ) {
 						$letters[$first] = null;
 						if ( $first == $letter || $letter == '*' ) {
 							$terms[$termIRI] = $termLabel;
