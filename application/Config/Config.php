@@ -33,6 +33,9 @@
 # Set maximum memory
 ini_set( 'memory_limit', '4096M' );
 
+# Set timeout
+set_time_limit( 60 );
+
 # Set Timezone
 date_default_timezone_set('America/New_York');
 
