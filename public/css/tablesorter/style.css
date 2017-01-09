@@ -1,0 +1,46 @@
+/* tables */
+table.tablesorter {
+    font-family: Arial, Helvetica, sans-serif;
+    /*margin:10px 0pt 15px;*/
+    font-size: 13pt;
+    width: 80%;
+    text-align: left;
+    border:1px #A0A0A4 solid;
+    vertical-align: center;
+}
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+    background-color: #158AFF;
+    font-size: 10pt;
+    font-weight: bold;
+    padding: 2px;
+    text-align: center;
+}
+table.tablesorter thead tr .header {
+    background-image: url(bg.gif);
+    background-repeat: no-repeat;
+    background-position: center right;
+    cursor: pointer;
+}
+table.tablesorter thead td {
+    background-color: #159EFF;
+    font-size: 8pt;
+    padding: 2px;
+}
+table.tablesorter tbody td {
+    color: #3D3D3D;
+    padding: 2px;
+    background-color: #FFF;
+    vertical-align: center;
+}
+table.tablesorter tbody tr.even td {
+    background-color:#BBDDFF;
+}
+table.tablesorter thead tr .headerSortUp {
+    background-image: url(asc.gif);
+}
+table.tablesorter thead tr .headerSortDown {
+    background-image: url(desc.gif);
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+    background-color: #1563FF;
+}

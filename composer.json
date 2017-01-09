@@ -1,0 +1,32 @@
+{
+    "name" : "ontobee",
+    "type" : "website",
+    "description" : "Linked Data Server for Ontologies",
+    "homepage" : "https://www.ontobee.org",
+    "license" : "APACHE-2.0",
+    "authors" : [
+        
+        {
+            "name" : "Yongqun Oliver He",
+            "email" : "yongqunh@med.umich.edu"
+        },
+        {
+            "name" : "Zuoshuang Allen Xiang"
+        },
+        {
+            "name" : "Edison Ong",
+            "email" : "edong@umich.edu"
+        }
+    ],
+    "require" : {
+        "php" : ">=5.3.0",
+        "phpmailer/phpmailer" : "~5.2",
+        "apache/log4php" : ">=2.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "": "application/"
+        }
+    },
+    "minimum-stability" : "dev"
+}
