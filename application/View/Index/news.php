@@ -43,6 +43,7 @@ if (!$this) {
 (<em><strong>Note</strong></em>: The list usually does not include news about new ontology inclusion. It may not include  those technical issues discussed in  <a href="https://groups.google.com/forum/#!forum/ontobee-discuss">Google Ontobee-discuss</a>, <a href="https://sourceforge.net/p/ontobee/feature-requests/">SourceForge feature requests</a>, or   <a href="https://github.com/ontoden/ontobee/issues">Github issues</a>.) </p>
 <br/>
 <ul>
+  <li><strong>1/9/2017</strong>: Ontobee paper is published in Nucleic Acids Research 2017 Database issue.</li>
   <li><strong>11/8/2015</strong>: Oliver and Edison announced to the update of the Ontobee program in the OBO-discuss and Ontobee-discuss email lists.</li>
   <li><strong>11/7/2015</strong>: Edison updated the Ontobee program to a new version.</li>
   <li><strong>10/19/2015</strong>: Oliver and Edison announced to the OBO-discuss and Ontobee-discuss email lists about a new beta version of Ontobee under testing.</li>
