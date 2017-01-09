@@ -72,17 +72,15 @@ if ( !$this ) {
 		<li><a href="<?php echo SITEURL; ?>tutorial/sparql/#ex7">Find the number of mouse genes associated with  mitochondrial DNA repair</a></li>		
       </ol>
   </li>
+  <li><a href="<?php echo SITEURL; ?>tutorial/sparql/#faqs">Frequently Asked Questions (FAQs)</a></li>
   <li><a href="<?php echo SITEURL; ?>tutorial/sparql/#refs">References and Web Links</a></li>
 </ol>
 <br/>
 <p class="style1" id="intro">1. Introduction of SPARQL and RDF Triple Store : </p>
-<p>RDF is .... </p>
-<p>RDF triple store is ...</p>
-<p>SPARQL (pronounced &quot;sparkle&quot;) is a recursive acronym. It stands for SPARQL Protocol and RDF Query Language. Current version of SPARQL is 1.1. The early version was 1.0. </p>
+<p><a href="https://en.wikipedia.org/wiki/Resource_Description_Framework">RDF</a> represents Resource Description Framework. RDF is a family of World Wide Web Consortium (W3C) specifications originally designed as a metadata data model (<a href="https://www.w3.org/RDF/">https://www.w3.org/RDF/</a>). The RDF data model makes  statements about resources (in particular web resources) expressions, known as triples. RDF triples  follow a subject–predicate–object structure. The <em>subject</em> denotes the resource, and the <em>predicate</em> denotes traits or aspects of the resource, and expresses a relationship between the subject and the <em>object</em>. </p>
+<p><a href="https://en.wikipedia.org/wiki/SPARQL">SPARQL</a> (pronounced &quot;sparkle&quot;) is a recursive acronym. It stands for SPARQL Protocol and RDF Query Language. Current version of SPARQL is 1.1 (<a href="https://www.w3.org/TR/sparql11-query/">https://www.w3.org/TR/sparql11-query/</a>). The early version was 1.0 (<a href="https://www.w3.org/TR/rdf-sparql-protocol/">https://www.w3.org/TR/rdf-sparql-protocol/</a>). </p>
 <p>Ontobee uses Hegroup RDF Triple store which is generated using the  <a href="http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main/">Virtuoso Open-Source Edition</a> software. </p>
-<p>-- <strong>Note</strong>: this section is still under construction. </p>
-<p>&nbsp;</p>
-<p id="examples"><span class="style1">2. SPARQL Examples to Query Ontobee RDF Triple Store: </span></p>
+<p><span class="style1">2. SPARQL Examples to Query Ontobee RDF Triple Store: </span></p>
 <p>  This section provides many examples on how to query the Ontobee RDF triple store:  </p>
 <p class="style3" id="ex1">(i). Example #1: Find all class-containing ontology graphs: </p>
 <p>This example is aimed to find all ontologies in our RDF triple store. Typically every single ontology includes at least one class. This SPARQL script searches those ontology graphs in the RDF triple store that contains at least one class. </p>
@@ -219,7 +217,15 @@ if ( !$this ) {
 <p>&nbsp;</p>
 
 
-<p class="style1" id="refs">3. References and Weblinks: </p>
+<p class="style1" id="faqs">3.  Frequently Asked Questions (FAQs): </p>
+<ul>
+  <li><strong>Q:</strong> How to obtain the ontology graph URI, which is required to perform SPARQL queries on the ontology?<br/>
+  <strong>A: </strong>The general naming pattern for the graph URI is to transform a PURL http://purl.obolibrary.org/obo/$foo.owl (note foo must be all lowercase by OBO conventions) to http://purl.obolibrary.org/obo/merged/uppercase($foo). However, this may not be consistent. Before a formal rule is set up and if the default naming pattern does not work, it would be good to run the Example 1 in <a href="http://www.ontobee.org/sparql">http://www.ontobee.org/sparql</a> and then find it out. See more in the <a href="https://groups.google.com/forum/#!profile/ontobee-discuss/APn2wQcmnFIj-vS3zy7XbQYoyJ8pA8w7lxkjLPuR79jZCvZ8s7iqsjFfePfGLakB-bZXs3Hzk_3k/ontobee-discuss/ucd3kWssyOQ/BAU9HtoTAQAJ">related Ontobee-discuss item</a>. </li>
+</ul>
+<p>&nbsp;</p>
+
+
+<p class="style1" id="refs">4. References and Weblinks: </p>
 <ul>
   <li> SPARQL Query Language for RDF, W3C Recommendation 15 January 2008: <a href="http://www.w3.org/TR/rdf-sparql-query/">http://www.w3.org/TR/rdf-sparql-query/</a></li>
   <li>W3C RDF: <a href="http://www.w3.org/RDF/">http://www.w3.org/RDF/</a></li>
@@ -227,8 +233,11 @@ if ( !$this ) {
   <li>NCBO SPARQL BioProtal: <a href="http://www.bioontology.org/wiki/index.php/SPARQL_BioPortal">http://www.bioontology.org/wiki/index.php/SPARQL_BioPortal</a> </li>
 </ul>
 <p>&nbsp;</p>
-<p>-- Prepared by Bin Zhao and Oliver He, 8/21/2013. </p>
-<p>-- Updated with new example #5 by Bin, 3/31/2013. </p>
+<p>-- Initial version prepared by Bin Zhao and Oliver He, 8/21/2013. </p>
+<p>-- Updates: </p>
+<ul>
+  <li> 1/9/2017: Oliver updated Introduction section, and added FAQs the first question and answer.</li>
+</ul>
 <p>&nbsp;</p>
 
 
