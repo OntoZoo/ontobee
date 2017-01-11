@@ -57,7 +57,7 @@ if ( !$this ) {
 <h3 class="head3_darkred">Tutorial</h3>
 
 <p>In general, the Ontobee HTML website is  easy to use and understand. You can usually search and navagate the linked results following your intuition. The source RDF or OWL output may need some explanation. </p>
-<p>Below is a tutorial that introduces some key features of the Ontobee system. </p>
+<p>Below is a tutorial that introduces some key features of the Ontobee system. Please feel free to contact us if you have suggestions on this tutorial. </p>
 <p><strong>Table of Contents</strong></p>
 <ol>
   <li><a href="<?php echo SITEURL; ?>tutorial/#query">Ontobee web data query engine</a></li>

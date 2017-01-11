@@ -89,6 +89,11 @@ END;
 
 <?php require TEMPLATE . 'Ontology/ontology.use.php'; ?>
 
+<a href="<?php echo SITEURL; ?>ontology/rdf/<?php echo $ontology->ontology_abbrv; ?>?iri=<?php echo Helper::encodeURL( $term->iri ); ?>">Show RDF Source</a>
+
+<br />
+<br />
+
 <?php require TEMPLATE . 'sparql.query.php'; ?>
 
 <?php require TEMPLATE . 'system.time.php'; ?>

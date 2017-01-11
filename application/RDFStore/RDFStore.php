@@ -645,6 +645,27 @@ END;
 		return array( $subClasses, $query );
 	}
 	
+	public function selectDirectSubClass( $graph, $termIRI ) {
+		$query =
+		<<<END
+PREFIX rdf: <{$this->prefixNS['rdf']}>
+PREFIX rdfs: <{$this->prefixNS['rdfs']}>
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT DISTINCT ?term ?label ?subTerm FROM <$graph> WHERE {
+	{
+		?term rdfs:subClassOf <$termIRI> .
+		FILTER (isIRI(?term)).
+		OPTIONAL {?term rdfs:label ?label} .
+		OPTIONAL {?subTerm rdfs:subClassOf ?term}
+	}
+}
+END;
+	
+		$json = SPARQLQuery::queue( $this->endpoint, $query );
+		$subClasses = RDFQueryHelper::parseSPARQLResult( $json );
+		return array( $subClasses, $query );
+	}
+	
 	public function selectSupClass( $graph, $termIRI ) {
 		$query =
 <<<END

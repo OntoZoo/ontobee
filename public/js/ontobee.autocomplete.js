@@ -19,7 +19,8 @@ $( function () {
 		minLength: 3,
 		select: function( event, ui ) {
 			var params = ui.item.id.split( /:::/ );
-			window.location = "/ontology/" + params.shift() + "?iri=" + params.shift();
+			var url = "/ontology/" + params.shift() + "?iri=" + encodeURIComponent( params.shift() );
+			window.location = url;
 		}
 	});
 });

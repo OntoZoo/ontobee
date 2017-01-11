@@ -94,7 +94,6 @@ Class UpdateOntology extends Maintenance {
 		if ( $this->ontology->ontology_url != '' ) {
 			$this->download( $this->ontology->ontology_url );
 		}
-		
 		if ( !file_exists( $this->file ) && $this->ontology->download != '' ) {
 			$this->logger->debug( "Trying to download $this->fileName from given download link" );
 			$this->download( $this->ontology->download );
@@ -287,6 +286,9 @@ END;
 		} else {
 			exec( "wget -q $downloadURL -O $this->tmpDir$this->fileName.owl" );
 		}
+		if ( filesize( "$this->fileName.owl" ) == 0 ) {
+			unlink( "$this->fileName.owl" );
+		}
 		if ( $this->ontology->do_merge == 'y' ) {
 			$this->merge( $downloadURL );
 		} else {
@@ -301,12 +303,13 @@ END;
 		switch ( $format ) {
 			case 'zip':
 				exec( "unzip $this->tmpDir$this->fileName.zip -d $this->tmpDir$this->fileName");
-				exec( "unzip -l $this->tmpDir$this->fileName.zip | grep .owl | awk '{cmd=\"mv $this->tmpDir$this->fileName" .
+				exec( "unzip -l $this->tmpDir$this->fileName.zip | awk '/.owl/ {cmd=\"mv $this->tmpDir$this->fileName" .
 					DIRECTORY_SEPARATOR .
-					"\" $4 \" $this->fileName.owl\"; system(cmd); close(cmd);}");
+					"\" $4 \" $this->fileName.owl\"; system(cmd); close(cmd);}'");
+				unlink( "$this->tmpDir$this->fileName.zip" );
+				$this->remove( "$this->tmpDir$this->fileName" );
 				break;
 		}
-		unlink( "$this->tmpDir$this->fileName" );
 	}
 	
 	private function merge( $downloadURL ) {
