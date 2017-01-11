@@ -60,7 +60,7 @@ if ( !$this ) {
 <p>&nbsp;</p>
 <p><strong>Table of Contents </strong> </p>
 <ol>
-  <li><a href="<?php echo SITEURL; ?>tutorial/sparql/#intro">Introduction of SPARQL and RDF Triple Store </a>    </li>
+  <li><a href="<?php echo SITEURL; ?>tutorial/sparql/#intro">Introduction of SPARQL and RDF triple store </a>    </li>
   <li><a href="<?php echo SITEURL; ?>tutorial/sparql/#basic">Basic SPARQL query programming skills</a>
       <ol type="i">
       <li><a href="<?php echo SITEURL; ?>tutorial/sparql/#structure">Query structure</a></li>  
@@ -90,7 +90,7 @@ if ( !$this ) {
   <li><a href="<?php echo SITEURL; ?>tutorial/sparql/#refs">References and Web Links</a></li>
 </ol>
 <br/>
-<p class="style1" id="intro">1. Introduction of SPARQL and RDF Triple Store : </p>
+<p class="style1" id="intro">1. Introduction of SPARQL and RDF triple store: </p>
 <p><a href="https://en.wikipedia.org/wiki/Resource_Description_Framework">RDF</a> represents Resource Description Framework. RDF is a family of World Wide Web Consortium (W3C) specifications originally designed as a metadata data model (<a href="https://www.w3.org/RDF/">https://www.w3.org/RDF/</a>). The RDF data model makes  statements about resources (in particular web resources) expressions, known as triples. RDF triples  follow a subject–predicate–object structure. The <em>subject</em> denotes the resource, and the <em>predicate</em> denotes traits or aspects of the resource, and expresses a relationship between the subject and the <em>object</em>. </p>
 <p><a href="https://en.wikipedia.org/wiki/SPARQL">SPARQL</a> (pronounced &quot;sparkle&quot;) is a recursive acronym. It stands for SPARQL Protocol and RDF Query Language. Current version of SPARQL is 1.1 (<a href="https://www.w3.org/TR/sparql11-query/">https://www.w3.org/TR/sparql11-query/</a>). The early version was 1.0 (<a href="https://www.w3.org/TR/rdf-sparql-protocol/">https://www.w3.org/TR/rdf-sparql-protocol/</a>). </p>
 <p>Ontobee uses Hegroup RDF Triple store which is generated using the  <a href="http://virtuoso.openlinksw.com/dataspace/doc/dav/wiki/Main/">Virtuoso Open-Source Edition</a> software. </p>
@@ -194,7 +194,7 @@ The general naming pattern for the graph URI is to transform a PURL http://purl.
 </blockquote>
 <p>You can use 'a' rather than rdf:type to specify the type of an entity.</p>
 <p><strong><em>2.5.2. Clauses </em></strong></p>
-<p>The <em><strong>UNION</strong></em> clause:  return results to match at least one of multiple patterns. </p>
+<p>The <em><strong>UNION</strong></em> clause:  return results to match at least one of multiple patterns. Note that the OGG paper (<a href="http://ceur-ws.org/Vol-1327/icbo2014_paper_23.pdf">http://ceur-ws.org/Vol-1327/icbo2014_paper_23.pdf</a>) provides a good example (Fig. 7) of using UNION. </p>
 <p>The <strong>OPTIONAL</strong> clause is also often used.</p>
 <p>The <strong>FILTER</strong> clause  filters the results based on certain conditions. </p>
 <ul>
@@ -368,7 +368,7 @@ The general naming pattern for the graph URI is to transform a PURL http://purl.
 	?x a owl:Class .}
   </pre>
 </div>
-<p>This script is listd as the sixth example provided on the <a href="<?php echo SITEURL; ?>sparql">Ontobee SPARQL query website</a>. </p>
+<p>This script is listd as the sixth example provided on the <a href="<?php echo SITEURL; ?>sparql">Ontobee SPARQL query website</a>. Note that this example came from the OGG paper: <a href="http://ceur-ws.org/Vol-1327/icbo2014_paper_23.pdf">http://ceur-ws.org/Vol-1327/icbo2014_paper_23.pdf</a>.</p>
 <p>&nbsp;</p>
 
 <p class="style3" id="ex7">(vii). Example #7: Count the number of mouse genes associated with mitochondrial DNA repair: </p>
@@ -506,14 +506,9 @@ The general naming pattern for the graph URI is to transform a PURL http://purl.
       <li>bio2rdf: <a href="http://bio2rdf.org/sparql">http://bio2rdf.org/sparql </a></li>
       <li></li>
       <li><em>General: </em></li>
-      <li>SPARQLer: <a href="http://sparql.org/sparql.html">http://sparql.org/sparql.html </a>(General-purpose query endpoint for Web-accessible data
-)  </li>
-      <li>DBPedia: <a href="http://dbpedia.org/sparql">http://dbpedia.org/sparql </a>(Extensive RDF  data from Wikipedia
-)</li>
-      <li>DBLP: <a href="http://www4.wiwiss.fu-berlin.de/dblp/snorql/">http://www4.wiwiss.fu-berlin.de/dblp/snorql/ </a>(Bibliographic data from computer science journals and  conferences)</li>
-      <li>LinkedMDB: <a href="http://data.linkedmdb.org/sparql">http://data.linkedmdb.org/sparql </a>(Films, actors, directors, writers,  producers, etc.
-)</li>
-      <li>World Factbook: <a href="http://www4.wiwiss.fu-berlin.de/factbook/snorql/">http://www4.wiwiss.fu-berlin.de/factbook/snorql/ </a>(Country statistics from the CIA World Factbook)</li>
+      <li>DBPedia: <a href="http://dbpedia.org/sparql">http://dbpedia.org/sparql </a>(RDF  data from Wikipedia)</li>
+      <li>SPARQLer: <a href="http://sparql.org/sparql.html">http://sparql.org/sparql.html </a>(General-purpose SPARQL query endpoint
+        )  </li>
       <li></li>
     </ul>
   </li>
