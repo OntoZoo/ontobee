@@ -135,7 +135,7 @@ END;
 			'-more" class="' .
 			$class .
 			'-more" href="' .
-			$moreURL .
+			$GLOBALS['call_function']( Helper::encodeURL( $moreURL ) ) .
 			'">more...</a>' .
 			'</li">';
 		return $html;
