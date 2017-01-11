@@ -38,3 +38,7 @@ function eg6() {
 function eg7() {
 	document.getElementById( "query" ).value = "#Example 7: \n#To find out how many mouse genes involving in mitochondrial DNA repair(GO_0043504).\n\nPREFIX obo-term: <http://purl.obolibrary.org/obo/>\nSELECT count(DISTINCT ?s)\nfrom <http://purl.obolibrary.org/obo/merged/OGG-Mm>\nfrom <http://purl.obolibrary.org/obo/merged/GO>\nWHERE\n{\n  #Note: Get OGG-Mm genes associated with GO_0043504\n   ?s a owl:Class .\n   ?s rdfs:label ?labelogg .\n   ?s obo-term:OGG_0000000029 ?annotation .\n   FILTER regex(?annotation, \"GO_0043504\") .\n}";
 }
+
+function eg8() {
+	document.getElementById( "query" ).value = "#Example 8: \n#To find out vaccines that have egg protein allergen. \n\nPREFIX has_vaccine_allergen: <http://purl.obolibrary.org/obo/VO_0000531>\nPREFIX chicken_egg_protein_allergen: <http://purl.obolibrary.org/obo/VO_0000912>\nSELECT distinct ?vaccine_label ?vaccine\nFROM <http://purl.obolibrary.org/obo/merged/VO>\nWHERE\n{\n   ?vaccine rdfs:label ?vaccine_label .\n   ?vaccine rdfs:subClassOf ?vaccine_restriction .\n   ?vaccine_restriction owl:onProperty has_vaccine_allergen:; owl:someValuesFrom chicken_egg_protein_allergen: .\n}";
+}

@@ -138,7 +138,7 @@ WHERE
 				<option value="tool_put('FILTER ( bound(?x) ) .')">put Bound Filter</option>
 				<option value="tool_put('FILTER ( ?date > &quot;2005-01-01T00:00:00Z&quot;^^xsd:dateTime ) .')">put Date Filter</option>
 			</select>
-<a href="javascript:eg1();">Example 1</a>, <a href="javascript:eg2();">Ex 2</a>, <a href="javascript:eg3();">Ex 3</a>, <a href="javascript:eg4();">Ex 4</a>, <a href="javascript:eg5();">Ex 5</a>, <a href="javascript:eg6();">Ex 6</a>, <a href="javascript:eg7();">Ex 7</a>
+<a href="javascript:eg1();">Example 1</a>, <a href="javascript:eg2();">Ex 2</a>, <a href="javascript:eg3();">Ex 3</a>, <a href="javascript:eg4();">Ex 4</a>, <a href="javascript:eg5();">Ex 5</a>, <a href="javascript:eg6();">Ex 6</a>, <a href="javascript:eg7();">Ex 7</a>, <a href="javascript:eg8();">Ex 8</a>
 		<br/>
 	    <textarea id="query" name="query" onChange="format_select(this)" onKeyUp="format_select(this)" wrap="off">
 <?php 

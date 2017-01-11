@@ -44,9 +44,9 @@ if (!$this) {
 <br/>
 <ul>
   <li><strong>1/9/2017</strong>: Ontobee source code in Github is updated. <a href="https://github.com/OntoZoo/ontobee/pull/97">https://github.com/OntoZoo/ontobee/pull/97</a></li>
-  <li><strong>1/9/2017</strong>: Ontobee paper is published in Nucleic Acids Research 2017 Database issue.</li>
+  <li><strong>1/9/2017</strong>: The Ontobee paper, titled &quot;<a href="http://nar.oxfordjournals.org/content/45/D1/D347">Ontobee: A linked ontology data server to support ontology term dereferencing, linkage, query, and integration</a>&quot;, is published in <em>Nucleic Acids Research</em> 2017 Database issue. PMID: <a href="https://www.ncbi.nlm.nih.gov/pubmed/27733503">27733503</a>.	PMCID: <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5210626/">PMC5210626</a>.</li>
   <li><strong>11/8/2015</strong>: Oliver and Edison announced to the update of the Ontobee program in the OBO-discuss and Ontobee-discuss email lists.</li>
-  <li><strong>11/7/2015</strong>: Edison updated the Ontobee program to a new version.</li>
+  <li><strong>11/7/2015</strong>: Edison updated the Ontobee program to a new version. The old version is now moved to: <a href="http://oriontobee.hegroup.org/">http://oriontobee.hegroup.org/</a>.</li>
   <li><strong>10/19/2015</strong>: Oliver and Edison announced to the OBO-discuss and Ontobee-discuss email lists about a new beta version of Ontobee under testing.</li>
   <li><strong>8/4/2015</strong>: Edison  solved a major issue on searching for synonyms that are defined by synonym-related annotation properties in OboInOWL: has_exact_synonym, has_related_synonym, has_narrow_synonym, and has_broad_synonym. See the related <a href="https://github.com/ontoden/ontobee/issues/35">github issue (#35) </a>page for more detail. </li>
   <li><strong>8/4/2015</strong>: Edison Ong  (a bioinformatics graduate student in Oliver He lab) solved an issue related to finding terms when character length is 3 or less. See the related <a href="https://github.com/ontoden/ontobee/issues/37">github issue (#37)</a> page for more detail. We have also explained this issue in a simplified way in answering a question in <a href="faqs.php">FAQs</a>. </li>
