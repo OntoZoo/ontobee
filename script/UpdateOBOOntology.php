@@ -109,7 +109,7 @@ class UpdateOBOOntology extends Maintenance {
 		
 		foreach ( $ontologies as $ontology ) {
 			$loadRDF = false;
-			if ( !in_array( $ontology['id'], $this->updateList ) ) {
+			if ( !empty( $this->updateList ) & !in_array( $ontology['id'], $this->updateList ) ) {
 				continue;
 			}
 			
