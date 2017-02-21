@@ -222,8 +222,7 @@ $(function() {
 
 <p><strong>Please cite the following reference for Ontobee: </strong></p>
 
-<p>Ong E, Xiang Z, Zhao B, Liu Y, Lin Y, Zheng J, Mungall C, Courtot M, Ruttenberg A, He Y. Ontobee: A linked ontology data server to support ontology term dereferencing, linkage, query, and integration. <i>Nucleic Acid Research</i>. 2016 Oct 12. pii: gkw918. PMID: <a href="https://www.ncbi.nlm.nih.gov/pubmed/27733503">27733503</a>.
-
+<p>Ong E, Xiang Z, Zhao B, Liu Y, Lin Y, Zheng J, Mungall C, Courtot M, Ruttenberg A, He Y. <a href="http://nar.oxfordjournals.org/content/45/D1/D347">Ontobee: A linked ontology data server to support ontology term dereferencing, linkage, query, and integration</a>. <em>Nucleic Acid Research</em>. 2017 Jan 4;45(D1):D347-D352. PMID: <a href="https://www.ncbi.nlm.nih.gov/pubmed/27733503">27733503</a>.	PMCID: <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5210626/">PMC5210626</a>.
 <p><strong>Ontobee ICBO proceeding paper: </strong></p>
 
 <p>Xiang Z, Mungall C, Ruttenberg A, He Y. <a href="doc/Ontobee_ICBO-2011_Proceeding.pdf">Ontobee: A Linked Data Server and Browser for Ontology Terms</a>. <em>Proceedings of the 2nd International Conference on Biomedical Ontologies (ICBO)</em>, July 28-30, 2011, Buffalo, NY, USA. Pages 279-281. URL: <a href="http://ceur-ws.org/Vol-833/paper48.pdf">http://ceur-ws.org/Vol-833/paper48.pdf</a>. </p>

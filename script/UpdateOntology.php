@@ -286,8 +286,8 @@ END;
 		} else {
 			exec( "wget -q $downloadURL -O $this->tmpDir$this->fileName.owl" );
 		}
-		if ( filesize( "$this->fileName.owl" ) == 0 ) {
-			unlink( "$this->fileName.owl" );
+		if ( filesize( "$this->tmpDir$this->fileName.owl" ) == 0 ) {
+			unlink( "$this->tmpDir$this->fileName.owl" );
 		}
 		if ( $this->ontology->do_merge == 'y' ) {
 			$this->merge( $downloadURL );
