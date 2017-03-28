@@ -478,6 +478,7 @@ SELECT ?path ?link ?label FROM <{$graph}> WHERE {
 				FILTER (isIRI(?o))
 				OPTIONAL {?o rdfs:label ?label}
 			}
+			FILTER ( ?s != ?o )
 		}
 	}
 	OPTION (TRANSITIVE, t_in(?s), t_out(?o), t_step (?s) as ?link, t_step ('path_id') as ?path).
@@ -730,6 +731,7 @@ SELECT ?path ?link ?label FROM <{$graph}> WHERE {
 				FILTER (isIRI(?o))
 				OPTIONAL {?o rdfs:label ?label}
 			}
+			FILTER ( ?s != ?o )
 		}
 	}
 	OPTION (TRANSITIVE, t_in(?s), t_out(?o), t_step (?s) as ?link, t_step ('path_id') as ?path).
