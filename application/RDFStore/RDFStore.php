@@ -478,6 +478,7 @@ SELECT ?path ?link ?label FROM <{$graph}> WHERE {
 				FILTER (isIRI(?o))
 				OPTIONAL {?o rdfs:label ?label}
 			}
+			FILTER ( ?s != ?o )
 		}
 	}
 	OPTION (TRANSITIVE, t_in(?s), t_out(?o), t_step (?s) as ?link, t_step ('path_id') as ?path).
@@ -495,15 +496,15 @@ PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
 SELECT * FROM <$graph> WHERE {
-	?nodeID owl:annotatedSource <$classIRI>.
-	#?nodeID rdf:type owl:Annotation.
-	?nodeID owl:annotatedProperty ?annotatedProperty.
-	?nodeID owl:annotatedTarget ?annotatedTarget.
-	?nodeID ?aaProperty ?aaPropertyTarget.
-	OPTIONAL {?annotatedProperty rdfs:label ?annotatedPropertyLabel}.
-	OPTIONAL {?aaProperty rdfs:label ?aaPropertyLabel}.
-	FILTER (isLiteral(?annotatedTarget)).
-	FILTER (not (?aaProperty in(owl:annotatedSource, rdf:type, owl:annotatedProperty, owl:annotatedTarget)))
+	?nodeID owl:annotatedSource <$classIRI> .
+	#?nodeID rdf:type owl:Annotation .
+	?nodeID owl:annotatedProperty ?annotatedProperty .
+	?nodeID owl:annotatedTarget ?annotatedTarget .
+	?nodeID ?aaProperty ?aaPropertyTarget .
+	OPTIONAL {?annotatedProperty rdfs:label ?annotatedPropertyLabel} .
+	OPTIONAL {?aaProperty rdfs:label ?aaPropertyLabel} .
+	FILTER ( isLiteral( ?annotatedTarget ) ) .
+	FILTER ( ?aaProperty NOT IN ( owl:annotatedSource, rdf:type, owl:annotatedProperty, owl:annotatedTarget ) )
 }
 END;
 		$this->sparql->add( 'annotation_annotation', $query );
@@ -730,6 +731,7 @@ SELECT ?path ?link ?label FROM <{$graph}> WHERE {
 				FILTER (isIRI(?o))
 				OPTIONAL {?o rdfs:label ?label}
 			}
+			FILTER ( ?s != ?o )
 		}
 	}
 	OPTION (TRANSITIVE, t_in(?s), t_out(?o), t_step (?s) as ?link, t_step ('path_id') as ?path).
@@ -747,15 +749,15 @@ PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
 SELECT * FROM <$graph> WHERE {
-	?nodeID owl:annotatedSource <$propertyIRI>.
-	#?nodeID rdf:type owl:Annotation.
-	?nodeID owl:annotatedProperty ?annotatedProperty.
-	?nodeID owl:annotatedTarget ?annotatedTarget.
-	?nodeID ?aaProperty ?aaPropertyTarget.
-	OPTIONAL {?annotatedProperty rdfs:label ?annotatedPropertyLabel}.
-	OPTIONAL {?aaProperty rdfs:label ?aaPropertyLabel}.
-	FILTER (isLiteral(?annotatedTarget)).
-	FILTER (not (?aaProperty in(owl:annotatedSource, rdf:type, owl:annotatedProperty, owl:annotatedTarget)))
+	?nodeID owl:annotatedSource <$propertyIRI> .
+	#?nodeID rdf:type owl:Annotation .
+	?nodeID owl:annotatedProperty ?annotatedProperty .
+	?nodeID owl:annotatedTarget ?annotatedTarget .
+	?nodeID ?aaProperty ?aaPropertyTarget .
+	OPTIONAL {?annotatedProperty rdfs:label ?annotatedPropertyLabel} .
+	OPTIONAL {?aaProperty rdfs:label ?aaPropertyLabel} .
+	FILTER ( isLiteral( ?annotatedTarget ) ) .
+	FILTER ( ?aaProperty NOT IN ( owl:annotatedSource, rdf:type, owl:annotatedProperty, owl:annotatedTarget ) )
 }
 END;
 		$this->sparql->add( 'annotation_annotation', $query );
@@ -995,15 +997,15 @@ PREFIX rdfs: <{$this->prefixNS['rdfs']}>
 PREFIX rdf: <{$this->prefixNS['rdf']}>
 PREFIX owl: <{$this->prefixNS['owl']}>
 SELECT * FROM <$graph> WHERE {
-	?nodeID owl:annotatedSource <$instanceIRI>.
-	#?nodeID rdf:type owl:Annotation.
-	?nodeID owl:annotatedProperty ?annotatedProperty.
-	?nodeID owl:annotatedTarget ?annotatedTarget.
-	?nodeID ?aaProperty ?aaPropertyTarget.
-	OPTIONAL {?annotatedProperty rdfs:label ?annotatedPropertyLabel}.
-	OPTIONAL {?aaProperty rdfs:label ?aaPropertyLabel}.
-	FILTER (isLiteral(?annotatedTarget)).
-	FILTER (not (?aaProperty in(owl:annotatedSource, rdf:type, owl:annotatedProperty, owl:annotatedTarget)))
+	?nodeID owl:annotatedSource <$instanceIRI> .
+	#?nodeID rdf:type owl:Annotation .
+	?nodeID owl:annotatedProperty ?annotatedProperty .
+	?nodeID owl:annotatedTarget ?annotatedTarget .
+	?nodeID ?aaProperty ?aaPropertyTarget .
+	OPTIONAL {?annotatedProperty rdfs:label ?annotatedPropertyLabel} .
+	OPTIONAL {?aaProperty rdfs:label ?aaPropertyLabel} .
+	FILTER ( isLiteral( ?annotatedTarget ) ) .
+	FILTER ( ?aaProperty NOT IN ( owl:annotatedSource, rdf:type, owl:annotatedProperty, owl:annotatedTarget ) )
 }
 END;
 		$this->sparql->add( 'annotation_annotation', $query );
