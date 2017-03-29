@@ -21,14 +21,12 @@
  */
 
 /**
- * @file header.default.dwt.php
- * @author Yongqun Oliver He
- * @author Zuoshuang Allen Xiang
+ * @file header.ontobeep.php
  * @author Edison Ong
- * @since Sep 3, 2015
+ * @since Mar 28, 2017
  * @comment 
  */
-
+ 
 if ( !$this ) {
 	exit( header( 'HTTP/1.0 403 Forbidden' ) );
 }
@@ -49,36 +47,6 @@ if ( !isset( $title ) ) {
 <link rel="shortcut icon" href="/favicon.ico" />
 <link href="<?php echo SITEURL; ?>public/css/main.css" rel="stylesheet" type="text/css"/>
 
-<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.theme.css"/>
-<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.css"/>
-<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.structure.css"/>
-<!--
-<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/themes/base/jquery.ui.all.css"/>
- -->
-<link rel="stylesheet" href="<?php echo SITEURL; ?>public/js/jquery/themes/base/jquery.ui.theme.css"/>
-<link rel="stylesheet" href="<?php echo SITEURL; ?>public/css/tablesorter/style.css"/>
-<!--
-<script src="<?php echo SITEURL; ?>public/js/jquery/jquery-1.7.1.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.core.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.widget.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.position.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/ui/jquery.ui.autocomplete.js"></script>
- -->
-<script src="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/external/jquery/jquery.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/jquery-ui-1.11.4/jquery-ui.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/ontobee.autocomplete.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/ontobee.deprecate.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/tablesorter/jquery.tablesorter.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/ontobee.infobox.js"></script>
-<script src="<?php echo SITEURL; ?>public/js/jquery/hoverIntent.min.js"></script>
-
-<style>
-.ui-autocomplete-loading { background: white url('<?php echo SITEURL; ?>public/images/ui-anim_basic_16x16.gif') right center no-repeat; }
-</style>
-<script type="text/javascript">
-var toolkitPath = "<?php echo SITEURL; ?>public/js/sparql/toolkit"; 
-var featureList = ["tab", "ajax2", "combolist", "window", "tree", "grid", "dav", "xml"];
-</script>
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-4869243-9']);
@@ -88,6 +56,66 @@ var featureList = ["tab", "ajax2", "combolist", "window", "tree", "grid", "dav",
     ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
+</script>
+
+<link rel="stylesheet" type="text/css" href="<?php echo SITEURL; ?>public/js/dijit/themes/tundra/tundra.css"/>
+
+<script src="<?php echo SITEURL; ?>public/js/dojo/dojo.js" djConfig="isDebug: true, parseOnLoad: true"></script>
+
+<script type="text/javascript">
+    dojo.require("dijit.Tree");
+    dojo.require("dojox.data.QueryReadStore");
+	dijit.Tree._createTreeNode = function(
+		/*Object*/
+		args) {
+			var tnode = new dijit._TreeNode(args);
+			tnode.labelNode.innerHTML = args.label;
+			return tnode;
+		}
+
+
+	dojo.provide("custom.TreeQueryReadStore");
+	dojo.declare("custom.TreeQueryReadStore", dojox.data.QueryReadStore, {
+		fetch: function(request) {
+			//console.log('fetching plugin: ' + request.term_url);
+			request.serverQuery = {termIRI: request.term_url, ontologies: '<?php echo join(',', $ontologies)?>', method: 'getChildren'};
+
+			// Call superclasses' fetch
+			return this.inherited("fetch", arguments);
+		}
+	});
+
+	dojo.provide("custom.HtmlTree");
+	dojo.declare("custom.HtmlTree", dijit.Tree, {
+		_createTreeNode: function(args) {
+			var tnode = new dijit._TreeNode(args);
+			tnode.labelNode.innerHTML = args.label;
+			return tnode;
+		},
+		
+		expandAll: function() {
+			// summary:
+			//     Expand all nodes in the tree
+			// returns:
+			//     Deferred that fires when all nodes have expanded
+	
+			var _this = this;
+	
+			function expand(node) {
+				_this._expandNode(node);
+	
+				var childBranches = dojo.filter(node.getChildren() || [], function(node) {
+					return node.isExpandable;
+				});
+	
+				var def = new dojo.Deferred();
+				defs = dojo.map(childBranches, expand);
+			}
+			return expand(this.rootNode);
+		}
+	});
+	
+	dojo.addOnLoad( function() { document.body.className = "tundra"; });
 </script>
 
 </head>

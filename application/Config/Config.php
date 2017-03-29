@@ -67,6 +67,9 @@ require APPPATH . 'Config/OntologyConfig.php';
 # Load hooks
 require APPPATH . 'Config/HookConfig.php';
 
+# Load Ontobeep configuration
+require APPPATH . 'Config/OntobeepConfig.php';
+
 # Define function caller variable
 $GLOBALS['call_function'] = function( $function ) {
 	return $function;
