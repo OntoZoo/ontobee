@@ -126,7 +126,8 @@ END;
 					
 					foreach( $ontologies as $ontAbbr => $index ) {
 						$this->model->loadOntology( $ontAbbr, $detail = false );
-						if ( !empty( $this->model->getTermSubClass( $keyTermIRI ) ) ) {
+						$subClasses = $this->model->getTermSubClass( $keyTermIRI );
+						if ( !empty( $subClasses ) ) {
 							$item['children'] = array();
 							break;
 						}
