@@ -21,28 +21,17 @@
  */
 
 /**
- * @file ErrorController.php
+ * @file OntobeepConfig.php
  * @author Edison Ong
- * @since Sep 3, 2015
+ * @since Mar 28, 2017
  * @comment 
  */
  
-namespace Controller;
-
-use Controller\Controller;
-
-Class ErrorController extends Controller {
-	
-	const INVALID_URL = 0;
-	const ONTOLOGY_NOT_FOUND = 1;
-	const TERM_NOT_FOUND = 2;
-	const INVALID_INPUT = 3;
-
-	public function index( $code = 0 ) {
-		require VIEWPATH . 'Error/404.php';
-	}
-}
-
-
+$GLOBALS['ontobeep_colorkey'] = array(
+		'#FF0000',
+		'#00FF00',
+		'#0000FF',
+		'#808000',
+);
 
 ?>

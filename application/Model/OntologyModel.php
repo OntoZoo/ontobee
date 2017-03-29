@@ -268,6 +268,53 @@ class OntologyModel {
 		return $type;
 	}
 	
+	public function getOntologyKeyTerm( $ontAbbr ) {
+		$sql = "SELECT * FROM key_terms WHERE ontology_abbrv='$ontAbbr' ORDER BY term_label";
+		$query = $this->db->prepare( $sql );
+		$query->execute();
+		return $query->fetchall();
+	}
+	
+	public function getTermSubClass( $termIRI ) {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+		list( $subClasses, $query ) = $this->rdf->selectSubClass( $this->ontology->ontology_graph_url, $termIRI );
+		$this->addQueries( $query );
+		return $subClasses;
+	}
+	
+	public function getTermFromType( $typeIRI ) {
+		if ( !isset( $this->rdf ) ) {
+			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
+		}
+		
+		$terms = array();
+		list( $tmpTerms, $query ) = $this->rdf->selectTermFromType( $this->ontology->ontology_graph_url, $typeIRI );
+		$prefixArray = array();
+		$classNoPrefix = array();
+		foreach ( $tmpTerms as $iri => $labels ){
+			$prefix = Helper::getIRIPrefix( $iri );
+			if ( !is_null( $prefix ) ) {
+				if ( !array_key_exists( $prefix, $prefixArray ) ) {
+					$prefixArray[$prefix] = array();
+				}
+				$prefixArray[$prefix][] = array( 'term' => $iri, 'label'=>$labels[0] );
+			} else {
+				$classNoPrefix[] = array( 'term' => $iri, 'label'=>$labels[0] );
+			}
+		}
+		foreach( $prefixArray as $prefix => $term ) {
+			$terms[$prefix] = $term;
+		}
+		$terms['no_prefix'] = $classNoPrefix;
+		$noprefix = $terms['no_prefix'];
+		unset( $terms['no_prefix'] );
+		ksort( $terms );
+		$terms['NoPrefix'] = $noprefix;
+		return $terms;
+	}
+	
 	public function describeTerm( $termIRI ) {
 		if ( !isset( $this->rdf ) ) {
 			throw new Exception( "RDFStore is not setup. Please run OntologyModel->loadOntology first." );
@@ -305,7 +352,10 @@ class OntologyModel {
 		return json_encode( $term );
 	}
 	
-	public function loadOntology( &$ontAbbr, &$termIRI, $endpoint = null, $detail = true ) {
+	public function loadOntology( &$ontAbbr, &$termIRI = '', $endpoint = null, $detail = true ) {
+		/*
+		 * $termIRI is only put here for automatic redirect by Hook(OGG remap).
+		 */
 		Hook::run( 'BeforeLoadOntology', array( &$ontAbbr, &$termIRI ) );
 		$sql = "SELECT * FROM ontology WHERE ontology_abbrv = '$ontAbbr'";
 		$query = $this->db->prepare( $sql );

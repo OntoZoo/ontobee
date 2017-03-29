@@ -30,6 +30,7 @@
 namespace Controller;
 
 use Exception;
+use Helper;
 
 use Controller\Controller;
 
@@ -77,6 +78,107 @@ class ApiController extends Controller  {
 		$this->loadModel( 'Ontology' );
 		$this->model->loadOntology( $ontAbbr, $termIRI, null, false );
 		echo json_encode( $this->model->describeTerm( $termIRI ) );
+	}
+	
+	public function ontobeep( $params = array() ) {
+		$site = SITEURL;
+		if ( $params['method'] == 'getChildren' ) {
+			$ontologies = array_flip( preg_split( '/,/', $params['ontologies'] ) );
+			$termIRI = $params['termIRI'];
+			$this->loadModel( 'Ontology' );
+			
+			$json = array();
+			$json['label'] = 'name';
+			$json['id'] = 'topLevelId';
+			$json['items'] = array();
+			
+			if ( $termIRI == '' ) {
+				foreach( $ontologies as $ontAbbr => $index ) {
+					foreach( $this->model->getOntologyKeyTerm( $ontAbbr) as $keyTerm ) {
+						if ( $keyTerm->is_root == '1' ) {
+							$keyTerms[$keyTerm->term_url][$keyTerm->ontology_abbrv] = $keyTerm->term_label;
+						}
+					}
+				}
+				
+				foreach( $keyTerms as $keyTermIRI => $keyTerm ) {
+					$id = Helper::getShortTerm( $keyTermIRI );
+					$label = $id;
+					foreach( $keyTerm as $keyTermOnt => $keyTermLabel ) {
+						if ( strpos( $label, "$keyTermLabel" ) !== false ) {
+							$label .= 
+<<<END
+ (<span style="font-weight:bold; color:{$GLOBALS['ontobeep_colorkey'][$ontologies[$keyTermOnt]]}; cursor:pointer" onClick="window.open('{$site}ontology/$keyTermOnt?iri={$GLOBALS['call_function']( Helper::encodeURL( $keyTermIRI ) )}')">$keyTermOnt</span>)
+END;
+						} else {
+							$label .=
+<<<END
+ | $keyTermLabel (<span style="font-weight:bold; color:{$GLOBALS['ontobeep_colorkey'][$ontologies[$keyTermOnt]]}; cursor:pointer" onClick="window.open('{$site}ontology/$keyTermOnt?iri={$GLOBALS['call_function']( Helper::encodeURL( $keyTermIRI ) )}')">$keyTermOnt</span>)
+END;
+						}
+					}
+					
+					$item = array();
+					$item['id'] = $id;
+					$item['name'] = $label;
+					$item['type'] = 'item';
+					$item['term_url'] = $keyTermIRI;
+					
+					foreach( $ontologies as $ontAbbr => $index ) {
+						$this->model->loadOntology( $ontAbbr, $detail = false );
+						if ( !empty( $this->model->getTermSubClass( $keyTermIRI ) ) ) {
+							$item['children'] = array();
+							break;
+						}
+					}
+					
+					$json['items'][] = $item;
+				}
+			} else {
+				$subTerms = array();
+				$subTermsHasChild = array();
+				foreach( $ontologies as $ontAbbr => $index ) {
+					$this->model->loadOntology( $ontAbbr, $detail = false );
+					$subClasses = $this->model->getTermSubClass( $termIRI );
+					foreach( $subClasses as $subClass ) {
+						$subTerms[$subClass['term']][$ontAbbr] = isset( $subClass['label'] ) ? $subClass['label'] : '';
+						if ( isset( $subClass['subTerm'] ) ) {
+							$subTermsHasChild[$subClass['term']] = true;
+						}
+					}
+				}
+				
+				foreach( $subTerms as $subTermIRI => $subTerm ) {
+					$id = Helper::getShortTerm( $subTermIRI );
+					$label = $id;
+					foreach( $subTerm as $subTermOnt => $subTermLabel ) {
+						if ( strpos( $label, "$subTermLabel" ) !== false ) {
+							$label .= 
+<<<END
+ (<span style="font-weight:bold; color:{$GLOBALS['ontobeep_colorkey'][$ontologies[$subTermOnt]]}; cursor:pointer" onClick="window.open('{$site}ontology/$subTermOnt?iri={$GLOBALS['call_function']( Helper::encodeURL( $subTermIRI ) )}')">$subTermOnt</span>)
+END;
+						} else {
+							$label .=
+<<<END
+ | $subTermLabel (<span style="font-weight:bold; color:{$GLOBALS['ontobeep_colorkey'][$ontologies[$subTermOnt]]}; cursor:pointer" onClick="window.open('{$site}ontology/$subTermOnt?iri={$GLOBALS['call_function']( Helper::encodeURL( $subTermIRI ) )}')">$subTermOnt</span>)
+END;
+						}
+					}
+					
+					$item = array();
+					$item['id'] = $id;
+					$item['name'] = $label;
+					$item['type'] = 'item';
+					$item['term_url'] = $subTermIRI;
+					if ( isset( $subTermsHasChild[$subTermIRI] ) ) {
+						$item['children'] = array();
+					}
+					$json['items'][] = $item;
+				}
+			}
+			
+			echo json_encode( $json );
+		}
 	}
 }
 

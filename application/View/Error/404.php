@@ -107,5 +107,10 @@ END;
 END;
 		require TEMPLATE . 'footer.default.dwt.php';
 		break;
+	case ErrorController::INVALID_INPUT:
+		require TEMPLATE . 'header.default.dwt.php';
+		echo "Invalid input.";
+		require TEMPLATE . 'footer.default.dwt.php';
+		break;
 }
 ?>
