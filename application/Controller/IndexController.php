@@ -103,9 +103,7 @@ Class IndexController extends Controller {
 	
 	public function tutorial( $params = array() ) {
 		if ( !empty( $params ) ) {
-			if ( $params[0] == 'sparql' ) {
-				require VIEWPATH . 'Tutorial/sparql.php';
-			}
+			require VIEWPATH . "Tutorial/{$GLOBALS['call_function']( strtolower( $params[0] ) )}.php";
 		} else {
 			require VIEWPATH . 'Tutorial/index.php';
 		}
