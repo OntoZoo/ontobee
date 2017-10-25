@@ -279,6 +279,12 @@ END;
 		echo "$this->fileName: getting final url $downloadURL\n";
 		$downloadURL = $this->getFinalURL( $downloadURL );
 		
+		if ( strpos( $downloadURL, 'file:' ) != false ) {
+			$header = get_headers( $downloadURL, 1 );
+			if ( !strpos( $header[0], '200 OK' ) ) return;
+		}
+		if ( in_array( $downloadURL, $GLOBALS['download']['exclude_url'] ) ) return;
+		
 		echo "$this->fileName: loading data from $downloadURL\n";
 		if ( preg_match( '/\.zip/', $downloadURL ) != false ) {
 			exec( "wget $downloadURL -O $this->tmpDir$this->fileName.zip" );

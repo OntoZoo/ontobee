@@ -47,7 +47,8 @@ class UpdateOBOOntology extends Maintenance {
 		
 		$this->addOption( 'ontologies', 'Ontologies to be updated', 'o', false );
 		$this->addOption( 'format', 'OBO Foundry meta-data format', 'f', false );
-		
+		$this->addOption( 'exclude', 'Ontologies to be excluded', 'x', false );
+				
 		$this->connectDB();
 	}
 	
@@ -55,7 +56,7 @@ class UpdateOBOOntology extends Maintenance {
 		$this->logger->info( 'Setting up OBO Foundry update process' );
 		
 		if ( $this->hasOption( 'ontologies' ) ) {
-			$tokens = preg_split( '/[-|,.;]/', $this->getOption( 'ontologies' ) );
+			$tokens = preg_split( '/[|,]/', $this->getOption( 'ontologies' ) );
 			$this->updateList = $tokens;
 		} else {
 			$this->updateList = array();
@@ -66,6 +67,13 @@ class UpdateOBOOntology extends Maintenance {
 		} else {
 			$format = 'jsonld';
 		}
+		
+		if ( $this->hasOption( 'exclude' ) ) {
+                        $tokens = preg_split( '/[|,]/', $this->getOption( 'exclude' ) );
+                        $this->excludeList = $tokens;
+                } else {
+                        $this->excludeList = array();
+                }
 		
 		$url = $GLOBALS['obo_registry'] . '.' . $format;
 		
@@ -110,6 +118,10 @@ class UpdateOBOOntology extends Maintenance {
 		foreach ( $ontologies as $ontology ) {
 			$loadRDF = false;
 			if ( !empty( $this->updateList ) & !in_array( $ontology['id'], $this->updateList ) ) {
+				continue;
+			}
+			if ( in_array( $ontology['id'], $this->excludeList ) ) {
+				$this->logger->info( "Excluded {$ontology['id']}" );
 				continue;
 			}
 			
