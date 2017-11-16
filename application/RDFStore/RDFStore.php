@@ -892,24 +892,6 @@ SELECT DISTINCT ?term ?label ?subTerm FROM <$graph> WHERE {
 		?s2 rdf:first <$termIRI> .
 		OPTIONAL {?term rdfs:label ?label} .
 		OPTIONAL {?subTerm rdfs:subPropertyOf ?term}
-	} UNION {
-		?term rdfs:subPropertyOf <$termIRI> .
-		FILTER (isIRI(?term)).
-		OPTIONAL {?term rdfs:label ?label} .
-		OPTIONAL {
-			?subTerm owl:equivalentProperty ?s1 .
-			?s1 owl:intersectionOf ?s2 .
-			?s2 rdf:first ?term
-		}
-	} UNION {
-		?term owl:equivalentProperty ?s1 .
-		FILTER (isIRI(?term)).
-		?s1 owl:intersectionOf ?s2 .
-		?s2 rdf:first <$termIRI> .
-		OPTIONAL {?term rdfs:label ?label} .
-		OPTIONAL {?subTerm owl:equivalentProperty ?s3 .
-		?s3 owl:intersectionOf ?s4 .
-		?s4 rdf:first ?term}
 	}
 }
 END;
