@@ -86,8 +86,9 @@ SELECT * FROM <$graph> WHERE{
 LIMIT $limit
 END;
 			} else {
+				$keywords = preg_replace( "/([()])/", "[$1]", $keywords );
 				$query =
-				<<<END
+<<<END
 SELECT * FROM <$graph> WHERE{
 	?s ?p ?o .
 	FILTER ( ?p in ( $propertiesQuery ) ) .
@@ -119,6 +120,7 @@ SELECT * WHERE {
 LIMIT $limit
 END;
 			} else {
+				$keywords = preg_replace( "/([()])/", "[$1]", $keywords );
 				$keypattern = preg_split( '/[,. ]/', $keywords );
 				$keypattern = $keypattern[0];
 				if ( strlen( $keypattern ) < 4 ) {
