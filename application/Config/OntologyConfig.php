@@ -130,4 +130,8 @@ $GLOBALS['alias']['ontology_url'] = array(
 	'http://purl.obolibrary.org/obo/ro/releases/2015-02-11/core.owl' => 'http://purl.obolibrary.org/obo/ro/releases/2015-10-07/ro.owl',
 );
 
+$GLOBALS['download']['exclude_url'] = array(
+		'http://ontologies.berkeleybop.org/',
+);
+
 ?>
