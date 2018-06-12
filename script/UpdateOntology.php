@@ -287,10 +287,10 @@ END;
 		
 		echo "$this->fileName: loading data from $downloadURL\n";
 		if ( preg_match( '/\.zip/', $downloadURL ) != false ) {
-			exec( "wget $downloadURL -O $this->tmpDir$this->fileName.zip" );
+			exec( "wget '$downloadURL' -O $this->tmpDir$this->fileName.zip" );
 			$this->decompress( 'zip' );
 		} else {
-			exec( "wget -q $downloadURL -O $this->tmpDir$this->fileName.owl" );
+			exec( "wget -q '$downloadURL' -O $this->tmpDir$this->fileName.owl" );
 		}
 		if ( filesize( "$this->tmpDir$this->fileName.owl" ) == 0 ) {
 			unlink( "$this->tmpDir$this->fileName.owl" );
