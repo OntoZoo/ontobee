@@ -53,7 +53,13 @@ $site = SITEURL;
 			
 			<tr>
 				<td>
-					<textarea name="keywords" cols="70" rows="10" id="term_iris" style="margin-left:32px"></textarea><br/><br/>
+					<textarea name="batchkeywords" cols="70" rows="10" id="batchkeywords" style="margin-left:32px">
+<?php 
+	if ( !empty( $keywords ) ) {
+		echo implode( PHP_EOL, $keywords );
+	}
+?>
+</textarea><br/><br/>
 				</td>
 			</tr>
 			
@@ -71,7 +77,7 @@ $site = SITEURL;
 		<p style="text-align:center;">
 			<input type="submit" name="submit" id="submit" value="Search" text-align="center" onClick="submitForm();"/>
 			
-			<input type="reset" name="reset" value="Reset" style="margin-left:40px;" text-align="center" onClick="resetForm();"/>
+			<button type="button" name="reset" value="Reset" style="margin-left:40px;" text-align="center" onClick="document.getElementById('batchkeywords').value=''">Reset</button>
 		</p>
 		
 	</form>
