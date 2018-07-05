@@ -34,6 +34,8 @@ if ( !$this ) {
 
 $site = SITEURL;
 
+#print_r($jsons);
+
 ?>
 
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
@@ -96,7 +98,7 @@ if ( $submit && !empty( $jsons ) ) {
 			Search Term
 		</td>
 		<td>
-			Matched Term
+			Ontobee Matched Term
  		</td>
  		
  		<td>
@@ -112,44 +114,33 @@ END;
 	foreach( $jsons as $keyword => $json ) {
 		foreach( $json as $index => $match ) {
 			$rowspan = sizeof( $json );
+			echo
+<<<END
+	<tr>
+END;
 			if ( $index == 0 ) {
 				echo
 <<<END
-	<tr>
 		<td rowspan="$rowspan">
 			$keyword
 		</td>
-		<td>
-			{$match['label']}
- 		</td>
- 		
- 		<td>
- 			{$match['ontology']}
- 		</td>
- 		
- 		<td>
- 			{$match['iri']}
- 		</td>
-	</tr>
-END;
-			} else {
-				echo
-<<<END
-	<tr>
-		<td>
-			{$match['label']}
- 		</td>
- 		
- 		<td>
- 			{$match['ontology']}
- 		</td>
- 		
- 		<td>
- 			{$match['iri']}
- 		</td>
-	</tr>
 END;
 			}
+			echo
+<<<END
+		<td>
+			<a class="term" href="{$site}ontology/{$match['ontology']}?iri={$match['iri']}">{$match['label']}</a>
+ 		</td>
+ 		
+ 		<td>
+ 			{$match['ontology']}
+ 		</td>
+ 		
+ 		<td>
+ 			<a class="term" href="{$match['iri']}">{$match['iri']}</a>
+ 		</td>
+	</tr>
+END;
 		}
 	}
 	
