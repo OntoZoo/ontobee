@@ -240,7 +240,7 @@ class OntologyModel {
 		return array( $terms, $letters, $page, $pageCount );
 	}
 	
-	public function searchKeyword( $keyword, $ontAbbr = null, $limit = 10000 ) {
+	public function searchKeyword( $keyword, $ontAbbr = null, $limit = 10000, $exact = false ) {
 		$ontologies = array();
 		if ( is_null( $ontAbbr ) || $ontAbbr == '' ) {
 			foreach ( $this->getAllOntology( 'y', null, false ) as $ontology ) {
@@ -253,7 +253,7 @@ class OntologyModel {
 		
 		$rdf = new RDFStore( $GLOBALS['endpoint']['search'] );
 		
-		list( $match, $query ) = $rdf->search( $ontologies, $keyword, $limit );
+		list( $match, $query ) = $rdf->search( $ontologies, $keyword, $limit, $exact );
 		$this->addQueries( $query );
 		return $match;
 	}

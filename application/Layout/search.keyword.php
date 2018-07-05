@@ -81,5 +81,15 @@ END;
 ?>
 
     <input type="submit" name="submit" value="Search terms" />
+
+<?php
+    if ( isset( $ontologies ) ) {
+    	echo
+<<<END
+<a href="{$SITEURL}search/batchsearch"><button type="button">Batch Search</button></a>
+END;
+    }
+?>
+
 </div>
 </form>
