@@ -94,8 +94,8 @@ class SearchController extends Controller  {
 		$this->loadModel( 'Ontology' );
 		
 		$keywords = array();
-		if ( array_key_exists( 'keywords' , $params ) ) {
-			$tokens = explode( PHP_EOL, $params['keywords'] );
+		if ( array_key_exists( 'batchkeywords' , $params ) ) {
+			$tokens = explode( PHP_EOL, $params['batchkeywords'] );
 			foreach ( $tokens as $token ) {
 				if ( $token != '' ) {
 					$keywords[] = trim( $token );
