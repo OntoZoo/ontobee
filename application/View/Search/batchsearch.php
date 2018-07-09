@@ -34,7 +34,6 @@ if ( !$this ) {
 
 $site = SITEURL;
 
-#print_r($jsons);
 
 ?>
 
@@ -98,46 +97,84 @@ if ( $submit && !empty( $jsons ) ) {
 			Search Term
 		</td>
 		<td>
-			Ontobee Matched Term
+			Matched Term IRI
  		</td>
  		
  		<td>
- 			Source Ontology
+ 			Source Ontology in Ontobee
  		</td>
  		
  		<td>
- 			Term IRI
+ 			Also in Ontobee
  		</td>
 	</tr>
 END;
 	
 	foreach( $jsons as $keyword => $json ) {
-		foreach( $json as $index => $match ) {
-			$rowspan = sizeof( $json );
+		
+		$validResult = array();
+		foreach ( $json as $index => $match ) {
+			if ( !$match['deprecate'] ) {
+				if ( !array_key_exists( $match['iri'], $validResult ) ) {
+					$validResult[$match['iri']] = array();
+				}
+				$validResult[$match['iri']][] = $match['ontology'];
+			}
+		}
+		
+		$rowspan = sizeof( $validResult );
+		
+		$labelFlag = false;
+		foreach ( $validResult as $resultIRI => $availableOntologies ) {
+			$termIRI = Helper::encodeURL( $resultIRI );
+			$prefix = Helper::getIRIPrefix( $resultIRI );
+			
 			echo
 <<<END
 	<tr>
 END;
-			if ( $index == 0 ) {
+			if ( !$labelFlag ) {
 				echo
 <<<END
 		<td rowspan="$rowspan">
 			$keyword
 		</td>
 END;
+				$labelFlag = true;
+			}
+			
+			echo
+<<<END
+ 		<td>
+ 			<a class="term" href="$termIRI">$termIRI</a>
+ 		</td>
+		<td>
+			<a class="term" href="{$site}ontology/{$prefix}?iri={$termIRI}">$prefix</a>
+ 		</td>
+		<td>
+END;
+
+			$availableOntologies = array_unique( $availableOntologies );
+			sort( $availableOntologies );
+			if ( ( $index = array_search( $prefix, $availableOntologies ) ) !== false ) {
+				/* In case purl link is not redirecting back to ontobee
+				 * We still need to display the ontobee link
+				 */
+				$tmpToken = $availableOntologies[$index];
+				unset( $availableOntologies[$index] );
+			}
+			
+			foreach ( $availableOntologies as $index => $availableOntology ) {
+				if ( $index != 0 ) {
+					echo ', ';
+				}
+				echo
+<<<END
+ 			<a class="term" href="{$site}ontology/$availableOntology?iri=$termIRI">$availableOntology</a>
+END;
 			}
 			echo
 <<<END
-		<td>
-			<a class="term" href="{$site}ontology/{$match['ontology']}?iri={$match['iri']}">{$match['label']}</a>
- 		</td>
- 		
- 		<td>
- 			{$match['ontology']}
- 		</td>
- 		
- 		<td>
- 			<a class="term" href="{$match['iri']}">{$match['iri']}</a>
  		</td>
 	</tr>
 END;
