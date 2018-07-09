@@ -1,0 +1,321 @@
+0	cardiac muscle tissue
+1	cell
+2	cell in vivo
+3	male germ cell
+3	nurse cell
+4	female germ cell
+5	neuron neural crest derived
+6	neuroblast
+7	stem cell
+8	germ line cell
+9	non-terminally differentiated cell
+9	blast cell
+10	fibroblast
+11	chondroblast
+11	chrondoplast
+12	osteoblast
+13	epithelial cell
+13	Epitheliocyte
+14	duct epithelial cell
+15	blood vessel endothelial cell
+15	Cuboidal endothelial cell of vascular tree
+16	columnar/cuboidal epithelial cell
+17	squamous epithelial cell
+18	stratified epithelial cell
+19	circulating cell
+20	blood cell
+21	neuron associated cell
+22	interneuron
+23	sensory neuron
+24	autonomic neuron
+25	glial cell
+25	neuroglia
+25	neuroglial cell
+26	macroglial cell
+26	Macrogliocyte
+27	astrocyte
+27	astrocytic glia
+28	oligodendrocyte
+28	oligodendroglia
+29	microglial cell
+29	microglia
+29	MF.microglia.CNS
+29	brain macrophage
+29	brain-resident macrophage
+29	hortega cells
+29	microgliocyte
+30	mesenchymal cell
+30	MSC
+30	BMSC
+30	CFU-F
+30	Stem Cells, Mesenchymal
+30	bone marrow stromal cells
+30	colony-forming unit-fibroblast
+30	marrow stromal cells
+30	mesenchymal precursor cell
+30	mesenchymal progenitor cells
+30	mesenchymal stem cell
+30	mesenchymal stromal cell
+30	mesenchymal stromal cells
+31	fat cell
+31	adipocyte
+31	adipose cell
+32	chondrocyte
+32	cartilage cell
+33	secretory cell
+34	neuroendocrine cell
+34	neurosecretory cell
+35	muscle cell
+35	myocyte
+36	skeletal muscle cell
+37	smooth muscle cell
+37	smooth muscle fiber
+37	non-striated muscle cell
+37	SMCs
+37	myocytes, smooth muscle
+38	flight muscle cell
+39	electrically active cell
+40	multinucleate cell
+40	syncitium
+40	syncytial cell
+40	syncytium
+41	glial cell (sensu Vertebrata)
+42	extracellular matrix secreting cell
+43	mesenchyme condensation cell
+44	electrically responsive cell
+45	obliquely striated muscle cell
+46	apoptosis fated cell
+47	neuroglioblast
+48	stromal cell
+49	syncytiotrophoblast cell
+49	plasmidotrophoblast
+49	syncytial trophoblast
+49	syntrophoblast
+50	afferent neuron
+50	input neuron
+51	efferent neuron
+51	output neuron
+52	neuron
+52	nerve cell
+53	germ cell
+54	cuticle secreting cell
+55	collagen secreting cell
+56	primordial germ cell
+56	Gonocyte
+56	Primitive germ cell
+57	muscle precursor cell
+58	striated muscle cell
+59	cardiac muscle cell
+59	cardiocyte
+59	cardiac myocyte
+59	cardiomyocyte
+59	heart muscle cell
+60	hematopoietic cell
+60	haematopoietic cell
+60	haemopoietic cell
+60	hemopoietic cell
+61	nucleate cell
+62	neural cell
+63	connective tissue cell
+64	somatic cell
+65	myotube
+65	skeletal muscle fiber
+65	myotubule
+65	single cell sarcomere
+66	Schwann cell
+67	cell by class
+68	cell by histology
+69	cell by function
+70	cell by nuclear number
+71	cell by ploidy
+72	nerve
+73	single-cell tissue
+74	lumen of tube
+74	tube lumen
+75	lumen of epithelial sac
+75	cavity of vesicle
+76	foramen
+77	matrix-based tissue
+78	bone
+79	endochondral bone
+80	membrane bone
+81	sesamoid bone
+82	cartilage
+83	ligament
+84	tendon
+85	aponeurosis
+86	non-connected functional system
+87	sense organ
+88	fluid-based anatomical entity
+89	gland
+90	ducted gland
+90	exocrine gland.
+91	ductless gland
+91	endocrine gland.
+92	keratin-based structure
+93	chitin-based structure
+94	body
+95	head
+96	neck
+97	tail
+98	mesothelium
+99	epithelial tube
+100	epithelial sac
+101	arborising epithelial duct system
+102	epithelial plexus
+103	epithelial vesicle
+104	muscle tissue
+105	neural tissue
+106	developing anatomical structure
+107	larva
+108	apoptosing developing anatomical entity
+109	functioning and developing structure
+110	developing structure with stem cells
+111	transitional anatomical structure
+112	ganglion
+113	neuronal nucleus
+114	nerve plexus
+115	nerve fiber tract
+115	neuron projection bundle
+116	striated muscle tissue
+117	smooth muscle tissue
+118	smooth muscle sphincter
+119	striated muscle sphincter
+120	mesenchymal tissue
+121	dense mesenchyme tissue
+122	cartilagenous condensation
+123	developing mesenchymal condensation
+124	pre-muscle condensation
+125	pre-cartilage condensation
+126	loose mesenchyme tissue
+127	migrating mesenchyme population
+128	mesenchymal tissue with stem cells
+129	organism surfacef
+130	groove
+131	ridge
+132	skeletal system
+133	embryo
+134	anlage
+135	primordium
+136	limb
+137	surface sense organ
+138	gender-specific anatomical structure
+139	male anatomical structure
+140	female anatomical structure
+141	hermaphrodite anatomical structure
+142	fibrous joint
+143	joint-associated cartilage
+144	non-joint-associated cartilage
+145	synovial membrane
+146	synovial joint
+147	exoskeletal tissue
+148	body cavity
+149	multi-tissue structure with stem cells
+150	acellular fluid anatomical entity
+151	epithelial tissue with stem cells
+152	anatomical surface feature
+152	anatomical surface.
+153	appendage
+154	conceptus
+155	extraembryonic component
+156	larval anatomical structure
+157	antenna
+158	mucous membrane
+158	mucosa
+159	regenerating anatomical structure
+160	afferent nerve
+161	efferent nerve
+162	syncytium
+163	pit
+164	protuberance
+165	migrating epithelium
+166	blood vessel
+167	artery
+168	vein
+169	row
+170	non-connected developing functional system
+171	sclerotome
+172	bone condensation
+173	dermomyotome
+174	open cavity
+175	epithelial cord
+176	migrating developing tissue
+177	developing epithelial placode
+178	vascular plexus
+179	tooth
+180	open anatomical space
+181	enclosed anatomical space
+182	fat tissue
+183	sensory ganglion
+184	autonomic ganglion
+185	capillary bed
+186	acellular extracellular matrix
+187	fin
+188	secretion
+189	excreta
+190	developing epithelium
+191	neuroepithelium
+192	proliferating neuroepithelium
+193	differentiating neuroepithelium
+194	neuronal white matter
+195	neuronal grey matter
+196	neuronal column
+197	differentiating neuronal condensation
+198	somite
+199	developing mesenchymal structure
+200	dermatome
+201	myotome
+202	developing germ cell population
+203	reproductive cell population
+204	stem cell population
+205	anatomical entity
+206	anatomical structure
+207	non-tissue substance
+207	portion of organism substance
+208	anatomical space
+209	material anatomical entity
+210	immaterial anatomical entity
+211	anatomical line
+212	anatomical point
+213	anatomical surface
+214	anatomical system
+215	multi-cellular organism
+216	cell
+217	cell component
+218	compound organ component
+219	simple organ
+220	compound organ
+221	male organism
+222	female organism
+223	hermaphroditic organism
+223	dioecious organism
+224	organism subdivision
+225	acellular anatomical structure
+226	anatomical cluster
+227	extraembryonic structure
+228	simple tissue
+228	portion of tissue.
+229	sequential hermaphroditic organism
+229	consecutive hermaphroditic organism
+230	synchronous hermaphroditic organism
+230	serially hermaphroditic organism
+231	gonochoristic organism
+231	monoecious organism
+232	protandrous hermaphroditic organism
+233	protogynous hermaphroditic organism
+234	anatomical group
+235	multi-tissue structure
+236	cell space
+237	asexual organism
+238	single cell organism
+239	basal lamina
+240	epithelium
+241	simple cuboidal epithelium
+242	columnar epithelium
+243	multilaminar epithelium
+244	simple squamous epithelium
+245	atypical epithelium
+246	cavitated compound organ
+247	unilaminar epithelium
+248	solid compound organ
+249	epithelial cell

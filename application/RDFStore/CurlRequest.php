@@ -46,10 +46,6 @@ class CurlRequest {
 		
 		$result = curl_exec( $request );
 		
-		if ( $result === false ) {
-			wfDebugLog( 'OntoKiWi', sprintf( 'OKW\CurlRequest: CURL Error: %s', curl_error($request) ) );
-		}
-		
 		curl_close( $request );
 
 		return( trim( $result ) );
