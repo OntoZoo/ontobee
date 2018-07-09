@@ -47,7 +47,7 @@ class AnnotateController extends Controller {
 		$this->loadModel( 'Ontology' );
 		
 		if ( array_key_exists( 'querytext' , $params ) ) {
-			$text = $params['querytext'];
+			$texts = explode( PHP_EOL, $params['querytext'] );
 		}
 		if ( array_key_exists( 'ontology', $params ) ) {
 			$ontologies = $params['ontology'];
@@ -62,53 +62,54 @@ class AnnotateController extends Controller {
 		
 		$caseFile = MGREPPATH . 'CaseFolding.txt';
 		
-		
-		$inputFile = tmpfile();
-		fwrite( $inputFile, $text );
-		$inputMeta = stream_get_meta_data( $inputFile );
-		$inputName = $inputMeta['uri'];
-		
 		$results = array();
-		foreach( $ontologies as $ontology ) {
-			$mapFile = MGREPPATH . 'mapping' . DIRECTORY_SEPARATOR . strtolower( $ontology ) . '.mapping';
-			$map = json_decode( file_get_contents( $mapFile ) );
+		foreach( $texts as $text ) {
+			$inputFile = tmpfile();
+			fwrite( $inputFile, $text );
+			$inputMeta = stream_get_meta_data( $inputFile );
+			$inputName = $inputMeta['uri'];
 			
-			$dictFile = MGREPPATH . 'dictionary' . DIRECTORY_SEPARATOR . strtolower( $ontology ) . '.dict';
-			$outputFile = tmpfile();
-			fwrite( $outputFile, $text );
-			$outputMeta = stream_get_meta_data( $outputFile );
-			$outputName = $outputMeta['uri'];
-			
-			exec( MGREPPATH . 'mgrep -m batch-mapping -w NonAlphanumeric -c ' . $caseFile . ' -d ' . $dictFile . 
-					' < ' . $inputName . ' > ' . $outputName );
-			
-			$output = file_get_contents( $outputName );
-			fclose( $outputFile );
-			
-			foreach( explode( PHP_EOL, $output ) as $line ) {
-				$result = array();
-				$tokens = preg_split( '/\t/', $line );
-				if ( sizeof( $tokens ) > 1 ) {
-					$termIRI = $map[$tokens[0]];
-					if ( !array_key_exists( $termIRI, $results ) ) {
-						$results[$termIRI] = array();
+			foreach( $ontologies as $ontology ) {
+				$mapFile = MGREPPATH . 'mapping' . DIRECTORY_SEPARATOR . strtolower( $ontology ) . '.mapping';
+				$map = json_decode( file_get_contents( $mapFile ) );
+				
+				$dictFile = MGREPPATH . 'dictionary' . DIRECTORY_SEPARATOR . strtolower( $ontology ) . '.dict';
+				$outputFile = tmpfile();
+				fwrite( $outputFile, $text );
+				$outputMeta = stream_get_meta_data( $outputFile );
+				$outputName = $outputMeta['uri'];
+				
+				exec( MGREPPATH . 'mgrep -m batch-mapping -w NonAlphanumeric -c ' . $caseFile . ' -d ' . $dictFile . 
+						' < ' . $inputName . ' > ' . $outputName );
+				
+				$output = file_get_contents( $outputName );
+				fclose( $outputFile );
+				
+				foreach( explode( PHP_EOL, $output ) as $line ) {
+					$result = array();
+					$tokens = preg_split( '/\t/', $line );
+					if ( sizeof( $tokens ) > 1 ) {
+						$termIRI = $map[$tokens[0]];
+						if ( !array_key_exists( $termIRI, $results ) ) {
+							$results[$termIRI] = array();
+						}
+						$match = mb_substr( $text, $tokens[1]-1, $tokens[2] - $tokens[1]+1 );
+						if ( !array_key_exists( $match, $results[$termIRI] ) ) {
+							$results[$termIRI][$match] = array();
+						}
+						$result['dictID'] = $tokens[0];
+						$result['iri'] = $termIRI;
+						$result['ontology'] = $ontology;
+						$result['start'] = $tokens[1];
+						$result['end'] = $tokens[2];
+						$result['length'] = $tokens[2] - $tokens[1];
+						$results[$termIRI][$match][] = $result;
 					}
-					$match = mb_substr( $text, $tokens[1]-1, $tokens[2] - $tokens[1]+1 );
-					if ( !array_key_exists( $match, $results[$termIRI] ) ) {
-						$results[$termIRI][$match] = array();
-					}
-					$result['dictID'] = $tokens[0];
-					$result['iri'] = $termIRI;
-					$result['ontology'] = $ontology;
-					$result['start'] = $tokens[1];
-					$result['end'] = $tokens[2];
-					$result['length'] = $tokens[2] - $tokens[1];
-					$results[$termIRI][$match][] = $result;
 				}
 			}
+			
+			fclose( $inputFile );
 		}
-		
-		fclose( $inputFile );
 		
 		require VIEWPATH . 'Annotator/result.php';
 	}
