@@ -51,6 +51,13 @@ class AnnotateController extends Controller {
 		}
 		if ( array_key_exists( 'ontology', $params ) ) {
 			$ontologies = $params['ontology'];
+		} else {
+			$ontologies = array();
+			foreach( $this->model->getAllOntology() as $ontology ) {
+				if ( $ontology->mgrep_ready == 'y' ) {
+					$ontologies[] = $ontology->id;
+				}
+			}
 		}
 		
 		$caseFile = MGREPPATH . 'CaseFolding.txt';
