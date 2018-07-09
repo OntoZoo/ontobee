@@ -41,7 +41,7 @@ $site = SITEURL;
 
 <div>
 
-	<textarea name="querytext" cols="70" rows="10" id="querytext" style="margin-left:32px"readonly><?php echo $text;?></textarea>
+	<textarea name="querytext" rows="10" id="querytext" style="width:100%"readonly><?php echo $text;?></textarea>
 <?php
 if ( !empty( $results ) ) {
 	echo
