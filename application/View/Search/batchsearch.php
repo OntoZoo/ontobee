@@ -121,7 +121,7 @@ END;
 				$validResult[$match['iri']][] = $match['ontology'];
 			}
 		}
-		
+		ksort( $validResult );
 		$rowspan = sizeof( $validResult );
 		
 		$labelFlag = false;
