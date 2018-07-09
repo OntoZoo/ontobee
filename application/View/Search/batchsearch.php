@@ -165,12 +165,9 @@ END;
 			}
 			
 			foreach ( $availableOntologies as $index => $availableOntology ) {
-				if ( $index != 0 ) {
-					echo ', ';
-				}
 				echo
 <<<END
- 			<a class="term" href="{$site}ontology/$availableOntology?iri=$termIRI">$availableOntology</a>
+ 			<a class="term" href="{$site}ontology/$availableOntology?iri=$termIRI">$availableOntology</a>, 
 END;
 			}
 			echo
