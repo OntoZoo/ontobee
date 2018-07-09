@@ -68,7 +68,13 @@ class MakeMgrepDict extends Maintenance {
 		}
 		
 		$this->dictDir = MGREPPATH . "dictionary" . DIRECTORY_SEPARATOR;
+		if ( !file_exists( $this->dictDir ) ) {
+			mkdir( $this->dictDir );
+		}
 		$this->mapDir = MGREPPATH . "mapping" . DIRECTORY_SEPARATOR;
+		if ( !file_exists( $this->mapDir ) ) {
+			mkdir( $this->mapDir );
+		}
 		
 		$this->logger->debug( "Querying $this->ontID from MySQL ontology table" );
 		$sql = "SELECT * FROM ontology WHERE id = '$this->ontID'";
@@ -77,7 +83,7 @@ class MakeMgrepDict extends Maintenance {
 		$this->ontology = $query->fetch();
 		$this->fileName = $this->ontology->ontology_abbrv;
 		$this->logger->debug( 'Complete' );
-	
+		
 		$this->logger->info( 'Setup complete' );
 	}
 	
@@ -120,6 +126,10 @@ END;
 			$output = $output . $index . "\t" . $value['o'] . "\n";
 		}
 		file_put_contents( "$this->dictDir$this->ontID.dict", $output );
+		
+		$this->logger->debug( 'Setting MySQL ontology table mgrep_ready to y' );
+		$sql = "UPDATE ontology SET mgrep_ready='y' WHERE id = '{$this->ontology->id}'";
+		$this->db->query( $sql );
 		
 		$this->logger->info( 'Complete' );
 	}
