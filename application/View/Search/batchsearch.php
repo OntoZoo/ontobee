@@ -34,7 +34,6 @@ if ( !$this ) {
 
 $site = SITEURL;
 
-
 ?>
 
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
