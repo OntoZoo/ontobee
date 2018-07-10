@@ -37,11 +37,14 @@ $site = SITEURL;
 
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
 
+<script src="<?php echo SITEURL; ?>public/js/mark/jquery.mark.min.js"></script>
+<script src="<?php echo SITEURL; ?>public/js/annotator.display.js"></script>
+
 <h3 class="head3_darkred">Ontobee Annotator</h3>
 
 <div>
 
-	<textarea name="querytext" rows="10" id="querytext" style="width:100%"readonly><?php echo implode( PHP_EOL, $texts );?></textarea>
+	<p class="querytext" name="querytext" id="querytext" style="height:300px;width:100%;overflow-y:scroll;font-size:16px;line-height:20px"><?php echo implode( "<br>", $texts );?></p>
 <?php
 if ( !empty( $results ) ) {
 	echo
@@ -77,14 +80,14 @@ END;
 		foreach( $result as $label => $matches ) {
 			echo
 <<<END
-		<tr>
+		<tr class="highlight">
 END;
 			
 			if ( !$firstLineFlag ) {
 				echo
 <<<END
 			<td rowspan="$rowspan">
-				<a class="term" href="$termIRI">$termIRI</a>
+				<a href="$termIRI">$termIRI</a>
 			</td>
 END;
 				$firstLineFlag = true;
@@ -93,10 +96,10 @@ END;
 			echo
 <<<END
 	 		<td>
-	 			$label
+	 			<a class="term" >$label</a>
 	 		</td>
  			<td>
- 				<a class="term" href="{$site}ontology/$prefix?iri={$termIRI}">$prefix</a>
+ 				<a href="{$site}ontology/$prefix?iri={$termIRI}">$prefix</a>
  			</td>
 			<td>
 END;
@@ -116,7 +119,7 @@ END;
 			foreach( $ontologies as $ontology ) {
 				echo
 <<<END
-				<a class="term" href="{$site}ontology/$ontology?iri={$termIRI}">$ontology</a>, 
+				<a href="{$site}ontology/$ontology?iri={$termIRI}">$ontology</a>, 
 END;
 			}
 			echo
