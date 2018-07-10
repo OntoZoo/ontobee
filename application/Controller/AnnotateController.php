@@ -49,7 +49,6 @@ class AnnotateController extends Controller {
 		if ( array_key_exists( 'querytext' , $params ) ) {
 			$text = $params['querytext'];
 			$text = preg_replace( '/\t/', ' ', $text );
-			print_r($text);
 			$texts = explode( PHP_EOL, $text );
 		}
 		if ( array_key_exists( 'ontology', $params ) ) {
