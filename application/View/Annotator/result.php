@@ -70,6 +70,7 @@ if ( !empty( $results ) ) {
 		</tr>
 END;
 	
+	$idCount = 0;
 	foreach( $results as $resultIRI => $result ) {
 		$termIRI = Helper::encodeURL( $resultIRI );
 		$prefix = Helper::getIRIPrefix( $resultIRI );
@@ -92,17 +93,19 @@ END;
 END;
 				$firstLineFlag = true;
 			}
-		
+			
 			echo
 <<<END
 	 		<td>
-	 			<a class="term" >$label</a>
+	 			<a class="term" id="$idCount">$label</a>
 	 		</td>
  			<td>
  				<a href="{$site}ontology/$prefix?iri={$termIRI}">$prefix</a>
  			</td>
 			<td>
 END;
+ 			$idCount ++;
+			
 			$ontologies = array();
 			foreach( $matches as $match ) {
 				$ontologies[] = $match['ontology'];
