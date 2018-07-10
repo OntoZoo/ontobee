@@ -47,7 +47,10 @@ class AnnotateController extends Controller {
 		$this->loadModel( 'Ontology' );
 		
 		if ( array_key_exists( 'querytext' , $params ) ) {
-			$texts = explode( PHP_EOL, $params['querytext'] );
+			$text = $params['querytext'];
+			$text = preg_replace( '/\t/', ' ', $text );
+			print_r($text);
+			$texts = explode( PHP_EOL, $text );
 		}
 		if ( array_key_exists( 'ontology', $params ) ) {
 			$ontologies = $params['ontology'];
