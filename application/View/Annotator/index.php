@@ -41,10 +41,14 @@ $site = SITEURL;
 
 <div>
 	<form enctype="multipart/form-data" name="annotate" id="annotate" action="<?php echo SITEURL; ?>annotate/submit" method="get">
-		
+	
+	<span style="margin-left:32px;"><strong>Enter or paste text:</strong></span><br/>
+	
 	<textarea name="querytext" cols="70" rows="10" id="querytext" style="margin-left:32px"></textarea><br/><br/>
-
-	<select name="ontology[]" id="ontology" size=5 multiple="multiple">
+	
+	<span style="margin-left:32px;"><strong>Please select ontologies (optional):</strong></span><br/>
+	
+	<select name="ontology[]" id="ontology" size=5 multiple="multiple" style="margin-left:32px">
 <?php
 	
 	foreach ( $ontologies as $ontology ) {
@@ -59,9 +63,9 @@ END;
 	</select>
 
 		<p style="text-align:center;">
-			<input type="submit" name="submit" id="submit" value="Search" text-align="center" onClick="submitForm();"/>
+			<input type="submit" name="submit" id="submit" value="Annotate" text-align="center" onClick="submitForm();"/>
 			
-			<button type="button" name="reset" value="Reset" style="margin-left:40px;" text-align="center" onClick="document.getElementById('batchkeywords').value=''">Reset</button>
+			<button type="button" name="reset" value="Reset" style="margin-left:40px;" text-align="center" onClick="document.getElementById('querytext').value=''">Reset</button>
 		</p>
 		
 	</form>

@@ -44,7 +44,7 @@ $site = SITEURL;
 
 <div>
 
-	<p class="querytext" name="querytext" id="querytext" style="height:300px;width:100%;overflow-y:scroll;font-size:16px;line-height:20px"><?php echo implode( "<br>", $texts );?></p>
+	<p class="querytext" name="querytext" id="querytext" style="max-height:300px;width:100%;overflow-y:scroll;font-size:16px;line-height:20px"><?php echo implode( "<br>", $texts );?></p>
 <?php
 if ( !empty( $results ) ) {
 	echo
