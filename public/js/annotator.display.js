@@ -11,7 +11,7 @@ $( function() {
 			"separateWordSearch":false,
 			"accuracy":{
 				"value":"exactly",
-				"limiters":["-",",","."]
+				"limiters":["-",",",".","/"]
 			}
 			});
 	}, function() {
