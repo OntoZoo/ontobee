@@ -44,15 +44,11 @@ class MakeMgrepDict extends Maintenance {
 	public function __construct() {
 		parent::__construct();
 	
-		$this->addArg( 'ontID', 'Ontology ID to be updated' );
+		$this->addOption( 'ontology', 'Ontology to be processed for Mgrep dictionary', 'o', false );
 	
 		$this->connectDB();
 		
 		$this->search = $GLOBALS['search'];
-	}
-
-	public function setOntID( $ontID ) {
-		$this->ontID = $ontID;
 	}
 	
 	public function execute() {
@@ -62,9 +58,18 @@ class MakeMgrepDict extends Maintenance {
 	
 	protected function setup() {
 		$this->logger->info( "Setting up update process" );
-	
-		if ( !isset( $this->ontID ) ) {
-			$this->ontID = $this->getArgByName( 'ontID' );
+		
+		if ( $this->hasOption( 'ontology' ) ) {
+			$this->updateList = array( $this->getOption( 'ontology' ) );
+		} else {
+			$this->updateList = array();
+			$sql = "SELECT * FROM ontology WHERE loaded='y' AND to_list = 'y' AND mgrep_ready = 'n'";
+			$query = $this->db->prepare( $sql );
+			$query->execute();
+			$results = $query->fetchAll();
+			foreach( $results as $result ) {
+				$this->updateList[] = $result->id;
+			}
 		}
 		
 		$this->dictDir = MGREPPATH . "dictionary" . DIRECTORY_SEPARATOR;
@@ -76,62 +81,61 @@ class MakeMgrepDict extends Maintenance {
 			mkdir( $this->mapDir );
 		}
 		
-		$this->logger->debug( "Querying $this->ontID from MySQL ontology table" );
-		$sql = "SELECT * FROM ontology WHERE id = '$this->ontID'";
-		$query = $this->db->prepare( $sql );
-		$query->execute();
-		$this->ontology = $query->fetch();
-		$this->fileName = $this->ontology->ontology_abbrv;
-		$this->logger->debug( 'Complete' );
-		
 		$this->logger->info( 'Setup complete' );
 	}
 	
 	private function make() {
-		$this->query();
+		
+		foreach( $this->updateList as $ontID ) {
+			$this->logger->debug( "Querying $ontID from MySQL ontology table" );
+			$sql = "SELECT * FROM ontology WHERE id = '$ontID'";
+			$query = $this->db->prepare( $sql );
+			$query->execute();
+			$this->ontology = $query->fetch();
+			$this->fileName = $this->ontology->ontology_abbrv;
+			$this->logger->debug( 'Complete' );
+			
+			$this->logger->debug( 'Starting query labels and synonyms for all classes' );
+			$propertiesQuery = '<' . join( '>,<', $this->search['property'] ) . '>';
+			
+			$query =
+<<<END
+	SELECT ?s ?o FROM <{$this->ontology->ontology_graph_url}> WHERE {
+		?s ?p ?o .
+		?s rdf:type ?t .
+		FILTER ( ?p in ( $propertiesQuery ) ) .
+		FILTER ( isIRI( ?s ) ) .
+		FILTER ( ?t = <{$GLOBALS['ontology']['type']['Class']}> )
 	}
-	
-	private function query() {
-		$this->logger->debug( 'Starting query labels and synonyms for all classes' );
-		$propertiesQuery = '<' . join( '>,<', $this->search['property'] ) . '>';
-		
-		$query =
-		<<<END
-SELECT ?s ?o FROM <{$this->ontology->ontology_graph_url}> WHERE {
-	?s ?p ?o .
-	?s rdf:type ?t .
-	FILTER ( ?p in ( $propertiesQuery ) ) .
-	FILTER ( isIRI( ?s ) ) .
-	FILTER ( ?t = <{$GLOBALS['ontology']['type']['Class']}> )
-}
 END;
-		
-		$json = SPARQLQuery::queue( $this->ontology->end_point, $query );
-		
-		$results = RDFQueryHelper::parseSPARQLResult( $json );
-		
-		$this->logger->debug( 'Generating map file' );
-		$map = array();
-		foreach( $results as $index => $value ) {
-			if ( !in_array( $value['s'], $map ) ) {
-				$map[] = $value['s'];
+			
+			$json = SPARQLQuery::queue( $this->ontology->end_point, $query );
+			
+			$results = RDFQueryHelper::parseSPARQLResult( $json );
+			
+			$this->logger->debug( 'Generating map file' );
+			$map = array();
+			foreach( $results as $index => $value ) {
+				if ( !in_array( $value['s'], $map ) ) {
+					$map[] = $value['s'];
+				}
 			}
+			file_put_contents( "$this->mapDir$ontID.mapping", json_encode( $map ) );
+			
+			$this->logger->debug( 'Generating dictionary file' );
+			$output = "";
+			foreach( $results as $value ) {
+				$index = array_search( $value['s'], $map );
+				$output = $output . $index . "\t" . $value['o'] . "\n";
+			}
+			file_put_contents( "$this->dictDir$ontID.dict", $output );
+			
+			$this->logger->debug( 'Setting MySQL ontology table mgrep_ready to y' );
+			$sql = "UPDATE ontology SET mgrep_ready='y' WHERE id = '{$this->ontology->id}'";
+			$this->db->query( $sql );
+			
+			$this->logger->info( "Complete make $ontID Mgrep dictionary." );
 		}
-		file_put_contents( "$this->mapDir$this->ontID.mapping", json_encode( $map ) );
-		
-		$this->logger->debug( 'Generating dictionary file' );
-		$output = "";
-		foreach( $results as $value ) {
-			$index = array_search( $value['s'], $map );
-			$output = $output . $index . "\t" . $value['o'] . "\n";
-		}
-		file_put_contents( "$this->dictDir$this->ontID.dict", $output );
-		
-		$this->logger->debug( 'Setting MySQL ontology table mgrep_ready to y' );
-		$sql = "UPDATE ontology SET mgrep_ready='y' WHERE id = '{$this->ontology->id}'";
-		$this->db->query( $sql );
-		
-		$this->logger->info( 'Complete' );
 	}
 	
 }
