@@ -952,6 +952,8 @@ class OntologyModel {
 		foreach ( $related as $termIRI => $termClass ) {
 			if ( isset( $labels[$termIRI] ) ) {
 				$termClass->label = array_shift( $labels[$termIRI] );
+			} else {
+				$termClass->label = $termIRI;
 			}
 		}
 		return $related;
