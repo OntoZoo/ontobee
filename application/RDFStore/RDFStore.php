@@ -819,6 +819,19 @@ END;
 		$this->sparql->add( 'ontology', $query );
 		$queries[] = $query;
 		
+		# Check if there exists a property which is inverseOf query property
+		$query = 
+<<<END
+PREFIX owl: <{$this->prefixNS['owl']}>
+SELECT ?s FROM <$graph> WHERE {
+?s owl:inverseOf ?o .
+FILTER ( ?o = <$propertyIRI> ) .
+FILTER ( isIRI( ?s ) ) .
+}
+END;
+		$this->sparql->add( 'inverse', $query );
+		$queries[] = $query;
+		
 		$results = $this->sparql->execute();
 		
 		$describeArray = json_decode( $results['describe'], true );
@@ -886,6 +899,16 @@ END;
 				}
 			}
 		}
+		if ( sizeof( RDFQueryHelper::parseSPARQLResult( $results['inverse'] ) ) > 0 ) {
+			foreach( RDFQueryHelper::parseSPARQLResult( $results['inverse'] ) as $inverse ) {
+				$axiom['inverse'][] = $inverse['s'];
+				$property['describe'][$this->prefixNS['owl'] . 'inverseOf'][] = array(
+					"type" => 'uri',
+					"value" => $inverse['s']
+				);
+			}
+		}
+		
 		$property['axiom'] = $axiom;
 	
 		return array( $property, $queries );
