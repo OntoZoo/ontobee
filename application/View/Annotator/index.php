@@ -79,8 +79,6 @@ END;
 </div>
 		<p style="text-align:center;">
 			<input type="submit" name="submit" id="submit" value="Annotate" text-align="center" onClick="submitForm();"/>
-			
-			<button type="button" name="reset" value="Reset" style="margin-left:40px;" text-align="center" onClick="document.getElementById('querytext').value=''">Reset</button>
 		</p>
 		
 	</form>
