@@ -63,7 +63,7 @@ class MakeMgrepDict extends Maintenance {
 			$this->updateList = array( $this->getOption( 'ontology' ) );
 		} else {
 			$this->updateList = array();
-			$sql = "SELECT * FROM ontology WHERE loaded='y' AND to_list = 'y' AND mgrep_ready = 'n'";
+			$sql = "SELECT * FROM ontology WHERE loaded='y' AND to_list = 'y' AND mgrep_ready = 'p'";
 			$query = $this->db->prepare( $sql );
 			$query->execute();
 			$results = $query->fetchAll();
