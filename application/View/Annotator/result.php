@@ -39,19 +39,20 @@ $site = SITEURL;
 
 <script src="<?php echo SITEURL; ?>public/js/mark/jquery.mark.min.js"></script>
 <script src="<?php echo SITEURL; ?>public/js/annotator.display.js"></script>
+<link href="<?php echo SITEURL; ?>public/css/annotator.css" rel="stylesheet" type="text/css"/>
 
 <h3 class="head3_darkred">Ontobee Annotator</h3>
 
 <div>
-
-	<p class="querytext" name="querytext" id="querytext" style="max-height:300px;width:100%;overflow-y:scroll;font-size:16px;line-height:20px"><?php echo implode( "<br>", $texts );?></p>
+	<span><strong>Query text:</strong></span><br/>
+	<p class="querytext" name="querytext" id="querytext"><?php echo implode( "<br>", $texts );?></p>
 <?php
 if ( !empty( $results ) ) {
 	echo
 <<<END
 	
 	<h3 class="head3_darkred">Results</h3>
-	
+	<div class="result_table">
 	<table border="1" width="100%" cellpadding="5">
 	
 		<tr style='text-align:center;font-weight:bold'>
@@ -136,6 +137,16 @@ END;
 	echo
 <<<END
 	</table>
+	</div>
+	</br>
+
+	<button class="exportHTML">Export Result</button>	
+
+END;
+} else {
+	echo 
+<<<END
+	<h3 class="head3_darkred">Unable to find any ontology terms.</h3>
 END;
 }
 	
