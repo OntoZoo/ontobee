@@ -52,7 +52,7 @@ class AnnotateController extends Controller {
 			$texts = explode( PHP_EOL, $text );
 		}
 		if ( array_key_exists( 'ontology', $params ) ) {
-			$ontologies = $params['ontology'];
+			$ontologies = explode( ',', $params['ontology'] );
 		} else {
 			$ontologies = array();
 			foreach( $this->model->getAllOntology() as $ontology ) {

@@ -37,6 +37,9 @@ $site = SITEURL;
 
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
 
+<script src="<?php echo SITEURL; ?>public/js/inputpicker/jquery.inputpicker.js"></script>
+<link href="<?php echo SITEURL; ?>public/css/inputpicker/jquery.inputpicker.css" rel="stylesheet" type="text/css"/>
+
 <h3 class="head3_darkred">Ontobee Annotator</h3>
 
 <div>
@@ -48,20 +51,32 @@ $site = SITEURL;
 	
 	<span style="margin-left:32px;"><strong>Please select ontologies (optional):</strong></span><br/>
 	
-	<select name="ontology[]" id="ontology" size=5 multiple="multiple" style="margin-left:32px">
-<?php
+
 	
+<div style="margin-left:32px">
+<input class="form-control" id="ontology" name="ontology" style="width:50%;height:32px;"/>
+<script>
+$('#ontology').inputpicker({
+    data:[
+<?php
 	foreach ( $ontologies as $ontology ) {
 		if ( $ontology->mgrep_ready == 'y' ) {
 			echo
 <<<END
-		<option value="$ontology->ontology_abbrv">$ontology->ontology_fullname ($ontology->ontology_abbrv)</option>
+		{value:"{$ontology->ontology_abbrv}", fullname: "{$ontology->ontology_fullname}"},
 END;
 		}
 	}
 ?>
-	</select>
-
+    ],
+    fields:['value','fullname'],
+    fieldText : 'fullname',
+    multiple: true,
+    filterOpen: true,
+    autoOpen: true,
+});
+</script>
+</div>
 		<p style="text-align:center;">
 			<input type="submit" name="submit" id="submit" value="Annotate" text-align="center" onClick="submitForm();"/>
 			
