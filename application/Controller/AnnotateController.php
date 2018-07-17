@@ -57,7 +57,7 @@ class AnnotateController extends Controller {
 			$ontologies = array();
 			foreach( $this->model->getAllOntology() as $ontology ) {
 				if ( $ontology->mgrep_ready == 'y' ) {
-					$ontologies[] = $ontology->id;
+					$ontologies[] = $ontology->ontology_abbrv;
 				}
 			}
 		}
