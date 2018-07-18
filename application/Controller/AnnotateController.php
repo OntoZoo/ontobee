@@ -51,8 +51,10 @@ class AnnotateController extends Controller {
 			$text = preg_replace( '/\t/', ' ', $text );
 			$texts = explode( PHP_EOL, $text );
 		}
-		if ( array_key_exists( 'ontology', $params ) ) {
-			$ontologies = explode( ',', $params['ontology'] );
+		
+		$ontologies = $params['ontology'];
+		if ( $ontologies != '' ) {
+			$ontologies = explode( ',', $ontologies );
 		} else {
 			$ontologies = array();
 			foreach( $this->model->getAllOntology() as $ontology ) {
@@ -61,7 +63,6 @@ class AnnotateController extends Controller {
 				}
 			}
 		}
-		
 		$caseFile = MGREPPATH . 'CaseFolding.txt';
 		
 		$results = array();
