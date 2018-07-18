@@ -47,8 +47,10 @@ $site = SITEURL;
 	<span><strong>Query text:</strong></span><br/>
 	<p class="querytext" name="querytext" id="querytext"><?php echo implode( "<br>", $texts );?></p>
 <?php
+
+	$html = "";
 if ( !empty( $results ) ) {
-	echo
+	$html .=
 <<<END
 	
 	<h3 class="head3_darkred">Results</h3>
@@ -80,13 +82,13 @@ END;
 		$firstLineFlag = false;
 		
 		foreach( $result as $label => $matches ) {
-			echo
+			$html .=
 <<<END
 		<tr class="highlight">
 END;
 			
 			if ( !$firstLineFlag ) {
-				echo
+				$html .=
 <<<END
 			<td rowspan="$rowspan">
 				<a href="$termIRI">$termIRI</a>
@@ -95,7 +97,7 @@ END;
 				$firstLineFlag = true;
 			}
 			
-			echo
+			$html .=
 <<<END
 	 		<td>
 	 			<a class="term" id="$idCount">$label</a>
@@ -120,13 +122,18 @@ END;
 				$tmpToken = $ontologies[$index];
 				unset( $ontologies[$index] );
 			}
+			
+			$anchor = "";
 			foreach( $ontologies as $ontology ) {
-				echo
+				$anchor .=
 <<<END
 				<a href="{$site}ontology/$ontology?iri={$termIRI}">$ontology</a>, 
 END;
 			}
-			echo
+			$anchor = substr( $anchor, 0, -2 );
+			if ( $anchor ) $html .= $anchor;
+			
+			$html .=
 <<<END
 	 		</td>
 		</tr>
@@ -134,7 +141,7 @@ END;
 		}
 	}
 	
-	echo
+	$html .=
 <<<END
 	</table>
 	</div>
@@ -144,13 +151,15 @@ END;
 
 END;
 } else {
-	echo 
+	$html .=
 <<<END
 	<h3 class="head3_darkred">Unable to find any ontology terms.</h3>
 END;
 }
 	
 ?>
+
+<?php echo Helper::tidyHTML( $html );?>
 
 </div>
 
