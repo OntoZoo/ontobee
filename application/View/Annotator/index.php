@@ -43,7 +43,7 @@ $site = SITEURL;
 <h3 class="head3_darkred">Ontobee Annotator</h3>
 
 <div>
-	<form enctype="multipart/form-data" name="annotate" id="annotate" action="<?php echo SITEURL; ?>annotate/submit" method="get">
+	<form enctype="multipart/form-data" name="annotate" id="annotate" action="<?php echo SITEURL; ?>annotate/submit" method="post">
 	
 	<span style="margin-left:32px;"><strong>Enter or paste text:</strong></span><br/>
 	
