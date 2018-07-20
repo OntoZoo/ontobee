@@ -116,6 +116,7 @@ END;
 			$this->logger->debug( 'Generating map file' );
 			$map = array();
 			foreach( $results as $index => $value ) {
+				if ( $value['o'] == "" ) continue;
 				if ( !in_array( $value['s'], $map ) ) {
 					$map[] = $value['s'];
 				}
