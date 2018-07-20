@@ -126,6 +126,7 @@ END;
 			$this->logger->debug( 'Generating dictionary file' );
 			$output = "";
 			foreach( $results as $value ) {
+				if ( $value['o'] == "" ) continue;
 				$index = array_search( $value['s'], $map );
 				$output = $output . $index . "\t" . $value['o'] . "\n";
 			}
