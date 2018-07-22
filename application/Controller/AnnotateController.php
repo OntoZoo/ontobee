@@ -84,7 +84,6 @@ class AnnotateController extends Controller {
 				
 				exec( MGREPPATH . 'mgrep -m batch-mapping -w NonAlphanumeric -c ' . $caseFile . ' -d ' . $dictFile . 
 						' < ' . $inputName . ' > ' . $outputName );
-				
 				$output = file_get_contents( $outputName );
 				fclose( $outputFile );
 				
@@ -93,10 +92,18 @@ class AnnotateController extends Controller {
 					$tokens = preg_split( '/\t/', $line );
 					if ( sizeof( $tokens ) > 1 ) {
 						$termIRI = $map[$tokens[0]];
+						$match = mb_substr( $text, $tokens[1]-1, $tokens[2] - $tokens[1]+1 );
+						// Simple fix to address incorrect abbreviation matching, such as All, all, An, an etc.
+						if ( in_array( strtolower( $match ), array( "all", "at", "of", "to", "was", "not", "in", "for", "a", "an", "is", "are", "am" ) ) ) {
+							if ( strtolower( $match ) == $match || ucfirst( strtolower( $match ) ) == $match ) {
+								continue;
+							}
+						} else if ( preg_match( '/^[\d]+$/', $match ) ) {
+							continue;
+						}
 						if ( !array_key_exists( $termIRI, $results ) ) {
 							$results[$termIRI] = array();
 						}
-						$match = mb_substr( $text, $tokens[1]-1, $tokens[2] - $tokens[1]+1 );
 						if ( !array_key_exists( $match, $results[$termIRI] ) ) {
 							$results[$termIRI][$match] = array();
 						}
