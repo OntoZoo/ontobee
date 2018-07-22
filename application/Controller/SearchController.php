@@ -79,13 +79,45 @@ class SearchController extends Controller  {
 				
 			}
 			
-			$this->writeExcel( $json );
+			#$this->writeExcel( $json );
 			
 		}	else {
 			throw new Exception( "Excess parameters." );
 		}
 		
 		require VIEWPATH . 'Search/search.php';
+	}
+	
+	public function batchsearch( $params = array() ) {
+		$GLOBALS['show_query'] = false;
+		
+		$this->loadModel( 'Ontology' );
+		
+		$keywords = array();
+		if ( array_key_exists( 'batchkeywords' , $params ) ) {
+			$tokens = explode( PHP_EOL, $params['batchkeywords'] );
+			foreach ( $tokens as $token ) {
+				if ( $token != '' ) {
+					$keywords[] = trim( $token );
+				}
+			}
+		}
+		
+		$submit = false;
+		if ( array_key_exists( 'submit', $params ) ) {
+			$submit = true;
+			unset( $params['submit'] );
+		}
+		
+		if ( $submit && !empty($keywords) ) {
+			$jsons = array();
+			$ontologies = $this->model->getAllOntology();
+			foreach ( $keywords as $keyword ) {
+				$jsons[$keyword] = $this->model->searchKeyword( $keyword, '', 10000, true );
+			}
+		}
+		
+		require VIEWPATH . 'Search/batchsearch.php';
 	}
 	
 	public function redirect( $params = array() ) {

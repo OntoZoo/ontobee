@@ -5,6 +5,8 @@ composer.phar
 composer.lock
 vendor/
 ontology/
+annotator/mapping/
+annotator/dictionary/
 
 application/Config/DB.php
 application/Config/HookConfig.php

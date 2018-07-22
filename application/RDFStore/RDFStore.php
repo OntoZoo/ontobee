@@ -63,18 +63,21 @@ class RDFStore {
 		}
 	}
 	
-	public function search( $graphs, $keywords, $limit ) {
+	public function search( $graphs, $keywords, $limit, $exact = false ) {
 		$propertiesQuery = '<' . join( '>,<', $this->search['property'] ) . '>';
 		
+		/* or exact one ontololgy */
 		if ( sizeof( $graphs ) == 1 ) {
 			$graph = current( $graphs );
+			
+			/* URL search */
 			if ( preg_match_all( '/([a-zA-Z]+)[:_]([a-zA-Z]*)[:_]?(\d+)/', $keywords, $matches, PREG_SET_ORDER ) ) {
 				if ( $matches[0][2] == '' ) {
 					$searchTermURL='http://purl.obolibrary.org/obo/' . $matches[0][1] . '_' . $matches[0][3];
 				} else {
 					$searchTermURL='http://purl.obolibrary.org/obo/' . $matches[0][2] . '_' . $matches[0][3];
 				}
-	
+				
 				$query =
 <<<END
 SELECT * FROM <$graph> WHERE{
@@ -85,8 +88,13 @@ SELECT * FROM <$graph> WHERE{
 }
 LIMIT $limit
 END;
-			} else {
+			}
+			/* Keyword search */
+			else {
 				$keywords = preg_replace( "/([()])/", "[$1]", $keywords );
+				if ( $exact ) {
+					$keywords = "^$keywords\$";
+				}
 				$query =
 <<<END
 SELECT * FROM <$graph> WHERE{
@@ -99,7 +107,10 @@ SELECT * FROM <$graph> WHERE{
 LIMIT $limit
 END;
 			}
-		} else {
+		} 
+		/* For more than one ontololgy */
+		else {
+			/* URL search */
 			if ( preg_match_all( '/([a-zA-Z]+)[:_]([a-zA-Z]*)[:_]?(\d+)/', $keywords, $matches, PREG_SET_ORDER ) ) {
 				if ( $matches[0][2] == '' ) {
 					$searchTermURL='http://purl.obolibrary.org/obo/' . $matches[0][1] . '_' . $matches[0][3];
@@ -108,7 +119,7 @@ END;
 				}
 	
 				$query =
-				<<<END
+<<<END
 SELECT * WHERE {
 	GRAPH ?g {
 		?s ?p ?o .
@@ -119,13 +130,18 @@ SELECT * WHERE {
 }
 LIMIT $limit
 END;
-			} else {
+			}
+			/* Keyword search */
+			else {
 				$keywords = preg_replace( "/([()])/", "[$1]", $keywords );
 				$keypattern = preg_split( '/[,. ]/', $keywords );
 				$keypattern = $keypattern[0];
+				if ( $exact ) {
+					$keywords = "^$keywords\$";
+				}
 				if ( strlen( $keypattern ) < 4 ) {
 					$query=
-					<<<END
+<<<END
 SELECT * WHERE {
 	GRAPH ?g {
 		?s ?p ?o .
@@ -139,7 +155,7 @@ LIMIT $limit
 END;
 				} else {
 					$query=
-					<<<END
+<<<END
 SELECT * WHERE {
 	GRAPH ?g {
 		?s ?p ?o .
