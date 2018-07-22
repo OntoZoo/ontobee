@@ -76,3 +76,12 @@ $( function() {
 	    link.click(); 
 	})
 })
+
+$( function() {
+	$( 'img.del' ).click( function( event ) {
+		for ( i=1; i<$( this ).parent().attr( 'rowspan' ); i++ ) {
+			$( this ).parent().parent().next().remove();
+		}
+		$( this ).parent().parent().remove();
+	})
+})
