@@ -11,7 +11,7 @@ $( function() {
 			"separateWordSearch":false,
 			"accuracy":{
 				"value":"exactly",
-				"limiters":["-",",",".","/"]
+				"limiters":["-",",",".","/","(",")"]
 			}
 			});
 	}, function() {
@@ -27,7 +27,7 @@ $( function() {
 	$( 'tr.highlight' ).click( function( event ) {
 		var term = $( this ).find( ".term" ).text();
 		var id = $( this ).find( ".term" ).attr('id');
-		if ( $( this ).hasClass( 'selected' ) ) {
+		if ( $( this ).find( ".term" ).hasClass( 'selected' ) ) {
 			$( "p.querytext" ).unmark({
 				"element":"mark",
 				"className":'click-'+id
@@ -45,7 +45,7 @@ $( function() {
 				});
 			$( this ).find( ".term" ).parent().css( 'background-color', 'coral');
 		};
-		$( this ).toggleClass( 'selected' );
+		$( this ).find( ".term" ).toggleClass( 'selected' );
 	})
 })
 
