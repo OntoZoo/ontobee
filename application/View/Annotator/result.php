@@ -70,6 +70,8 @@ if ( !empty( $results ) ) {
 	 		<td>
 	 			Also available in Ontology
 	 		</td>
+ 			<td style="border-style:hidden">
+ 			</td>
 		</tr>
 END;
 	
@@ -94,7 +96,7 @@ END;
 				<a href="$termIRI">$termIRI</a>
 			</td>
 END;
-				$firstLineFlag = true;
+				
 			}
 			
 			$html .=
@@ -133,11 +135,23 @@ END;
 			$anchor = substr( $anchor, 0, -2 );
 			if ( $anchor ) $html .= $anchor;
 			
-			$html .=
+			if ( !$firstLineFlag ) {
+				$html .=
+<<<END
+	 		</td>
+			<td style="border-style:hidden" rowspan="$rowspan">
+ 				<img class="del" src="https://png.icons8.com/metro/1600/delete-sign.png" alt="del" width="10" border="1">
+ 			</td>
+		</tr>
+END;
+			$firstLineFlag = true;
+			} else {
+				$html .=
 <<<END
 	 		</td>
 		</tr>
 END;
+			}
 		}
 	}
 	
