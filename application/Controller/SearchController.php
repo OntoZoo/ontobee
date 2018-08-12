@@ -103,17 +103,34 @@ class SearchController extends Controller  {
 			}
 		}
 		
+		$batchontologies = $params['ontology'];
+		if ( $batchontologies != '' ) {
+			$batchontologies = explode( ',', $batchontologies );
+		} else {
+			$batchontologies = array();
+		}
+		//print_r($batchontologies);
+		//print_r($keywords);
+		
 		$submit = false;
 		if ( array_key_exists( 'submit', $params ) ) {
 			$submit = true;
 			unset( $params['submit'] );
 		}
 		
+		$ontologies = $this->model->getAllOntology();
+		
 		if ( $submit && !empty($keywords) ) {
 			$jsons = array();
-			$ontologies = $this->model->getAllOntology();
 			foreach ( $keywords as $keyword ) {
-				$jsons[$keyword] = $this->model->searchKeyword( $keyword, '', 10000, true );
+				if ( empty( $batchontologies ) ) {
+					$jsons[$keyword] = $this->model->searchKeyword( $keyword, '', 10000, true );
+				} else {
+					$jsons[$keyword] = array();
+					foreach( $batchontologies as $batchontology ) {
+						$jsons[$keyword] = array_merge ( $jsons[$keyword], $this->model->searchKeyword( $keyword, $batchontology, 10000, true ) );
+					}
+				}
 			}
 		}
 		

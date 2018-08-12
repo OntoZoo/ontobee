@@ -38,6 +38,9 @@ $site = SITEURL;
 
 <?php require TEMPLATE . 'header.default.dwt.php'; ?>
 
+<script src="<?php echo SITEURL; ?>public/js/inputpicker/jquery.inputpicker.js"></script>
+<link href="<?php echo SITEURL; ?>public/css/inputpicker/jquery.inputpicker.css" rel="stylesheet" type="text/css"/>
+
 <h3 class="head3_darkred">Ontobee Batch Search</h3>
 
 <div>
@@ -74,10 +77,37 @@ $site = SITEURL;
 			
 		</table>
 		
+		 <span style="margin-left:32px;"><strong>Please select ontologies (optional):</strong></span><br/>
+	
+
+	
+		<div style="margin-left:32px">
+		<input class="form-control" id="ontology" name="ontology" style="width:50%;height:32px;" value="<?php echo implode(",",$batchontologies);?>"/>
+		<script>
+			$('#ontology').inputpicker({
+			    data:[
+<?php
+foreach ( $ontologies as $ontology ) {
+	echo
+<<<END
+			{value:"{$ontology->ontology_abbrv}", fullname: "{$ontology->ontology_fullname}"},
+END;
+}
+?>
+			    ],
+			    fields:['value','fullname'],
+			    fieldText : 'fullname',
+			    multiple: true,
+			    filterOpen: true,
+			    autoOpen: true,
+			});
+		</script>
+		</div>
+		
 		<p style="text-align:center;">
 			<input type="submit" name="submit" id="submit" value="Search" text-align="center" onClick="submitForm();"/>
 			
-			<button type="button" name="reset" value="Reset" style="margin-left:40px;" text-align="center" onClick="document.getElementById('batchkeywords').value=''">Reset</button>
+			<button type="button" name="reset" value="Reset" style="margin-left:40px;" text-align="center" onClick="document.getElementById('batchkeywords').value='';document.getElementById('ontology').value=''">Reset</button>
 		</p>
 		
 	</form>
