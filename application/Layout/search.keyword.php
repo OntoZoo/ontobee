@@ -86,7 +86,7 @@ END;
     if ( isset( $ontologies ) ) {
     	echo
 <<<END
-<a href="{$SITEURL}search/batchsearch"><button type="button">Batch Search</button></a>
+<a href="{$SITEURL}search/batchsearch"><button type="button"  class="ui-button" style="font-family:system-ui;font-size:11px;padding:2px 8px 3px 8px">Batch Search</button></a>
 END;
     }
 ?>
